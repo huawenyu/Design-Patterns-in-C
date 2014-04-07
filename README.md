@@ -8,6 +8,7 @@ This will be a repository of how to use the Design Patterns from *Gang of Four* 
 ## Quick Start:
 
 linux $ make			<<< build project
+
 linux $ ./Debug/main	<<< if Makefile set Debug=y, then run this one
 
 ## Update:
