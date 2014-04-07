@@ -1,4 +1,4 @@
-#ifndef RIGHTSTRATEGY_H_
+#ifndef STRATEGY_RIGHT_H_
 #define STRATEGY_RIGHT_H_
 
 #include "strategy.h"
@@ -9,4 +9,4 @@ struct strategy_right {
 
 void strategy_right_init(struct strategy_right *);
 
-#endif /* RIGHTSTRATEGY_H_ */
+#endif /* STRATEGY_RIGHT_H_ */

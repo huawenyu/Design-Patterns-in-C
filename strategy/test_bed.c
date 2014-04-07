@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "TestBed.h"
+#include "test_bed.h"
 #include "strategy_left.h"
 #include "strategy_right.h"
 

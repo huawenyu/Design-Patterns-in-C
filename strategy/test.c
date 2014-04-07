@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "TestBed.h"
+#include "test_bed.h"
 
 static int test()
 {
