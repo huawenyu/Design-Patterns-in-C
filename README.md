@@ -7,9 +7,8 @@ This will be a repository of how to use the Design Patterns from *Gang of Four* 
 
 ## Quick Start:
 
-linux $ make			<<< build project
-
-linux $ ./Debug/main	<<< if Makefile set Debug=y, then run this one
+> linux $ make			<<< build project  
+> linux $ ./Debug/main	<<< if Makefile set Debug=y, then run this one  
 
 ## Update:
 
@@ -17,21 +16,39 @@ Apr 6, 2014: Add init version
 
 ## Design Patterns:
 
-* Adapter
-* Command
-* Composite
-* Iterator
-* Decorator
-* Facade
-* Factory
-* MVC
-* Observer
-* Proxy
-* Singleton
-* State
-* Strategy
-* Template Method
-* Chaining
+1. Creational patterns
+  * Factory
+    - Static Factory
+    - Simple Factory
+    - Factory Method
+    - Abstract Factory
+  * Builder
+  * Object Pool
+  * Prototype
+  * Singleton
+2. Structural patterns
+  * Adapter
+  * Bridge
+  * Composite
+  * Decorator
+  * Facade
+  * Flyweight
+  * Private Class Data
+  * Proxy
+  * MVC
+3. Behavioral patterns
+  * Chain of Responsibility
+  * Command
+  * Interpreter
+  * Iterator
+  * Mediator
+  * Memento
+  * Null Object
+  * Observer
+  * State
+  * Strategy
+  * Template Method
+  * Visitor
 
 The repository contains a folder by each design pattern.
 
@@ -64,13 +81,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## Agreements
+## See also & References
 
-[Design Patterns Explained Simply](http://sourcemaking.com/design_patterns)
-
-[.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)
-
-[Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)
-
-[Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)
-
+[Design Patterns Explained Simply](http://sourcemaking.com/design_patterns)  
+[.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
+[Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
+[Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)  
