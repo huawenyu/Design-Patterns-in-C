@@ -10,7 +10,7 @@ all:
 # annotation when release version
 TARGET_PROG := main
 DEBUG       := y #y
-INC_DIR     := /home/wilson/work_me/design_pattern  #$(DIR1) $(DIR2) ...
+INC_DIR     := #$(DIR1) $(DIR2) ...
 MACROS      := 
 CFLAGS      := -m32
 LDFLAGS     := -m32

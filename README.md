@@ -5,6 +5,11 @@ Practical Design Patterns in C
 
 This will be a repository of how to use the Design Patterns from *Gang of Four* in your applications with C.
 
+## Quick Start:
+
+linux $ make			<<< build project
+linux $ ./Debug/main	<<< if Makefile set Debug=y, then run this one
+
 ## Update:
 
 Apr 6, 2014: Add init version
