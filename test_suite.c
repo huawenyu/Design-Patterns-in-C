@@ -71,6 +71,10 @@ static void test_run(struct my_test_suite *suite, unsigned int flags)
 	struct my_test_case *test_case;
 	int pos = 0;
 	int all_finish = 1;
+	const char *outcomes[] = {
+		"[\e[32m OK \e[37m]",
+		"[\e[31m Failed \e[37m]",
+	};
 
 	if (!suite->init)
 		return;
@@ -99,7 +103,7 @@ static void test_run(struct my_test_suite *suite, unsigned int flags)
 			|| test_case->rtn != 0) {
 			MY_DEBUG(MY_DEBUG_TEST
 				"=TESTSUITE= %s %d\t%s\t%s\n",
-				test_case->rtn==0 ? "OK":"X", test_case->rtn,
+				test_case->rtn==0 ? outcomes[0] : outcomes[1], test_case->rtn,
 				test_case->note, test_case->msg);
 		}
 

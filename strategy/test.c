@@ -13,11 +13,12 @@ static int test(char *output, size_t sz)
 	const char *retstr = "left,right,left,left,right";
 
 	test_bed_init(&test);
-	printf("output should be: %s\n", retstr);
+	printf("output should be: \n%s\n", retstr);
 	for (ii=0; ii < sizeof(answer)/sizeof(answer[0]); ++ii) {
 		test.ops->set_strategy(&test, answer[ii]);
 		test.ops->do_it(&test);
 	}
+	printf("\n");
 	return 0;
 }
 
