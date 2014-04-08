@@ -133,6 +133,7 @@ void my_test_suite_open()
 	my_test_suite_init(&my_test_suite);
 
 	extern void strategy_test(); strategy_test();
+	extern void chain_of_responsibility_test(); chain_of_responsibility_test();
 }
 
 void my_test_suite_close()

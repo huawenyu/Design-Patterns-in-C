@@ -7,16 +7,14 @@
 static int test()
 {
 	struct test_bed test;
-	int answer;
+	int ii, answer[] = {1,2,1,1,2};
+	char *retstr = "left,right,left,left,right";
 
 	test_bed_init(&test);
-	printf("Exit(0) Left(1) Right(2): \n");
-	scanf("%d", &answer);
-	while (answer) {
-		test.ops->set_strategy(&test, answer);
+	printf("output should be: %s\n", retstr);
+	for (ii=0; ii < sizeof(answer)/sizeof(answer[0]); ++ii) {
+		test.ops->set_strategy(&test, answer[ii]);
 		test.ops->do_it(&test);
-		printf("Exit(0) Left(1) Right(2): \n");
-		scanf("%d", &answer);
 	}
 	return 0;
 }

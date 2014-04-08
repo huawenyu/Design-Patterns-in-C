@@ -3,7 +3,7 @@
 #define PRODUCT_H_
 
 enum product_type {
-	product_one,
+	product_with_menu,
 	product_two,
 };
 

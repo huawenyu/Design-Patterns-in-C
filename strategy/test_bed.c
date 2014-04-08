@@ -3,7 +3,7 @@
 #include "strategy_left.h"
 #include "strategy_right.h"
 
-void test_bed_set_strategy(struct test_bed *test, int type)
+static void test_bed_set_strategy(struct test_bed *test, int type)
 {
 	struct strategy_left *left;
 	struct strategy_right *right;
@@ -22,7 +22,7 @@ void test_bed_set_strategy(struct test_bed *test, int type)
 	}
 }
 
-void test_bed_do_it(struct test_bed *test)
+static void test_bed_do_it(struct test_bed *test)
 {
 	strategy_justify(test->strategy_, 0);
 }

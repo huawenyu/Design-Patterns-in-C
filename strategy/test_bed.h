@@ -7,7 +7,6 @@ struct test_bed {
 	struct strategy *strategy_;
 };
 
-
 enum strategy_type {
 	Dummy, Left, Right,
 };
