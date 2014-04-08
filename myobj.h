@@ -41,7 +41,7 @@
 
 #define __CLASS_OPS_INIT(ptr, ops, offset) \
 	static unsigned int ops##_init_flag_ = 0; \
-	void class_ops_init() \
+	void class_ops_init(void) \
 	{ \
 		typeof(*(ptr)) l_super_ops = *(ptr); \
 		if (!ops##_init_flag_) { \

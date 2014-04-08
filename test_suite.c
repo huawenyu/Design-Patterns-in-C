@@ -10,25 +10,25 @@ struct my_test_suite;
 static void test_add(struct my_test_suite *suite, test_case_fp, const char *note);
 static void test_run(struct my_test_suite *suite, unsigned int flags);
 
-struct my_test_suite_ops {
+static struct my_test_suite_ops {
 	void (*add)(struct my_test_suite *, test_case_fp, const char *note);
 	void (*run)(struct my_test_suite *, unsigned int flags);
-} static test_ops = {
+} test_ops = {
 	.add = test_add,
 	.run = test_run,
 };
 
-struct my_test_suite {
+static struct my_test_suite {
 	struct my_test_suite_ops *ops;
 	struct list_head test_cases;
-	char *name;
+	const char *name;
 	int total, fail, pos;
 	int init;
-} static my_test_suite = {
+} my_test_suite = {
 	.name = "Design Pattern TestSuite",
 };
 
-void my_test_suite_init(struct my_test_suite *suite)
+static void my_test_suite_init(struct my_test_suite *suite)
 {
 	if (!suite->init) {
 		suite->init = 1;
@@ -132,9 +132,9 @@ void my_test_suite_open()
 {
 	my_test_suite_init(&my_test_suite);
 
-	extern void strategy_test(); strategy_test();
-	extern void chain_of_responsibility_test(); chain_of_responsibility_test();
-	extern void static_factory_test(); static_factory_test();
+	extern void strategy_test(void); strategy_test();
+	extern void chain_of_responsibility_test(void); chain_of_responsibility_test();
+	extern void factory_test(void); factory_test();
 }
 
 void my_test_suite_close()

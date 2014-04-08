@@ -4,27 +4,27 @@
 #include <myobj.h>
 #include "cheese_pizza.h"
 
-static void cheese_prepare (struct pizza *pizza)
+static void cheese_prepare(struct pizza *pizza)
 {
 	printf("cheese::prepare(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void cheese_bake (struct pizza *pizza)
+static void cheese_bake(struct pizza *pizza)
 {
 	printf("cheese::bake(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void cheese_cut (struct pizza *pizza)
+static void cheese_cut(struct pizza *pizza)
 {
 	printf("cheese::cut(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void cheese_box (struct pizza *pizza)
+static void cheese_box(struct pizza *pizza)
 {
 	printf("cheese::box(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void cheese_free (struct pizza *pizza)
+static void cheese_free(struct pizza *pizza)
 {
 	printf("cheese::free(%s, %d)\n", pizza->name, pizza->size);
 	struct cheese_pizza *cheese = container_of(pizza, typeof(*cheese), pizza);

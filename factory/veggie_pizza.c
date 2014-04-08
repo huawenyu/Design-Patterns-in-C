@@ -5,27 +5,27 @@
 #include "veggie_pizza.h"
 
 
-static void veggie_prepare (struct pizza *pizza)
+static void veggie_prepare(struct pizza *pizza)
 {
 	printf("veggie::prepare(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void veggie_bake (struct pizza *pizza)
+static void veggie_bake(struct pizza *pizza)
 {
 	printf("veggie::bake(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void veggie_cut (struct pizza *pizza)
+static void veggie_cut(struct pizza *pizza)
 {
 	printf("veggie::cut(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void veggie_box (struct pizza *pizza)
+static void veggie_box(struct pizza *pizza)
 {
 	printf("veggie::box(%s, %d)\n", pizza->name, pizza->size);
 }
 
-static void veggie_free (struct pizza *pizza)
+static void veggie_free(struct pizza *pizza)
 {
 	printf("veggie::free(%s, %d)\n", pizza->name, pizza->size);
 	struct veggie_pizza *veggie = container_of(pizza, typeof(*veggie), pizza);

@@ -25,8 +25,8 @@ enum my_test_suite_flag {
 /* test case function
  * @return 0-succ, other-fail with _outmsg_ reason */
 typedef int (*test_case_fp)(char *outmsg, size_t sz);
-void my_test_suite_open();
-void my_test_suite_close();
+void my_test_suite_open(void);
+void my_test_suite_close(void);
 void my_test_suite_add(test_case_fp, const char *note);
 void my_test_suite_run_all(unsigned int flags); /* default 0, my_test_suite_flag */
 

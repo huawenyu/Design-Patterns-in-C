@@ -26,31 +26,31 @@ struct pizza_ops {
 void pizza_init(struct pizza *);
 
 static inline
-pizza_prepare(struct pizza *pizza)
+void pizza_prepare(struct pizza *pizza)
 {
 	pizza->ops->prepare(pizza);
 }
 
 static inline
-pizza_bake(struct pizza *pizza)
+void pizza_bake(struct pizza *pizza)
 {
 	pizza->ops->bake(pizza);
 }
 
 static inline
-pizza_cut(struct pizza *pizza)
+void pizza_cut(struct pizza *pizza)
 {
 	pizza->ops->cut(pizza);
 }
 
 static inline
-pizza_box(struct pizza *pizza)
+void pizza_box(struct pizza *pizza)
 {
 	pizza->ops->box(pizza);
 }
 
 static inline
-pizza_free(struct pizza *pizza)
+void pizza_free(struct pizza *pizza)
 {
 	pizza->ops->free(pizza);
 }

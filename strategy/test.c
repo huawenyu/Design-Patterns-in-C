@@ -2,13 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <test_suite.h>
 #include "test_bed.h"
 
-static int test()
+static int test(char *output, size_t sz)
 {
 	struct test_bed test;
-	int ii, answer[] = {1,2,1,1,2};
-	char *retstr = "left,right,left,left,right";
+	unsigned int ii, answer[] = {1,2,1,1,2};
+	const char *retstr = "left,right,left,left,right";
 
 	test_bed_init(&test);
 	printf("output should be: %s\n", retstr);
@@ -19,7 +21,8 @@ static int test()
 	return 0;
 }
 
-void strategy_test()
+void strategy_test(void);
+void strategy_test(void)
 {
 	my_test_suite_add(test, "strategy test");
 }

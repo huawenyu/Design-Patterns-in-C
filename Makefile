@@ -12,7 +12,10 @@ TARGET_PROG := main
 DEBUG       := y #y
 INC_DIR     := #$(DIR1) $(DIR2) ...
 MACROS      := 
-CFLAGS      := -m32
+CFLAGS      := -m32 -Wall -Werror -Wextra -Wmissing-prototypes -Wstrict-prototypes \
+  -Wfloat-equal -Wshadow -Wpointer-arith -Wcast-qual \
+  -Wcast-align -Wwrite-strings -Wno-conversion -Wdisabled-optimization \
+  -Wredundant-decls -Wunused-value -Wno-deprecated -Wno-unused-parameter
 LDFLAGS     := -m32
 
 # project directory	
@@ -42,7 +45,7 @@ $(foreach dirname,$(sort $(dir $(sources_c) $(sources_cpp))),\
   $(shell $(MKDIR) $(BIN_DIR)/$(dirname)))
 
 # complie & link variable
-CFLAGS     += $(if $(DEBUG),-g -O, -O2)
+CFLAGS     += $(if $(DEBUG),-g -O, -O3)
 CFLAGS     += $(addprefix -I ,$(sort $(dir $(sources_h))))
 CFLAGS     += $(INC_PARAMS)
 LOADLIBES  += #-L/usr/include/mysql
