@@ -134,6 +134,7 @@ void my_test_suite_open()
 
 	extern void strategy_test(); strategy_test();
 	extern void chain_of_responsibility_test(); chain_of_responsibility_test();
+	extern void static_factory_test(); static_factory_test();
 }
 
 void my_test_suite_close()

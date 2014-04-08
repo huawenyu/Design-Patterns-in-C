@@ -19,7 +19,7 @@ static void chain_handler2_ops_close(struct chan_handle *base)
 {
 }
 
-struct chain_base_ops chain_handler2_ops = {
+static struct chain_base_ops chain_handler2_ops = {
 	.handle = chain_handler2_ops_handle,
 	.close = chain_handler2_ops_close,
 };

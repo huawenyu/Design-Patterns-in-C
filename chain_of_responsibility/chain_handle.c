@@ -16,7 +16,7 @@ static void chain_base_ops_handle(struct chan_handle *base, int data)
 		assert(0); /* virtual: assume override */
 }
 
-struct chain_base_ops chain_base_ops = {
+static struct chain_base_ops chain_base_ops = {
 	._add = chain_base_ops_add,
 	.handle = chain_base_ops_handle,
 };

@@ -3,12 +3,12 @@
 #include "myobj.h"
 #include "strategy_left.h"
 
-void left_justify(struct strategy *strat, char *line)
+static void left_justify(struct strategy *strat, char *line)
 {
-	printf("left\n");
+	printf("left ");
 }
 
-struct strategy_ops left_ops = {
+static struct strategy_ops left_ops = {
 	.justify = left_justify,
 };
 

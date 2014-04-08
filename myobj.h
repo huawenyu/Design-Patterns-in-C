@@ -13,6 +13,15 @@
 
 #define _STR_MYOBJ_PRE_TAG_ "myobj.h:"
 
+/**
+ * container_of - get the struct for this entry
+ * @ptr:	the &struct list_head pointer.
+ * @type:	the type of the struct this is embedded in.
+ * @member:	the name of the list_struct within the struct.
+ */
+#define container_of(ptr, type, member) \
+	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
+
 /* copy func-ptr array when src-ops[*] (!0) */
 #define __CLASS_COPY_OPS(dst,src,offset) \
 { \

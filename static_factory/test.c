@@ -1,18 +1,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "product.h"
+#include "pizza_store.h"
 
 static int test(void)
 {
-	struct product *product;
-	product = create_product(product_one);
-	product_do_it(product);
-	free(product);
+	struct pizza *pizza;
+	pizza = pizza_store_order_pizza("cheese", pizza_size_large);
+	pizza_free(pizza);
 
-	product = create_product(product_two);
-	product_do_it(product);
-	free(product);
+	pizza = pizza_store_order_pizza("veggie", pizza_size_normal);
+	pizza_free(pizza);
 
 	return 0;
 }

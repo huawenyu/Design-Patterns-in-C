@@ -27,7 +27,7 @@ static void test_bed_do_it(struct test_bed *test)
 	strategy_justify(test->strategy_, 0);
 }
 
-struct test_bed_ops test_ops = {
+static struct test_bed_ops test_ops = {
 	.set_strategy = test_bed_set_strategy,
 	.do_it = test_bed_do_it,
 };
