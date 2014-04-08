@@ -1,10 +1,8 @@
 
-#include <string.h>
+#include <stdlib.h>
 #include "pizza_store2.h"
-#include "cheese_pizza.h"
-#include "veggie_pizza.h"
 
-struct pizza *pizza_store2_order_pizza(struct pizza_store *store,
+struct pizza *pizza_store2_order_pizza(struct pizza_store2 *store,
 		const char *name, enum pizza_size_type size)
 {
 	struct pizza *pizza;
@@ -21,8 +19,13 @@ struct pizza *pizza_store2_order_pizza(struct pizza_store *store,
 	return pizza;
 }
 
-void pizza_store_init(struct pizza_store *store, struct pizza_simple_factory *factory)
+void pizza_store2_init(struct pizza_store2 *store, struct pizza_simple_factory *factory)
 {
 	store->factory = factory;
+}
+
+void pizza_store2_free(struct pizza_store2 *store)
+{
+	free(store->factory);
 }
 

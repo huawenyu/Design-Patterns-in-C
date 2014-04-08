@@ -5,14 +5,14 @@
 #include "pizza.h"
 #include "pizza_simple_factory.h"
 
-struct pizza_store {
+struct pizza_store2 {
 	struct pizza_simple_factory *factory;
 };
 
-void pizza_store_init(struct pizza_store *, struct pizza_simple_factory *);
-
 /* static method */
-struct pizza *pizza_store2_order_pizza(struct pizza_store *,
+void pizza_store2_init(struct pizza_store2 *, struct pizza_simple_factory *);
+void pizza_store2_free(struct pizza_store2 *);
+struct pizza *pizza_store2_order_pizza(struct pizza_store2 *,
 		const char *name, enum pizza_size_type);
 
 #endif /* PIZZA_STORE2_H_ */
