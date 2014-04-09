@@ -1,14 +1,17 @@
 Factory Method and Abstract Factory
 ===================================
 
-1. AbstractFactory pattern uses composition to delegate responsibility of creating object to another class
-2. while Factory design pattern uses inheritance and relies on derived class or sub class to create object.
+1. Background worker diff
+  - AbstractFactory pattern uses composition to delegate responsibility of creating object to another class
+  - while Factory design pattern uses inheritance and relies on derived class or sub class to create object.
 
-1. With the Factory pattern, you produce implementations (Apple, Banana, Cherry, etc.) of a particular interface -- say, IFruit.
-2. With the Abstract Factory pattern, you produce implementations of a particular Factory interface -- e.g., IFruitFactory. Each of those knows how to create different kinds of fruit.
+2. Factory's produce diff
+  - With the Factory pattern, you produce implementations (Apple, Banana, Cherry, etc.) of a particular interface -- say, IFruit.
+  - With the Abstract Factory pattern, you produce implementations of a particular Factory interface -- e.g., IFruitFactory. Each of those knows how to create different kinds of fruit.
 
-1. Factory pattern: The factory produces IProduct-implementations
-2. Abstract Factory Pattern: A factory-factory produces IFactories, which in turn produces IProducts :)
+3. Factory's produce diff
+  - Factory pattern: The factory produces IProduct-implementations
+  - Abstract Factory Pattern: A factory-factory produces IFactories, which in turn produces IProducts :)
 
 Mark Seemann Suggests
 =====================
