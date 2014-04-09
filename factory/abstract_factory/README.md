@@ -1,3 +1,8 @@
+Abstract Factory
+================
+* creating families of related or dependent products.
+* creating product which depending on two-dimension.
+
 Factory Method and Abstract Factory
 ===================================
 
