@@ -4,9 +4,9 @@
 #include <myobj.h>
 #include "cheese_pizza.h"
 #include "veggie_pizza.h"
-#include "pizza_factory_style_canada.h"
+#include "pizza_factory_standard.h"
 
-static struct pizza *factory_style_canada_create(struct pizza_factory *factory,
+static struct pizza *factory_standard_create(struct pizza_factory *factory,
 		const char *name, enum pizza_size_type size)
 {
 	struct pizza *pizza = 0;
@@ -32,20 +32,20 @@ static struct pizza *factory_style_canada_create(struct pizza_factory *factory,
 	return pizza;
 }
 
-static void factory_style_candada_free(struct pizza_factory *factory)
+static void factory_standard_free(struct pizza_factory *factory)
 {
-	struct pizza_factory_style_canada *factory_canada =
+	struct pizza_factory_standard *factory_canada =
 		container_of(factory, typeof(*factory_canada), factory);
 	free(factory_canada);
 }
 
 
 static struct pizza_factory_ops ops = {
-	.create = factory_style_canada_create,
-	.free = factory_style_candada_free,
+	.create = factory_standard_create,
+	.free = factory_standard_free,
 };
 
-void pizza_factory_style_canada_init(struct pizza_factory_style_canada *factory)
+void pizza_factory_standard_init(struct pizza_factory_standard *factory)
 {
 	pizza_factory_init(&factory->factory);
 	CLASS_OPS_INIT(factory->factory.ops, ops);

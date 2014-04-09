@@ -1,11 +1,9 @@
 They are NOT same
 =================
 
-"The static factory method is NOT the same as the Factory Method pattern" (c) Effective Java, Joshua Bloch.
-
-1. Factory Method: "Define an interface for creating an object, but let the classes which implement the interface decide which class to instantiate. The Factory method lets a class defer instantiation to subclasses" (c) GoF.
-
-2. "Static factory method is simply a static method that returns an instance of a class." (c) Effective Java, Joshua Bloch. Usually this method is inside a particular class.
+"The static factory method is NOT the same as the Factory Method pattern" (c) Effective Java, Joshua Bloch.  
+1. Factory Method: "Define an interface for creating an object, but let the classes which implement the interface decide which class to instantiate. The Factory method lets a class defer instantiation to subclasses" (c) GoF.  
+2. "Static factory method is simply a static method that returns an instance of a class." (c) Effective Java, Joshua Bloch. Usually this method is inside a particular class.  
 
 The defference:
 ==============
