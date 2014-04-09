@@ -1,8 +1,8 @@
 IoC and DI
 =================
 
-> DI - Dependency injection
-> IOC - Inversion of control
+* DI - Dependency injection
+* IOC - Inversion of control
 
 ```
                  +––––––––––––––––––––––––––+
