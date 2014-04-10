@@ -37,8 +37,8 @@
 { \
 	typedef void (*fptr) (void); \
 	int sz = offset/sizeof(fptr); \
-	_Static_assert(offset <= sizeof(dst), _STR_MYOBJ_PRE_TAG_ __CLASS_WHERE #src " copy ops size overflow"); \
-	_Static_assert(sizeof(dst) == sizeof(src), _STR_MYOBJ_PRE_TAG_  __CLASS_WHERE #src " copy ops should be same type"); \
+	_Static_assert(offset <= sizeof(dst), _STR_MYOBJ_PRE_TAG_ __CLASS_WHERE ":" #src " copy ops size overflow"); \
+	_Static_assert(sizeof(dst) == sizeof(src), _STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #src " copy ops should be same type"); \
 	fptr *psrc = (fptr*)(&(src)); \
 	fptr *pdst = (fptr*)(&(dst)); \
 	while ((--sz) >= 0) { \
@@ -96,7 +96,7 @@
 #define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member) \
 	typeof(ptr) l_super = ptr; \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE #ops "." #member " as super member, should be the last element"); \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as super member, should be the last element"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
 	assert(l_super != &ops); \
 	ptr = &ops;
@@ -108,7 +108,7 @@
  */
 #define CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member) \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE #ops "." #member " as static member should be the last element and keep align"); \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as static member should be the last element and keep align"); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), member)) \
 	ptr = &ops;
 
@@ -120,10 +120,10 @@
 #define CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static) \
 	typeof(ptr) l_super = ptr; \
 	_Static_assert(offsetof(typeof(ops), m_super) < offsetof(typeof(ops), m_static), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE #ops "." #m_super " as super member should before static member " #m_static); \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #m_super " as super member should before static member " #m_static); \
 	_Static_assert(sizeof(ops) == offsetof(typeof(ops), m_super) \
 			+ sizeof((ops).m_super) + sizeof((ops).m_static), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), m_super), m_super, l_super) \
 	assert(l_super != &ops); \
 	ptr = &ops;
