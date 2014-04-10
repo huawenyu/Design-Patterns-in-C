@@ -12,8 +12,8 @@
  *
  * container_of(ptr, type, member)
  *
- * CLASS_SUPPER(obj, ops_member, ...)
- * CLASS_SUPPER_OPS(obj, ops_member, ops, supper, ...)
+ * CLASS_SUPER(obj, ops_member, ...)
+ * CLASS_SUPER_OPS(obj, ops_member, ops, super, ...)
  */
 
 #define _STR_MYOBJ_PRE_TAG_ "myobj.h:"
@@ -70,7 +70,6 @@
  * @see CLASS_OPS_INIT_SUPER_STATIC support super and static member
  */
 #define CLASS_OPS_INIT(ptr, ops) \
-	assert(ptr); \
 	__CLASS_OPS_INIT(ptr, ops, sizeof(ops)) \
 	ptr = &ops;
 
@@ -81,10 +80,8 @@
  */
 #define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member) \
 	typeof(ptr) l_super = ptr; \
-	assert(ptr); \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
 			_STR_MYOBJ_PRE_TAG_ #ops "." #member " as super member, should be the last element"); \
-	assert(!(ops).member); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), member)) \
 	(ops).member = l_super; \
 	ptr = &ops;
@@ -95,7 +92,6 @@
  * @member as static-member, can be object or object-ptr
  */
 #define CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member) \
-	assert(ptr); \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
 			_STR_MYOBJ_PRE_TAG_ #ops "." #member " as static member should be the last element and keep align"); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), member)) \
@@ -108,31 +104,33 @@
  */
 #define CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static) \
 	typeof(ptr) l_super = ptr; \
-	assert(ptr); \
 	_Static_assert(offsetof(typeof(ops), m_super) < offsetof(typeof(ops), m_static), \
 			_STR_MYOBJ_PRE_TAG_ #ops "." #m_super " as super member should before static member " #m_static); \
 	_Static_assert(sizeof(ops) == offsetof(typeof(ops), m_super) \
 			+ sizeof((ops).m_super) + sizeof((ops).m_static), \
 			_STR_MYOBJ_PRE_TAG_ #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
-	assert(!(ops).m_super); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), m_super)) \
 	(ops).m_super = l_super; \
 	ptr = &ops;
 
-/**Call supper method
- * Assume ops have standard member name: ops, supper
+/**Call super method
+ * Assume ops have standard member name: ops, super
  */
-#define CLASS_SUPPER(obj, function, ...) \
-	(obj).ops->supper->function(&(obj), ##__VA_ARGS__)
+#define CLASS_SUPER(ptr, function, ...) \
+	assert((ptr)->ops->super); \
+	if ((ptr)->ops->super) \
+		(ptr)->ops->super->function(ptr, ##__VA_ARGS__)
 
-/**Call supper method
- * @obj the basic class obj
+/**Call super method
+ * @ptr the basic class ptr
  * @function the method function name
  * @ops class.ops member name
- * @supper pos.supper member name
+ * @super pos.super member name
  */
-#define CLASS_SUPPER_OPS(obj, function, ops, supper, ...) \
-	(obj).ops->supper->function(&(obj), ##__VA_ARGS__)
+#define CLASS_SUPER_OPS(ptr, function, ops, super, ...) \
+	assert((ptr)->ops->super); \
+	if ((ptr)->ops->super) \
+		(ptr)->ops->super->function(ptr, ##__VA_ARGS__)
 
 #endif /* __MY_OBJ_H__ */
 

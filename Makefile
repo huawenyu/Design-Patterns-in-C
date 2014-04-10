@@ -43,7 +43,7 @@ $(foreach dirname,$(sort $(dir $(sources_c) $(sources_cpp))),\
   $(shell $(MKDIR) $(BIN_DIR)/$(dirname)))
 
 # complie & link variable
-CFLAGS     += $(if $(DEBUG),-g -O, -O3)
+CFLAGS     += $(if $(DEBUG),-g -O0, -O3)
 CFLAGS     += $(addprefix -I ,$(sort $(dir $(sources_h))))
 CFLAGS     += $(INC_PARAMS)
 LOADLIBES  += #-L/usr/include/mysql

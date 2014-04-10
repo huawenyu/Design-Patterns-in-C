@@ -8,9 +8,20 @@ enum pizza_size_type {
 	pizza_size_large,
 };
 
+enum pizza_ingredient_type {
+	pizza_ingredient_null,
+	pizza_ingredient_no_organic,
+	pizza_ingredient_organic,
+};
+
 /* support organic */
-struct pizza_dough {};
-struct pizza_sauce {};
+struct pizza_dough {
+	enum pizza_ingredient_type ingredient;
+};
+
+struct pizza_sauce {
+	enum pizza_ingredient_type ingredient;
+};
 
 struct pizza_ops;
 struct pizza {
@@ -29,6 +40,8 @@ struct pizza_ops {
 	void (*cut)(struct pizza *);
 	void (*box)(struct pizza *);
 	void (*free)(struct pizza *);
+
+	struct pizza_ops *super;
 };
 
 void pizza_init(struct pizza *);

@@ -34,9 +34,9 @@ static struct pizza *factory_standard_create(struct pizza_factory *factory,
 
 static void factory_standard_free(struct pizza_factory *factory)
 {
-	struct pizza_factory_standard *factory_canada =
-		container_of(factory, typeof(*factory_canada), factory);
-	free(factory_canada);
+	struct pizza_factory_standard *factory_standard =
+		container_of(factory, typeof(*factory_standard), factory);
+	free(factory_standard);
 }
 
 

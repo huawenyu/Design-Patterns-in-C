@@ -34,9 +34,9 @@ static struct pizza *factory_greek_create(struct pizza_factory *factory,
 
 static void factory_greek_free(struct pizza_factory *factory)
 {
-	struct pizza_factory_greek *factory_china =
-		container_of(factory, typeof(*factory_china), factory);
-	free(factory_china);
+	struct pizza_factory_greek *factory_greek =
+		container_of(factory, typeof(*factory_greek), factory);
+	free(factory_greek);
 }
 
 static struct pizza_factory_ops ops = {

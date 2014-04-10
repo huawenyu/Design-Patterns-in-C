@@ -6,6 +6,7 @@
 
 static void greek_cheese_prepare(struct pizza *pizza)
 {
+	CLASS_SUPER(pizza, prepare);
 	printf("greek_cheese::prepare(%s, %d)\n", pizza->name, pizza->size);
 }
 
@@ -42,7 +43,7 @@ static struct pizza_ops greek_cheese_ops = {
 void greek_cheese_pizza_init(struct greek_cheese_pizza *greek_cheese, enum pizza_size_type type)
 {
 	pizza_init(&greek_cheese->pizza);
-	CLASS_OPS_INIT(greek_cheese->pizza.ops, greek_cheese_ops);
+	CLASS_OPS_INIT_WITH_SUPER(greek_cheese->pizza.ops, greek_cheese_ops, super);
 	snprintf(greek_cheese->pizza.name, sizeof(greek_cheese->pizza.name), "greek_cheese");
 	greek_cheese->pizza.size = type;
 }

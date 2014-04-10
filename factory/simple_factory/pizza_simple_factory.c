@@ -1,5 +1,6 @@
 
 #include <string.h>
+#include <stdlib.h>
 #include "cheese_pizza.h"
 #include "veggie_pizza.h"
 #include "pizza_simple_factory.h"
