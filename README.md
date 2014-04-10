@@ -23,6 +23,8 @@ Apr 6, 2014: Add init version
     - Simple Factory
     - Factory Method
     - Abstract Factory
+      + family objects
+      + two dimension
   * Builder
   * Object Pool
   * Prototype
