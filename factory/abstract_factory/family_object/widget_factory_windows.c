@@ -4,7 +4,7 @@
 
 #include "widget_windows_button.h"
 #include "widget_windows_menu.h"
-#include "widget_windows_factory.h"
+#include "widget_factory_windows.h"
 
 static struct widget *windows_factory_create_button(struct widget_factory *factory)
 {
@@ -31,7 +31,7 @@ static struct widget_factory_ops ops = {
 	.create_menu = windows_factory_create_menu,
 };
 
-void widget_windows_factory_init(struct widget_windows_factory *factory)
+void widget_factory_windows_init(struct widget_factory_windows *factory)
 {
 	widget_factory_init(&factory->factory);
 	CLASS_OPS_INIT(factory->factory.ops, ops);

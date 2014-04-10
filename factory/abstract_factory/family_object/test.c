@@ -4,18 +4,18 @@
 
 #include <test_suite.h>
 #include "widget.h"
-#include "widget_motif_factory.h"
-#include "widget_windows_factory.h"
+#include "widget_factory_motif.h"
+#include "widget_factory_windows.h"
 
 static int test_factory_family_object(char *output, size_t sz)
 {
 	int ii;
 	struct widget *widget1 = 0;
-	struct widget_motif_factory motif;
-	struct widget_windows_factory windows;
+	struct widget_factory_motif motif;
+	struct widget_factory_windows windows;
 
-	widget_motif_factory_init(&motif);
-	widget_windows_factory_init(&windows);
+	widget_factory_motif_init(&motif);
+	widget_factory_windows_init(&windows);
 
 	for (ii=0; ii < 4; ++ii) {
 		switch (ii) {

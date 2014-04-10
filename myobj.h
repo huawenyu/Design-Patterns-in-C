@@ -9,6 +9,9 @@
  * CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member)
  * CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member)
  * CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static)
+ *
+ * container_of(ptr, type, member)
+ *
  * CLASS_SUPPER(obj, ops_member, ...)
  * CLASS_SUPPER_OPS(obj, ops_member, ops, supper, ...)
  */
@@ -117,24 +120,19 @@
 	ptr = &ops;
 
 /**Call supper method
+ * Assume ops have standard member name: ops, supper
+ */
+#define CLASS_SUPPER(obj, function, ...) \
+	(obj).ops->supper->function(&(obj), ##__VA_ARGS__)
+
+/**Call supper method
  * @obj the basic class obj
  * @function the method function name
  * @ops class.ops member name
  * @supper pos.supper member name
  */
 #define CLASS_SUPPER_OPS(obj, function, ops, supper, ...) \
-{ \
-	typeof((obj).ops) ops = (obj).ops;
-	(obj).ops = (obj).ops->supper;
-	(obj).ops->function(&(obj), ##__VA_ARGS__);
-}
-
-
-/**Call supper method
- * Wrap CLASS_SUPPER_OPS with standard member name: ops, supper
- */
-#define CLASS_SUPPER(obj, function, ...) \
-	CLASS_SUPPER_OPS(obj, function, ops, supper, ##__VA_ARGS__)
+	(obj).ops->supper->function(&(obj), ##__VA_ARGS__)
 
 #endif /* __MY_OBJ_H__ */
 

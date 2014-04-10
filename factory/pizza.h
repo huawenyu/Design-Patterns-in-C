@@ -8,11 +8,19 @@ enum pizza_size_type {
 	pizza_size_large,
 };
 
+/* support organic */
+struct pizza_dough {};
+struct pizza_sauce {};
+
 struct pizza_ops;
 struct pizza {
 	char name[32];
 	enum pizza_size_type size;
 	struct pizza_ops *ops;
+
+	struct pizza_dough dough;
+	struct pizza_sauce sauce;
+	/* Also we can organic ingredient cheese,veggie */
 };
 
 struct pizza_ops {
