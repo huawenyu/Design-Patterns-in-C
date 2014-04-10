@@ -1,9 +1,10 @@
 Design-Patterns-in-C
 ====================
 
-Practical Design Patterns in C
-
-This will be a repository of how to use the Design Patterns from *Gang of Four* in your applications with C.
+Practical Design Patterns in C  
+This will be a repository of implement the Design Patterns from *Gang of Four* in C.  
+* Using patterns can keep our code **loose coupling, cohesive code, and encapsulation**.  
+* Then we can write maintainable code with a high degree of **Orthogonality**.  
 
 ## Quick Start:
 

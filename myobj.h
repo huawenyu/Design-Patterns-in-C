@@ -9,6 +9,8 @@
  * CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member)
  * CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member)
  * CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static)
+ * CLASS_SUPPER(obj, ops_member, ...)
+ * CLASS_SUPPER_OPS(obj, ops_member, ops, supper, ...)
  */
 
 #define _STR_MYOBJ_PRE_TAG_ "myobj.h:"
@@ -113,6 +115,26 @@
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), m_super)) \
 	(ops).m_super = l_super; \
 	ptr = &ops;
+
+/**Call supper method
+ * @obj the basic class obj
+ * @function the method function name
+ * @ops class.ops member name
+ * @supper pos.supper member name
+ */
+#define CLASS_SUPPER_OPS(obj, function, ops, supper, ...) \
+{ \
+	typeof((obj).ops) ops = (obj).ops;
+	(obj).ops = (obj).ops->supper;
+	(obj).ops->function(&(obj), ##__VA_ARGS__);
+}
+
+
+/**Call supper method
+ * Wrap CLASS_SUPPER_OPS with standard member name: ops, supper
+ */
+#define CLASS_SUPPER(obj, function, ...) \
+	CLASS_SUPPER_OPS(obj, function, ops, supper, ##__VA_ARGS__)
 
 #endif /* __MY_OBJ_H__ */
 
