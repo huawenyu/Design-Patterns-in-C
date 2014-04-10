@@ -6,14 +6,18 @@
 
 static struct pizza_dough *organic_create_dough(struct pizza_ingredient_factory *factory)
 {
+	static struct pizza_dough dough = {.ingredient = pizza_ingredient_organic };
+
 	printf("ingredient_factory_organic::create_dough()\n");
-	return 0;
+	return &dough;
 }
 
 static struct pizza_sauce *organic_create_sauce(struct pizza_ingredient_factory *factory)
 {
+	static struct pizza_sauce sauce = {.ingredient = pizza_ingredient_organic };
+
 	printf("ingredient_factory_organic::create_sauce()\n");
-	return 0;
+	return &sauce;
 }
 
 static struct pizza_ingredient_factory_ops ops = {

@@ -84,6 +84,7 @@
 			_STR_MYOBJ_PRE_TAG_ #ops "." #member " as super member, should be the last element"); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), member)) \
 	(ops).member = l_super; \
+	assert(l_super != &ops); \
 	ptr = &ops;
 
 /**Initial with static-member
@@ -111,15 +112,14 @@
 			_STR_MYOBJ_PRE_TAG_ #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
 	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), m_super)) \
 	(ops).m_super = l_super; \
+	assert(l_super != &ops); \
 	ptr = &ops;
 
 /**Call super method
  * Assume ops have standard member name: ops, super
  */
 #define CLASS_SUPER(ptr, function, ...) \
-	assert((ptr)->ops->super); \
-	if ((ptr)->ops->super) \
-		(ptr)->ops->super->function(ptr, ##__VA_ARGS__)
+	CLASS_SUPER_OPS(ptr, function, ops, super, ##__VA_ARGS__)
 
 /**Call super method
  * @ptr the basic class ptr
@@ -127,10 +127,15 @@
  * @ops class.ops member name
  * @super pos.super member name
  */
-#define CLASS_SUPER_OPS(ptr, function, ops, super, ...) \
+#define CLASS_SUPER_OPS(ptr, function, ops, super, ...) do{\
+	typeof((ptr)->ops) l_ops = (ptr)->ops; \
 	assert((ptr)->ops->super); \
-	if ((ptr)->ops->super) \
-		(ptr)->ops->super->function(ptr, ##__VA_ARGS__)
+	if ((ptr)->ops->super) { \
+		(ptr)->ops = (ptr)->ops->super; \
+		(ptr)->ops->function(ptr, ##__VA_ARGS__); \
+	} \
+	(ptr)->ops = l_ops; \
+}while(0)
 
 #endif /* __MY_OBJ_H__ */
 

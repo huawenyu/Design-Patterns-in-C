@@ -6,32 +6,24 @@
 #include <test_suite.h>
 #include "pizza_store3.h"
 #include "pizza_factory.h"
-#include "pizza_factory_standard.h"
-#include "pizza_factory_greek.h"
+#include "pizza_factory_standard_v2.h"
+#include "pizza_ingredient_factory_organic.h"
 
 static int test_abstrace_factory(char *output, size_t sz)
 {
 	struct pizza *pizza;
 	struct pizza_store3 *store;
-	struct pizza_factory_standard *factory_canada;
-	struct pizza_factory_greek *factory_china;
+	struct pizza_factory_standard_v2 *factory_standard;
+	struct pizza_ingredient_factory_organic factory_organic;
 	
 	store = malloc(sizeof(*store));
 	pizza_store3_init(store);
 
-	factory_canada = malloc(sizeof(*factory_canada));
-	pizza_factory_standard_init(factory_canada);
-	pizza_store3_set_factory(store, &factory_canada->factory);
+	pizza_ingredient_factory_organic_init(&factory_organic);
 
-	pizza = pizza_store3_order_pizza(store, "cheese", pizza_size_large);
-	pizza_free(pizza);
-
-	pizza = pizza_store3_order_pizza(store, "veggie", pizza_size_normal);
-	pizza_free(pizza);
-
-	factory_china = malloc(sizeof(*factory_china));
-	pizza_factory_greek_init(factory_china);
-	pizza_store3_set_factory(store, &factory_china->factory);
+	factory_standard = malloc(sizeof(*factory_standard));
+	pizza_factory_standard_v2_init(factory_standard, &factory_organic.factory);
+	pizza_store3_set_factory(store, &factory_standard->factory);
 
 	pizza = pizza_store3_order_pizza(store, "cheese", pizza_size_large);
 	pizza_free(pizza);
