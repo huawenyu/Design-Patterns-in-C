@@ -2,14 +2,24 @@ Design-Patterns-in-C
 ====================
 
 Practical Design Patterns in C  
-This will be a repository of implement the Design Patterns from *Gang of Four* in C.  
+This will be a repository of implement the Design Patterns from **GoF**(Gang of Four) in C.  
 * Using patterns can keep our code **loose coupling, cohesive code, and encapsulation**.  
 * Then we can write maintainable code with a high degree of **Orthogonality**.  
 
 ## Quick Start:
 
-> linux $ make			<<< build project  
-> linux $ ./Debug/main	<<< if Makefile set Debug=y, then run this one  
+> Make
+> > linux $ make			<<< build project  
+> > linux $ ./Debug/main	<<< if Makefile set Debug=y, run this  
+
+> Clean
+> > linux $ make clean
+
+> Debug
+> > linux $ gdb ./Debug/main	<<< Makefile set Debug=y
+
+> Auto Generate class source/header
+> > linux $ autogen_jinja2.py
 
 ## Update:
 
@@ -22,9 +32,12 @@ Apr 6, 2014: Add init version
     - Static Factory
     - Simple Factory
     - Factory Method
+      + GoF
+      + two stage
     - Abstract Factory
-      + family objects
+      + GoF family objects
       + two dimension
+      + three dimension
   * Builder
   * Object Pool
   * Prototype
