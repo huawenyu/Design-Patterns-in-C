@@ -1,0 +1,56 @@
+{
+"namespace":"factory method",
+"path":"factory_method",
+"classes": {
+	"product":{"file":"", "super":""
+		"members": {
+			"do_it":{"type":"virtual",
+				"pre":"void",
+				"post":"int a, int b"
+			},
+			"name":{"type":"variable",
+				"pre":"char",
+				"post":"[32]",
+			},
+		},
+		"enable_super":"True",
+
+		"inheritance": {
+			"concrete_product_1":{"file":"", "super":""
+				"members": {
+					"do_it":{"type":"override"},
+				},
+			},
+			"concrete_product_2":{"file":"", "super":""
+				"members": {
+					"do_it":{"type":"override"},
+				},
+			},
+		},
+	},
+
+	"product_factory":{
+		"members": {
+			"create":{"type":"virtual",
+				"pre":"product",
+			},
+			"do_it":{"type":"method",
+				"pre":"void",
+			},
+		},
+
+		"inheritance": {
+			"product_factory_1":{
+				"members": {
+					"create":{"type":"override"},
+				},
+			},
+			"product_factory_2":{
+				"members": {
+					"create":{"type":"override"},
+				},
+			},
+		},
+	},
+},
+}
