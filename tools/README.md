@@ -23,7 +23,7 @@ If no the node, process as default value
 
 "product":{"file":"", "super":""	<<< file default="" auto same as class's name. super default="" auto is parent if have
 	"members": {		<<< list members and methods
-		"do_it":{"type":"method",	<<< type=(method|virtual|override) | variable. virtual used by base class just have protocol but no implement, override used by sub-class copying protocol from super, method is just routine
+		"do_it":{"type":"method",	<<< type=(method|virtual|override|routine) | variable. virtual used by base class just have protocol but no implement, override used by sub-class copying protocol from super, method is just routine
 			"pre":"void",			<<< function's return type, or variable's type
 			"post":"int a, int b"	<<< default="". if have, function's parameters, or variable's array;
 		},
