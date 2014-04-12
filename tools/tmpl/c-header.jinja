@@ -7,7 +7,7 @@ struct {{ name }} {
 };
 
 struct pizza_ops {
-{%- for func_rtn, func, func_params in members -%}
+{%- for func_rtn, func, func_params in ops -%}
 	{%- if func_params %}
 	{{ func_rtn }} (*{{ func }})(struct {{ name }} *, {{ func_params }});
 	{%- else %}

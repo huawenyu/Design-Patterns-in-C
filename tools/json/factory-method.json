@@ -1,54 +1,44 @@
 {
-"namespace":"factory method",
+"namespace":"factory_method",
 "path":"factory_method",
 "classes": {
 	"product":{"file":"", "super":"",
-		"members": {
-			"do_it":{"type":"virtual",
-				"pre":"void",
-				"post":"int a, int b"
-			},
-			"name":{"type":"variable",
-				"pre":"char",
-				"post":"[32]"
-			}
-		},
+		"members": [
+			["virtual",  "void", "do_it", "int a, int b"],
+			["variable", "char", "name", "[32]"]
+		],
 		"enable_super":"True",
 
 		"inheritance": {
 			"concrete_product_1":{
-				"members": {
-					"do_it":{"type":"override"}
-				}
+				"members": [
+					["override", "do_it"]
+				]
 			},
 			"concrete_product_2":{
-				"members": {
-					"do_it":{"type":"override"}
-				}
+				"members": [
+					["override", "do_it"]
+				]
 			}
 		}
 	},
 
 	"product_factory":{
-		"members": {
-			"create":{"type":"virtual",
-				"pre":"product"
-			},
-			"do_it":{"type":"method",
-				"pre":"void"
-			}
-		},
+		"members": [
+			["virtual", "struct product*", "create"],
+			["method",  "void", "do_it"]
+		],
 
 		"inheritance": {
 			"product_factory_1":{
-				"members": {
-					"create":{"type":"override"}
-				}
+				"members": [
+					["override", "create"]
+				]
 			},
 			"product_factory_2":{
-				"members": {
-					"create":{"type":"override"}
-				}
+				"members": [
+					["override", "create"]
+				]
 			}
 		}
 	}
