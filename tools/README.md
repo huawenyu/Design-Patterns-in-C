@@ -15,26 +15,58 @@ Solution
 Syntax: Json describe pattern
 =============================
 
-class describe
---------------
+class describe using Json
+-------------------------
 
 ```
 If no the node, process as default value
 
-"product":{"file":"", "super":""	<<< file default="" auto same as class's name. super default="" auto is parent if have
-	"members": {		<<< list members and methods
-		"do_it":{"type":"method",	<<< type=(method|virtual|override|routine) | variable. virtual used by base class just have prototype but no implement, override used by sub-class copying protocol from super, method is just routine
-			"pre":"void",			<<< function's return type, or variable's type
-			"post":"int a, int b"	<<< default="". if have, function's parameters, or variable's array;
-		},
-		"name":{"type":"variable",	<<< type=variable
-			"pre":"char",
-			"post":"[32]",
-		},
-	},
-	"enable_super":"True",			<<< default="False". append ops super to implement call-super
+{
+"namespace":"factory_method",
+"path":"factory_method",
+"classes": {
+	"product":{"file":"", "super":"",
+		"members": [
+			["virtual",  "void", "do_it", "int a, int b"],
+			["variable", "char", "name", "[32]"]
+		],
+		"enable_super":"True",
 
-	"inheritance": {},				<<< the sub derive classes
+		"inheritance": {
+			"concrete_product_1":{
+				"members": [
+					["override", "do_it"]
+				]
+			},
+			"concrete_product_2":{
+				"members": [
+					["override", "do_it"]
+				]
+			}
+		}
+	},
+
+	"product_factory":{
+		"members": [
+			["virtual", "struct product*", "create"],
+			["method",  "void", "do_it"]
+		],
+
+		"inheritance": {
+			"product_factory_1":{
+				"members": [
+					["override", "create"]
+				]
+			},
+			"product_factory_2":{
+				"members": [
+					["override", "create"]
+				]
+			}
+		}
+	}
+}
+}
 ```
 Requirement
 ===========
