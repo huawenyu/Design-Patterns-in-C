@@ -70,7 +70,7 @@ def render_one_to_file(x, dir_name, files):
 	templateEnv,templateVars,output_dir = x
 
 	for one_file in files :
-		if not one_file.startswith('_'):
+		if not one_file.startswith('_') and one_file.endswith('jinja'):
 			templ_file = templateEnv.get_template(one_file)
 			output_text = templ_file.render( templateVars )
 
