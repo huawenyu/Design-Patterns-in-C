@@ -1,0 +1,39 @@
+{%- include '../autogen_.jinja' ignore missing -%}
+
+#ifndef {{ NAME }}_H_
+#define {{ NAME }}_H_
+
+{% if _enable_virtual -%}
+struct {{ name }}_ops;
+{% endif -%}
+
+struct {{ name }} {
+	{% if _enable_virtual -%}
+	struct {{ name }}_ops *ops;
+	{% endif -%}
+
+	{% block vars %}
+	{% endblock vars %}
+};
+
+{% if _enable_virtual -%}
+struct {{ name }}_ops {
+	{% block ops_func_ptr -%}
+	{% endblock ops_func_ptr %}
+
+	{%- if _enable_super -%}
+	{% block ops_super_ptr -%}
+	{% endblock ops_super_ptr %}
+	{%- endif %}
+};
+{%- endif %}
+
+void {{ name }}_init(struct {{ name }} *);
+
+{% if _enable_virtual -%}
+{% block ops_func_call %}
+{% endblock ops_func_call %}
+{% endif -%}
+
+#endif /* {{ NAME }}_H_ */
+

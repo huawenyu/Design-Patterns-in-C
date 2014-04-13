@@ -51,13 +51,14 @@ def enum(*sequential, **named):
 
 
 # Setup syntax constants
+mysyn.auto_comn_tmpl_file = 'autogen_.jinja'
 mysyn.classes = 'classes'  #
 mysyn.members = 'members'  #
 mysyn.sub_classes = 'inheritance'  #
 
 # Must match one by one
 mysyn.m_type = enum('routine', 'method', 'virtual', 'override', 'variable')
-mysyn.m_set =      ['routines','methods','ops',     'ops',      'vars']
+mysyn.m_set =      ['routines','methods','virtuals','overrides','vars']
 mysyn.m_str = mysyn.m_type.reverse_mapping
 
 # cat-category
@@ -65,27 +66,42 @@ mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_type_name', 'cat_type_n
 mysyn.func =      enum('scope', 'type', 'name', 'args')
 
 
-# templateVars:
-# path, file,
-# NAME, name, super
-# members:(pre,func,post),
-def render_one_to_file(templateVars):
+def render_one_to_file(x, dir_name, files):
+	templateEnv,templateVars,output_dir = x
+
+	for one_file in files :
+		if not one_file.startswith('_'):
+			templ_file = templateEnv.get_template(one_file)
+			output_text = templ_file.render( templateVars )
+
+			# open file
+			ext = os.path.splitext(one_file)[0] # use filename as output file extension
+			output_abs_file = os.path.abspath('{0}/{1}/{2}.{3}'.format(output_dir, templateVars['path'], templateVars['file'], ext))
+			output_abs_dir = os.path.dirname(output_abs_file)
+			if not os.path.exists(output_abs_dir):
+				os.makedirs(output_abs_dir)
+
+			f = open(output_abs_file, 'w')
+			f.write(output_text)
+			f.close()
+
+
+def render_class_to_file(templateVars, code_style, output_dir):
+	tmpl_dir = ''
+	if code_style == 'c':
+		tmpl_dir = 'tmpl/c/'
+	elif code_style == 'cplus':
+		tmpl_dir = 'tmpl/cplus/'
+	elif code_style == 'java':
+		tmpl_dir = 'tmpl/java/'
+	elif code_style == 'csharp':
+		tmpl_dir = 'tmpl/csharp/'
+
 	# Setup jinja2 render template
-	templateLoader = jinja2.FileSystemLoader( searchpath="." )
+	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
 	templateEnv = jinja2.Environment( loader=templateLoader )
-	templ_header = templateEnv.get_template( os.path.abspath("json/c-header.jinja") )
-	templ_source = templateEnv.get_template( os.path.abspath("json/c-source.jinja") )
-	#outputText = template.render( templateVars ) # dictionary
+	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,output_dir))
 
-	outputText = templ_header.render( templateVars )
-	f = open('{0}/{1}.{2}'.format(one_class_dict['path'], one_class_dict['file'], 'h'), 'w')
-	f.write(outputText)
-	f.close()
-
-	outputText = templ_source.render( templateVars )
-	f = open('{0}/{1}.{2}'.format(one_class_dict['path'], one_class_dict['file'], 'c'), 'w')
-	f.write(outputText)
-	f.close()
 
 def get_value_else_default(rdict, key, def_val):
 	rval = rdict.get(key, def_val)
@@ -93,11 +109,11 @@ def get_value_else_default(rdict, key, def_val):
 		rval = def_val
 	return rval
 
-def render_tree_to_file(context_dict_tree):
+def render_tree_to_file(context_dict_tree, code_style, output_dir):
 	for class_name, class_detail in context_dict_tree.iteritems():
-		render_one_to_file(class_detail)
-		if mysyn.sub_classes in input_dict:
-			render_tree_to_file(class_detail[mysyn.sub_classes])
+		render_class_to_file(class_detail, code_style, output_dir)
+		if mysyn.sub_classes in class_detail:
+			render_tree_to_file(class_detail[mysyn.sub_classes], code_style, output_dir)
 
 
 def convert_to_myclasses(myclass_dict, input_dict, mysuper):
@@ -109,14 +125,13 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name'] = myclass_name
 		one_myclass['NAME'] = myclass_name.upper()
-		one_myclass['enable_super'] = get_value_else_default(one_inputclass, 'enable_super', 'False')
 		one_myclass['super'] = get_value_else_default(mysuper, 'name', '')
-		#one_myclass['have_super'] = length()
 
-		# split members into ops and vars ...
-		one_myclass[mysyn.m_set[mysyn.m_type.virtual]] = []
+		# split members into functions and vars ...
 		one_myclass[mysyn.m_set[mysyn.m_type.routine]]  = []
 		one_myclass[mysyn.m_set[mysyn.m_type.method]]   = []
+		one_myclass[mysyn.m_set[mysyn.m_type.virtual]]  = []
+		one_myclass[mysyn.m_set[mysyn.m_type.override]] = []
 		one_myclass[mysyn.m_set[mysyn.m_type.variable]] = []
 		if one_inputclass.has_key(mysyn.members):
 			for member_input in one_inputclass[mysyn.members]:
@@ -149,17 +164,54 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 				elif member_category == mysyn.m_str[mysyn.m_type.virtual]:
 					one_myclass[        mysyn.m_set[mysyn.m_type.virtual]].append(member_detail)
 				elif member_category == mysyn.m_str[mysyn.m_type.override]:
-					ops_find = False
-					for ops_member in \
+					virtual_find = False
+					for virtual_member in \
 					  mysuper[          mysyn.m_set[mysyn.m_type.virtual]]:
-						if ops_member[mysyn.func.name] == member_detail[mysyn.func.name]:
-							ops_find = True
-							one_myclass[mysyn.m_set[mysyn.m_type.override]].append(ops_member)
+						if virtual_member[mysyn.func.name] == member_detail[mysyn.func.name]:
+							virtual_find = True
+							one_myclass[mysyn.m_set[mysyn.m_type.override]].append(virtual_member)
 
-					if not ops_find:
+					if not virtual_find:
 						raise Exception('member override, but no prototype in super: {0}'.format(member_detail))
 				elif member_category == mysyn.m_str[mysyn.m_type.variable]:
 					one_myclass[        mysyn.m_set[mysyn.m_type.variable]].append(member_detail)
+
+		''' **Just needed by C code.**
+		1. "enable_super" come from config
+		2. "_enable_super" is auto-gen field used to control code-gen
+		   If "_enable_super" is "True", means should support super call:
+		    * As base class, who have no super at all
+			  - can be control by **config**
+			  - must have virtual-function,
+			  - must user requie (config) 'enable_super'
+			  - when implement, must append super pointer in ops
+		    * As derive class,
+			  - just control by super, **config have no use at all**.
+			  - must exist super to sure self is really 'derive' class
+			  - the parent must have enable_super already
+			  - when implement, must init with super
+		'''
+		one_myclass['_enable_super'] = False
+		if one_myclass['super']: # As derive class
+			if mysuper['_enable_super'] == True: # if parent support super, child should be init with super
+				one_myclass['_enable_super'] = True
+		else: # As base class
+			if len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0:
+				enable_super = get_value_else_default(one_inputclass, 'enable_super', 'False')
+				if enable_super.lower() == 'true':
+					one_myclass['_enable_super'] = True
+		
+		'''
+		"_enable_virtual" is auto-gen field used to control code-gen
+		    - must be basic class who have no super
+		    - must have virtual function
+		    - when implement, must have ops (for C code) or "virtual" keyword (for others) keyword
+		        + so as derive class, auto have virtual but this flag is false, that's OK.
+		'''
+		one_myclass['_enable_virtual'] = False
+		if not one_myclass['super'] and len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0: # As basic class
+			one_myclass['_enable_virtual'] = True
+
 
 		# recursive sub-classes
 		one_myclass[mysyn.sub_classes] = odict()
@@ -179,24 +231,26 @@ def convert_namespace_to_tree(input_dict):
 
 	mysuper['path'] = get_value_else_default(input_dict, 'path', '.')
 	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', 'anonymouse')
+	mysuper['enable_super'] = 'False'
+	mysuper['super'] = ''
 	if input_dict.has_key('classes'):
 		convert_to_myclasses(context_dict_tree, input_dict['classes'], mysuper)
 
 	return context_dict_tree
 
 
-def render_namespace(namespace_json):
+def render_namespace(input_file, code_style, output_dir):
 	try:
-		if not os.path.isfile(namespace_json):
-			raise Exception('file {0} not exists'.format(namespace_json))
+		if not os.path.isfile(input_file):
+			raise Exception('file {0} not exists'.format(input_file))
 
-		input_dict = json.load(open(namespace_json), object_pairs_hook=collections.OrderedDict)
-		print 'NAMESPACE loading:',json.dumps(input_dict, sort_keys=False, indent=2)
+		input_dict = json.load(open(input_file), object_pairs_hook=collections.OrderedDict)
+		#print 'NAMESPACE loading:',json.dumps(input_dict, sort_keys=False, indent=2)
 
 		context_dict_tree = convert_namespace_to_tree(input_dict)
-		print 'NAMESPACE generating:',json.dumps(context_dict_tree, sort_keys=False, indent=2)
+		print json.dumps(context_dict_tree, sort_keys=False, indent=2)
 
-		#render_tree_to_file(context_dict_tree)
+		render_tree_to_file(context_dict_tree, code_style, output_dir)
 	except Exception, e:
 		print "Exception and exit now!", e.args
 		traceback.print_exc(file=sys.stdout)
@@ -209,10 +263,10 @@ def test_me():
 if __name__ == '__main__':
 	# arguments parser
 	parser = argparse.ArgumentParser(description='Code Generater for GoF')
-	parser.add_argument('-i','--input', help='Design Pattern File', required=True)
-	parser.add_argument('-o','--output', help='Output Directory', required=False)
-	parser.add_argument('-f','--format', help='The Code Format Choose, default=c, [c,c++,java,c#]', required=False)
+	parser.add_argument('--file', metavar='input file', help='Input Design Pattern File', required=True)
+	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='autogen_code')
+	parser.add_argument('--code', metavar='code type', help='Language Choose', choices=['c','cplus','java','csharp'], required=False, default='c')
 	args = vars(parser.parse_args())
 
-	render_namespace(args['input'])
+	render_namespace(args['file'], args['code'], args['dir'])
 

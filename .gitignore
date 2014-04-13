@@ -22,6 +22,13 @@
 *.x86_64
 *.hex
 
-# build dir
+# Build dir
 Debug
 Release
+
+# Speical files
+tools/const.pyc
+tools/odict.pyc
+tools/tmpl/autogen_.jinja
+tools/autogen_code
+
