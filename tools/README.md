@@ -8,19 +8,33 @@ Solution
 ========
 
 1. Using json to describe our class
-2. Loading json file into python's Dictionary
-3. Create template code using jinja2 Template Engine
-4. Using jinja2 replace&combine the json-define-class-info and the Template
+2. Create template code using jinja2 Template Engine
+3. Using jinja2 replace&combine the json-define-class-info and the Template
+4. Check Result
 
-Syntax: Json describe pattern
-=============================
+The files like following:
+```
+➜  Design-Patterns-in-C git:(master) tree tools
+tools
+|-- autogen_jinja2.py   <<< the entry script
+|-- const.py            <<<    implement const
+|-- odict.py            <<<    implement order diction
+|-- json                <<< the pattern describe files using json
+|   `-- factory-method.json
+|-- README.md
+`-- tmpl                <<< the templates using jinja2
+    `-- c               <<< used for generate C code
+        |-- c.jinja     <<<      for code {class-name}.c 
+        |-- _header.jinja <      beginwith "_" means no-render, normal used by other template or as super template
+        `-- h.jinja     <<<      for code {class-name}.h
+```
 
-class describe using Json
--------------------------
+1. Using Json describe pattern
+------------------------------
 
 ```
-If no the node, process as default value
-
+$ cd tools  
+$ cat json/factory-method.json  
 {
 "namespace":"factory_method",
 "path":"factory_method",
@@ -68,21 +82,60 @@ If no the node, process as default value
 }
 }
 ```
-Requirement
-===========
-> linux $ sudo pip install jinja2  
-> <or>
-> linux $ sudo easy_install jinja2
+
+2. Create template code using jinja2 Template Engine
+----------------------------------------------------
+
+```
+$ tree tmpl       
+tmpl
+`-- c
+    |-- c.jinja
+    |-- _header.jinja
+    `-- h.jinja
+```
+
+3. Using jinja2 replace&combine the json-define-class-info and the Template
+---------------------------------------------------------------------------
+
+```
+$ ./autogen_jinja2.py --file json/factory-method.json 
+```
+
+4. Check Result
+---------------
+
+```
+$ tree autogen_code 
+autogen_code
+`-- factory_method
+    |-- concrete_product_1.c
+    |-- concrete_product_1.h
+    |-- concrete_product_2.c
+    |-- concrete_product_2.h
+    |-- product.c
+    |-- product_factory_1.c
+    |-- product_factory_1.h
+    |-- product_factory_2.c
+    |-- product_factory_2.h
+    |-- product_factory.c
+    |-- product_factory.h
+    `-- product.h
+```
 
 QuickStart
 ==========
 Run
 ---
-cd tools  
-./autogen_jinja2.py --file json/factory-method.json  
+
+```
+$ cd tools  
+$ ./autogen_jinja2.py --file json/factory-method.json  
+```
 
 Debug
 -----
+```
 python /usr/lib64/python2.7/pdb.py autogen_jinja2.py  
 (Pdb) break            # set breakpoint  
 (Pdb) run -i 'json/factory-method.json'  
@@ -90,6 +143,16 @@ python /usr/lib64/python2.7/pdb.py autogen_jinja2.py
 (Pdb) s                # step into  
 (Pdb) n                # next  
 (Pdb) util 112         # continue util the line number  
+```
+
+Requirement
+===========
+
+```
+$ sudo pip install jinja2  
+<or>
+$ sudo easy_install jinja2
+```
 
 Vim Plugin
 ==========
