@@ -212,7 +212,6 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		if not one_myclass['super'] and len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0: # As basic class
 			one_myclass['_enable_virtual'] = True
 
-
 		# recursive sub-classes
 		one_myclass[mysyn.sub_classes] = odict()
 		if one_inputclass.has_key(mysyn.sub_classes):
