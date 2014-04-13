@@ -1,0 +1,14 @@
+
+#include <myobj.h>
+#include "{{ name }}.h"
+
+{% if _enable_virtual -%}
+{% block ops_func -%}
+{% endblock ops_func %}
+
+{% block ops_func_set -%}
+{% endblock ops_func_set %}
+{% endif -%}
+
+{% block init -%}
+{% endblock init %}

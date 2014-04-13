@@ -11,18 +11,21 @@ This will be a repository of
 
 ```
 Make
-$ make			         <<< build project  
-$ ./Debug/main	   <<< if Makefile set Debug=y, run this  
+$ cd patterns
+$ make             <<< build project
+$ ./Debug/main	   <<< if Makefile set Debug=y, run this
 $ ./Release/main  <<< else run this
 
 Clean
+$ cd patterns
 $ make clean
 
 Debug
+$ cd patterns
 $ gdb ./Debug/main	<<< Makefile set Debug=y
 
 Auto Generate class source/header
-$ cd ./tools
+$ cd tools
 $ ./autogen_jinja2.py --file json/factory-method.json 
 ```
 
