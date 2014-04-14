@@ -29,9 +29,34 @@ $ cd tools
 $ ./autogen_jinja2.py --file json/factory-method.json 
 ```
 
-## Update:
+## OOP basic:
 
-Apr 6, 2014: Add init version
+The oop come from myobj.h:
+* each class have it's special v-table, here is the struct ops
+* the derive class should also have it's v-table instance, but same type with it's parent
+* the derive class's v-table instance should initial with merge with it's parent
+
+### Sample
+
+```
+$ cd patterns
+$ ls
+$ tree oop
+oop
+|-- diagram               <<< the uml class diagram
+|   |-- inheritance.py
+|   `-- mult_inherit.py
+|-- inheritance           <<< sample of inheritance
+|   |-- child.c
+|   |-- child.h
+|   |-- grandgirl.c       <<< grandgirl_init() give the myobj.h MACRO expand code for our review reading
+|   |-- grandgirl.h
+|   |-- parent.c
+|   |-- parent.h
+|   `-- test.c
+`-- README.md
+
+```
 
 ## Design Patterns:
 
