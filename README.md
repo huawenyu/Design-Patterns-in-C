@@ -135,6 +135,7 @@ SOFTWARE.
 
 ## See also & References
 
+[PyNSource - UML tool for Python](http://www.andypatterns.com/index.php/products/pynsource/)
 [Design Patterns Explained Simply](http://sourcemaking.com/design_patterns)  
 [.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
 [Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
