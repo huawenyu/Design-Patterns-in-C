@@ -144,6 +144,7 @@ void my_test_suite_open()
 	extern void factory_method_test(void); factory_method_test();
 	extern void abstract_factory_family_objest_test(void); abstract_factory_family_objest_test();
 	extern void abstract_factory_two_dimension_test(void); abstract_factory_two_dimension_test();
+	extern void inheritance_test(void); inheritance_test();
 }
 
 void my_test_suite_close()

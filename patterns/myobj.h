@@ -28,6 +28,11 @@
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
 /* get error message file info */
+#define __CLASS_CONCAT(s1, s2) s1##s2
+#define __CLASS_CONCAT_2(s1, s2) __CLASS_CONCAT(s1, s2)
+#define __CLASS_CONCAT_3(s1, s2, s3) __CLASS_CONCAT_2(s1, __CLASS_CONCAT_2(s2,s3))
+#define __CLASS_INTHELPER(x) 0 ## x
+#define __CLASS_TOINT(x) __CLASS_INTHELPER(x)
 #define __CLASS_STRINGIFY(x) #x
 #define __CLASS_TOSTRING(x) __CLASS_STRINGIFY(x)
 #define __CLASS_WHERE __FILE__ ":" __CLASS_TOSTRING(__LINE__)
@@ -50,12 +55,12 @@
 }
 
 #define __CLASS_OPS_INIT_COMN(ptr, ops, offset) \
-	static unsigned int ops##_init_flag_ = 0; \
-	void class_ops_init(void) \
+	static unsigned int __CLASS_CONCAT_3(ops,_init_flag_,__LINE__) = 0; \
+	void __CLASS_CONCAT_2(class_ops_init_,__LINE__)(void) \
 	{ \
 		typeof(*(ptr)) l_super_ops = *(ptr); \
-		if (!ops##_init_flag_) { \
-			ops##_init_flag_ = 1; \
+		if (!__CLASS_CONCAT_3(ops,_init_flag_,__LINE__)) { \
+			__CLASS_CONCAT_3(ops,_init_flag_,__LINE__) = 1; \
 			__CLASS_COPY_OPS(l_super_ops, ops, offset); \
 			ops = l_super_ops; \
 		} \
@@ -64,14 +69,14 @@
 
 #define __CLASS_OPS_INIT(ptr, ops, offset) \
 	__CLASS_OPS_INIT_COMN(ptr, ops, offset) \
-	if (!ops##_init_flag_) { \
-		class_ops_init(); \
+	if (!__CLASS_CONCAT_3(ops, _init_flag_, __LINE__)) { \
+		__CLASS_CONCAT_2(class_ops_init_,__LINE__)(); \
 	}
 
 #define __CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offset, member, rval) \
 	__CLASS_OPS_INIT_COMN(ptr, ops, offset) \
-	if (!ops##_init_flag_) { \
-		class_ops_init(); \
+	if (!__CLASS_CONCAT_3(ops,_init_flag_,__LINE__)) { \
+		__CLASS_CONCAT_2(class_ops_init_,__LINE__)(); \
 		(ops).member = rval; \
 	}
 
