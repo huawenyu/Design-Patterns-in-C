@@ -41,6 +41,10 @@
 #define __CLASS_COPY_OPS(dst,src,offset) \
 { \
 	typedef void (*fptr) (void); \
+	typeof(dst) *type_dst; \
+	typeof(src) *type_src = 0; \
+	type_dst = type_src; \
+	type_src = type_dst; \
 	int sz = offset/sizeof(fptr); \
 	_Static_assert(offset <= sizeof(dst), _STR_MYOBJ_PRE_TAG_ __CLASS_WHERE ":" #src " copy ops size overflow"); \
 	_Static_assert(sizeof(dst) == sizeof(src), _STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #src " copy ops should be same type"); \
