@@ -51,8 +51,18 @@ oop
 |   |-- child.h
 |   |-- grandgirl.c       <<< grandgirl_init() give the myobj.h MACRO expand code for our review reading
 |   |-- grandgirl.h
+|   |-- grandson.c
+|   |-- grandson.h
 |   |-- parent.c
 |   |-- parent.h
+|   `-- test.c
+|-- mult_inherit
+|   |-- employee.c
+|   |-- employee.h
+|   |-- person.c
+|   |-- person.h
+|   |-- teacher.c
+|   |-- teacher.h
 |   `-- test.c
 `-- README.md
 
