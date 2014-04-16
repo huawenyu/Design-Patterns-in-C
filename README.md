@@ -5,7 +5,7 @@ Design-Patterns-in-C
 
 This will be a repository of
 * Implement the Design Patterns of **GoF**(Gang of Four) in C.  
-* Provide script to auto generate Design Patterns into different code style: C, C++, Java, C#
+* Provide script to auto generate Design Patterns into different code style: C, C++, Java, C#, python-uml
 
 ## Quick Start:
 
