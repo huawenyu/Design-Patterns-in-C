@@ -1,5 +1,4 @@
-Design-Patterns-in-C
-====================
+# Design-Patterns-in-C
 
 **Practical Design Patterns in C**  
 
@@ -28,7 +27,7 @@ The oop come from myobj.h:
 * the derive class should also have it's v-table instance, but same type with it's parent
 * the derive class's v-table instance should initial with merge with it's parent
 
-### Sample
+### Code Sample Tree
 
 ```
 $ cd patterns
@@ -142,3 +141,13 @@ SOFTWARE.
 [.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
 [Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
 [Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)  
+
+## TODOS
+
+* move 'static ops' into init-function
+* framework-lib cooperate with client:
+  - caps: template drive
+  - DI: dependence on abstract interface
+  - derive (instance embed): inheritance as-A
+  - client-ops: AI (argument injection)
+  - call-ops: smaller client-ops
