@@ -2,7 +2,7 @@
 "namespace":"factory_method",
 "path":"factory_method",
 "classes": {
-	"product":{"file":"", "super":"",
+	"product":{"file":"", "supers":[],
 		"members": [
 			["virtual",  "void", "do_it", "int a, int b"],
 			["variable", "char", "name", "[32]"]
@@ -12,12 +12,12 @@
 		"inheritance": {
 			"concrete_product_1":{
 				"members": [
-					["override", "do_it"]
+					["override", "", "do_it"]
 				]
 			},
 			"concrete_product_2":{
 				"members": [
-					["override", "do_it"]
+					["override", "", "do_it"]
 				]
 			}
 		}
@@ -32,12 +32,12 @@
 		"inheritance": {
 			"product_factory_1":{
 				"members": [
-					["override", "create"]
+					["override", "", "create"]
 				]
 			},
 			"product_factory_2":{
 				"members": [
-					["override", "create"]
+					["override", "", "create"]
 				]
 			}
 		}

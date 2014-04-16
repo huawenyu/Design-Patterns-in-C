@@ -62,7 +62,7 @@ mysyn.m_set =      ['routines','methods','virtuals','overrides','vars']
 mysyn.m_str = mysyn.m_type.reverse_mapping
 
 # cat-category
-mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_type_name', 'cat_type_name_args')
+mysyn.func_mode = enum('_None', '_cat', '_cat_name', 'cat_type_name', 'cat_type_name_args')
 mysyn.func =      enum('scope', 'type', 'name', 'args')
 
 
@@ -109,11 +109,20 @@ def get_value_else_default(rdict, key, def_val):
 		rval = def_val
 	return rval
 
+
 def render_tree_to_file(context_dict_tree, code_style, output_dir):
 	for class_name, class_detail in context_dict_tree.iteritems():
 		render_class_to_file(class_detail, code_style, output_dir)
 		if mysyn.sub_classes in class_detail:
 			render_tree_to_file(class_detail[mysyn.sub_classes], code_style, output_dir)
+
+
+def convert_to_dict(context_dict_tree):
+	myclasses_array_dict = odict()
+	for class_name, class_detail in context_dict_tree.iteritems():
+		myclasses_array_dict[class_name] = class_detail
+		if mysyn.sub_classes in class_detail:
+			convert_to_dict(class_detail[mysyn.sub_classes])
 
 
 def convert_to_myclasses(myclass_dict, input_dict, mysuper):
@@ -125,7 +134,10 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name'] = myclass_name
 		one_myclass['NAME'] = myclass_name.upper()
-		one_myclass['super'] = get_value_else_default(mysuper, 'name', '')
+
+		supers = get_value_else_default(one_inputclass, 'supers', []);
+		one_myclass['supers'] = supers
+		supers[0:0] = mysuper.name
 
 		# split members into functions and vars ...
 		one_myclass[mysyn.m_set[mysyn.m_type.routine]]  = []
@@ -139,10 +151,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 				member_detail = ['public', '', '', '']
 
 				member_mode = len(member_input)
-				if member_mode == mysyn.func_mode.cat_name:
-					member_category = member_input[0]
-					member_detail[mysyn.func.name] = member_input[1]
-				elif member_mode == mysyn.func_mode.cat_type_name:
+				if member_mode == mysyn.func_mode.cat_type_name:
 					member_category = member_input[0]
 					member_detail[mysyn.func.type] = member_input[1]
 					member_detail[mysyn.func.name] = member_input[2]
@@ -178,39 +187,48 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 		''' **Just needed by C code.**
 		1. "enable_super" come from config
-		2. "_enable_super" is auto-gen field used to control code-gen
-		   If "_enable_super" is "True", means should support super call:
+		2. "_have_super_ref" is auto-gen field used to control code-gen
+		   If "_have_super_ref" is "True", means the implement support super call:
 		    * As base class, who have no super at all
 			  - can be control by **config**
 			  - must have virtual-function,
 			  - must user requie (config) 'enable_super'
-			  - when implement, must append super pointer in ops
+			  - The generated code should append super pointer in ops
 		    * As derive class,
 			  - just control by super, **config have no use at all**.
 			  - must exist super to sure self is really 'derive' class
 			  - the parent must have enable_super already
-			  - when implement, must init with super
+			  - The generated code should init with super
 		'''
-		one_myclass['_enable_super'] = False
-		if one_myclass['super']: # As derive class
-			if mysuper['_enable_super'] == True: # if parent support super, child should be init with super
-				one_myclass['_enable_super'] = True
+		one_myclass['_have_super_ref'] = False
+		if one_myclass['supers']: # As derive class
+			if mysuper['_have_super_ref'] == True: # if parent support super, child should be init with super
+				one_myclass['_have_super_ref'] = True
 		else: # As base class
 			if len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0:
 				enable_super = get_value_else_default(one_inputclass, 'enable_super', 'False')
 				if enable_super.lower() == 'true':
-					one_myclass['_enable_super'] = True
+					one_myclass['_have_super_ref'] = True
 		
 		'''
-		"_enable_virtual" is auto-gen field used to control code-gen
-		    - must be basic class who have no super
-		    - must have virtual function
-		    - when implement, must have ops (for C code) or "virtual" keyword (for others) keyword
-		        + so as derive class, auto have virtual but this flag is false, that's OK.
+		"_have_vtable_override" is auto-gen field used to control code-gen
+		    - means the class re-definition the parents virtual function
+		    - members must have 'override' category function
+		    -   which also must can be located in the supers
+		    - The generated code should have ops instance (for C code)
 		'''
-		one_myclass['_enable_virtual'] = False
-		if not one_myclass['super'] and len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0: # As basic class
-			one_myclass['_enable_virtual'] = True
+		one_myclass['_have_vtable_override'] = False
+		if not one_myclass['supers'] and len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0: # As basic class
+			one_myclass['_have_vtable_override'] = True
+
+		'''
+		"_have_vtable_new" is auto-gen field used to control code-gen
+		    - means the class add new virtual function for itself and it's derive classes
+		    - The generated code should have a new ops type (for C code)
+		'''
+		one_myclass['_have_vtable_new'] = False
+		if len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0:
+			one_myclass['_have_vtable_new'] = True
 
 		# recursive sub-classes
 		one_myclass[mysyn.sub_classes] = odict()
@@ -231,7 +249,7 @@ def convert_namespace_to_tree(input_dict):
 	mysuper['path'] = get_value_else_default(input_dict, 'path', '.')
 	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', 'anonymouse')
 	mysuper['enable_super'] = 'False'
-	mysuper['super'] = ''
+	mysuper['supers'] = []
 	if input_dict.has_key('classes'):
 		convert_to_myclasses(context_dict_tree, input_dict['classes'], mysuper)
 
