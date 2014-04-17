@@ -118,34 +118,6 @@ def render_array_to_file(myclasses_array_dict, code_style, output_dir):
 		render_class_to_file(class_detail, code_style, output_dir)
 
 
-# find function's protocol from super's vtable
-def find_vtable_entry_by_function(class_detail, func_name, myclasses_array_dict, from_class, old_class):
-	if not myclasses_array_dict.has_key(from_class):
-		raise Exception('class *{0}* override function *{1}*\'s super class *{2}* not exist'.\
-			format(class_detail['name'], func_name, from_class))
-		
-	one_class = myclasses_array_dict[from_class]
-	if not one_class:
-		raise Exception('class *{0}*\'s super class *{1}* not exist'.\
-			format(class_detail['name'], from_class))
-
-	supers = class_detail['supers']
-	#function = ['public', 'void', 'do_something', '']
-	for one_virtual in one_class[mysyn.m_dict['virtual']]:
-		if func_name == one_virtual[mysyn.func.name]:
-			if not supers.has_key(old_class):
-				supers[old_class] = odict()
-			if not supers[old_class].has_key(one_class['name']):
-				supers[old_class][one_class['name']] = []
-			supers[old_class][one_class['name']].append(one_virtual)
-			return True
-
-	for one_super in one_class['supers'].keys():
-		if find_vtable_entry_by_function(class_detail, func_name, myclasses_array_dict, one_super, old_class):
-			return True
-	return False
-
-
 def flush_unused_and_makeup(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
 		if class_detail.has_key(mysyn.sub_classes):
@@ -165,26 +137,50 @@ def flush_unused_and_makeup(myclasses_array_dict):
 					class_detail.pop(members, None)
 
 
+def convert_to_class(myclasses_array_dict, class_name):
+	if myclasses_array_dict.has_key(class_name) and len(myclasses_array_dict[class_name]) > 0:
+		return myclasses_array_dict[class_name];
+	else:
+		raise Exception('class *{0}* not exist'.format(class_name))
+
+
+# find function's protocol from super's vtable
+# @find_my_supers begin search from this class's supers
+# @is_a_class come from override's type field, means the vtable should search first from is_a_class
+# @my_direct_parent must be contain in this_class's supers
+def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, find_the_supers, is_a_class, my_direct_parents):
+	one_class = convert_to_class(myclasses_array_dict, find_the_supers)
+	for super_name in one_class['supers'].keys():
+		my_direct_parents.append(super_name)
+		one_super = convert_to_class(myclasses_array_dict, super_name)
+
+		# find vtable protocol, copy info into our processing class
+		my_supers = my_class['supers']
+		#function = ['public', 'void', 'do_something', '']
+		for one_virtual in one_super[mysyn.m_dict['virtual']]:
+			if func_name == one_virtual[mysyn.func.name] and len(my_direct_parents) > 0:
+				if not my_supers.has_key(my_direct_parents[0]):
+					my_supers[my_direct_parents[0]] = odict()
+				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
+					my_supers[my_direct_parents[0]][one_super['name']] = []
+				my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
+				return True
+
+		if find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
+			return True
+		my_direct_parents.pop()
+	return False
+
+
 def parse_override_function(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
 		#override = ['public', 'base_class', 'do_something', '']
 		for override in class_detail[mysyn.m_dict['override']]:
-			if override[mysyn.func.type]: # given base class name
-				if not find_vtable_entry_by_function(class_detail, \
-				  override[mysyn.func.name], myclasses_array_dict, \
-				  override[mysyn.func.type], override[mysyn.func.type]):
-					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
-						format(class_detail['name'], override[mysyn.func.name], override[mysyn.func.type]))
-			else:
-				find = False
-				for one_super in class_detail['supers'].keys():
-					if find_vtable_entry_by_function(class_detail, \
-					  override[mysyn.func.name], myclasses_array_dict, one_super, one_super):
-						find = True
-						break
-				if not find:
-					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
-						format(class_detail['name'], override[mysyn.func.name], override[mysyn.func.type]))
+			if not find_vtable_entry_by_function(class_detail, \
+			  override[mysyn.func.name], myclasses_array_dict, \
+			  class_detail['name'], override[mysyn.func.type], []):
+				raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
+					format(class_detail['name'], override[mysyn.func.name], override[mysyn.func.type]))
 
 
 def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
