@@ -57,9 +57,12 @@ mysyn.members = 'members'  #
 mysyn.sub_classes = 'inheritance'  #
 
 # Must match one by one
-mysyn.m_type = enum('routine', 'method', 'virtual', 'override', 'variable')
-mysyn.m_set =      ['routines','methods','virtuals','overrides','vars']
-mysyn.m_str = mysyn.m_type.reverse_mapping
+mysyn.m_dict = {\
+'routine' :'routines',\
+'method'  :'methods',\
+'virtual' :'virtuals',\
+'override':'overrides',\
+'variable':'vars'}
 
 # cat-category
 mysyn.func_mode = enum('_None', '_cat', '_cat_name', 'cat_type_name', 'cat_type_name_args')
@@ -110,19 +113,85 @@ def get_value_else_default(rdict, key, def_val):
 	return rval
 
 
-def render_tree_to_file(context_dict_tree, code_style, output_dir):
-	for class_name, class_detail in context_dict_tree.iteritems():
+def render_array_to_file(myclasses_array_dict, code_style, output_dir):
+	for class_name, class_detail in myclasses_array_dict.iteritems():
 		render_class_to_file(class_detail, code_style, output_dir)
-		if mysyn.sub_classes in class_detail:
-			render_tree_to_file(class_detail[mysyn.sub_classes], code_style, output_dir)
 
 
-def convert_to_dict(context_dict_tree):
-	myclasses_array_dict = odict()
+# find function's protocol from super's vtable
+def find_vtable_entry_by_function(class_detail, func_name, myclasses_array_dict, from_class, old_class):
+	if not myclasses_array_dict.has_key(from_class):
+		raise Exception('class *{0}* override function *{1}*\'s super class *{2}* not exist'.\
+			format(class_detail['name'], func_name, from_class))
+		
+	one_class = myclasses_array_dict[from_class]
+	if not one_class:
+		raise Exception('class *{0}*\'s super class *{1}* not exist'.\
+			format(class_detail['name'], from_class))
+
+	supers = class_detail['supers']
+	#function = ['public', 'void', 'do_something', '']
+	for one_virtual in one_class[mysyn.m_dict['virtual']]:
+		if func_name == one_virtual[mysyn.func.name]:
+			if not supers.has_key(old_class):
+				supers[old_class] = odict()
+			if not supers[old_class].has_key(one_class['name']):
+				supers[old_class][one_class['name']] = []
+			supers[old_class][one_class['name']].append(one_virtual)
+			return True
+
+	for one_super in one_class['supers'].keys():
+		if find_vtable_entry_by_function(class_detail, func_name, myclasses_array_dict, one_super, old_class):
+			return True
+	return False
+
+
+def flush_unused_and_makeup(myclasses_array_dict):
+	for class_name, class_detail in myclasses_array_dict.iteritems():
+		if class_detail.has_key(mysyn.sub_classes):
+			class_detail.pop(mysyn.sub_classes, None)
+		if class_detail.has_key(mysyn.m_dict['override']):
+			class_detail.pop(mysyn.m_dict['override'], None)
+		if class_detail.has_key('supers') and len(class_detail['supers']) == 0:
+			class_detail.pop('supers', None)
+		for members in mysyn.m_dict.values(): # avoid None Error
+			if class_detail.has_key(members):
+				if len(class_detail[members]) > 0:
+					members_tuple = []
+					for one_member in class_detail[members]:
+						members_tuple.append(tuple(one_member))
+					class_detail[members] = members_tuple
+				elif len(class_detail[members]) == 0:
+					class_detail.pop(members, None)
+
+
+def parse_override_function(myclasses_array_dict):
+	for class_name, class_detail in myclasses_array_dict.iteritems():
+		#override = ['public', 'base_class', 'do_something', '']
+		for override in class_detail[mysyn.m_dict['override']]:
+			if override[mysyn.func.type]: # given base class name
+				if not find_vtable_entry_by_function(class_detail, \
+				  override[mysyn.func.name], myclasses_array_dict, \
+				  override[mysyn.func.type], override[mysyn.func.type]):
+					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
+						format(class_detail['name'], override[mysyn.func.name], override[mysyn.func.type]))
+			else:
+				find = False
+				for one_super in class_detail['supers'].keys():
+					if find_vtable_entry_by_function(class_detail, \
+					  override[mysyn.func.name], myclasses_array_dict, one_super, one_super):
+						find = True
+						break
+				if not find:
+					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
+						format(class_detail['name'], override[mysyn.func.name], override[mysyn.func.type]))
+
+
+def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
 	for class_name, class_detail in context_dict_tree.iteritems():
 		myclasses_array_dict[class_name] = class_detail
-		if mysyn.sub_classes in class_detail:
-			convert_to_dict(class_detail[mysyn.sub_classes])
+		if class_detail.has_key(mysyn.sub_classes):
+			convert_to_array_dict(myclasses_array_dict, class_detail[mysyn.sub_classes])
 
 
 def convert_to_myclasses(myclass_dict, input_dict, mysuper):
@@ -135,16 +204,18 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['name'] = myclass_name
 		one_myclass['NAME'] = myclass_name.upper()
 
-		supers = get_value_else_default(one_inputclass, 'supers', []);
+		supers = odict()
 		one_myclass['supers'] = supers
-		supers[0:0] = mysuper.name
+		if mysuper.has_key('name'):
+			supers[mysuper['name']] = odict()
+		if one_inputclass.has_key('supers'):
+			for super_name in one_inputclass['supers']:
+				supers[super_name] = odict()
+
+		for members in mysyn.m_dict.values(): # avoid None Error
+			one_myclass[members]  = []
 
 		# split members into functions and vars ...
-		one_myclass[mysyn.m_set[mysyn.m_type.routine]]  = []
-		one_myclass[mysyn.m_set[mysyn.m_type.method]]   = []
-		one_myclass[mysyn.m_set[mysyn.m_type.virtual]]  = []
-		one_myclass[mysyn.m_set[mysyn.m_type.override]] = []
-		one_myclass[mysyn.m_set[mysyn.m_type.variable]] = []
 		if one_inputclass.has_key(mysyn.members):
 			for member_input in one_inputclass[mysyn.members]:
 				member_category = ''
@@ -165,25 +236,11 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					format(member_input, member_mode))
 
 				#@TODO check member_name conflict
-
-				if   member_category == mysyn.m_str[mysyn.m_type.routine]:
-					one_myclass[        mysyn.m_set[mysyn.m_type.routine]].append(member_detail)
-				elif member_category == mysyn.m_str[mysyn.m_type.method]:
-					one_myclass[        mysyn.m_set[mysyn.m_type.method]].append(member_detail)
-				elif member_category == mysyn.m_str[mysyn.m_type.virtual]:
-					one_myclass[        mysyn.m_set[mysyn.m_type.virtual]].append(member_detail)
-				elif member_category == mysyn.m_str[mysyn.m_type.override]:
-					virtual_find = False
-					for virtual_member in \
-					  mysuper[          mysyn.m_set[mysyn.m_type.virtual]]:
-						if virtual_member[mysyn.func.name] == member_detail[mysyn.func.name]:
-							virtual_find = True
-							one_myclass[mysyn.m_set[mysyn.m_type.override]].append(virtual_member)
-
-					if not virtual_find:
-						raise Exception('member override, but no prototype in super: {0}'.format(member_detail))
-				elif member_category == mysyn.m_str[mysyn.m_type.variable]:
-					one_myclass[        mysyn.m_set[mysyn.m_type.variable]].append(member_detail)
+				if one_myclass.has_key(mysyn.m_dict[member_category]):
+					one_myclass[mysyn.m_dict[member_category]].append(member_detail)
+				else:
+					raise Exception('members of category *{0}* not exist'.\
+						format(mysyn.m_dict[member_category]))
 
 		''' **Just needed by C code.**
 		1. "enable_super" come from config
@@ -192,8 +249,8 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		    * As base class, who have no super at all
 			  - can be control by **config**
 			  - must have virtual-function,
-			  - must user requie (config) 'enable_super'
-			  - The generated code should append super pointer in ops
+			  - must already config as 'enable_super'
+			  - The generated code should append super pointer in vtable
 		    * As derive class,
 			  - just control by super, **config have no use at all**.
 			  - must exist super to sure self is really 'derive' class
@@ -202,32 +259,21 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		'''
 		one_myclass['_have_super_ref'] = False
 		if one_myclass['supers']: # As derive class
-			if mysuper['_have_super_ref'] == True: # if parent support super, child should be init with super
+			if mysuper.has_key('_have_super_ref') and mysuper['_have_super_ref'] == True: # if parent support super, child should be init with super
 				one_myclass['_have_super_ref'] = True
 		else: # As base class
-			if len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0:
+			if len(one_myclass[mysyn.m_dict['virtual']]) > 0:
 				enable_super = get_value_else_default(one_inputclass, 'enable_super', 'False')
 				if enable_super.lower() == 'true':
 					one_myclass['_have_super_ref'] = True
 		
 		'''
-		"_have_vtable_override" is auto-gen field used to control code-gen
-		    - means the class re-definition the parents virtual function
-		    - members must have 'override' category function
-		    -   which also must can be located in the supers
-		    - The generated code should have ops instance (for C code)
-		'''
-		one_myclass['_have_vtable_override'] = False
-		if not one_myclass['supers'] and len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0: # As basic class
-			one_myclass['_have_vtable_override'] = True
-
-		'''
 		"_have_vtable_new" is auto-gen field used to control code-gen
 		    - means the class add new virtual function for itself and it's derive classes
-		    - The generated code should have a new ops type (for C code)
+		    - The generated code should have a new vtable (for C code)
 		'''
 		one_myclass['_have_vtable_new'] = False
-		if len(one_myclass[mysyn.m_set[mysyn.m_type.virtual]]) > 0:
+		if len(one_myclass[mysyn.m_dict['virtual']]) > 0:
 			one_myclass['_have_vtable_new'] = True
 
 		# recursive sub-classes
@@ -242,12 +288,12 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 
 # convert config data to render data
-def convert_namespace_to_tree(input_dict):
+def convert_namespace_to_tree(def_path, input_dict):
 	mysuper = odict()
 	context_dict_tree = odict()
 
-	mysuper['path'] = get_value_else_default(input_dict, 'path', '.')
-	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', 'anonymouse')
+	mysuper['path'] = get_value_else_default(input_dict, 'path', def_path)
+	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', def_path)
 	mysuper['enable_super'] = 'False'
 	mysuper['supers'] = []
 	if input_dict.has_key('classes'):
@@ -259,15 +305,21 @@ def convert_namespace_to_tree(input_dict):
 def render_namespace(input_file, code_style, output_dir):
 	try:
 		if not os.path.isfile(input_file):
-			raise Exception('file {0} not exists'.format(input_file))
+			raise Exception('file *{0}* not exists'.format(input_file))
 
 		input_dict = json.load(open(input_file), object_pairs_hook=collections.OrderedDict)
 		#print 'NAMESPACE loading:',json.dumps(input_dict, sort_keys=False, indent=2)
 
-		context_dict_tree = convert_namespace_to_tree(input_dict)
-		print json.dumps(context_dict_tree, sort_keys=False, indent=2)
+		context_dict_tree = convert_namespace_to_tree(\
+		  os.path.splitext(os.path.basename(input_file))[0], input_dict)
+		#print json.dumps(context_dict_tree, sort_keys=False, indent=2)
 
-		render_tree_to_file(context_dict_tree, code_style, output_dir)
+		myclasses_array_dict = odict()
+		convert_to_array_dict(myclasses_array_dict, context_dict_tree)
+		parse_override_function(myclasses_array_dict)
+		flush_unused_and_makeup(myclasses_array_dict)
+		print json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		render_array_to_file(myclasses_array_dict, code_style, output_dir)
 	except Exception, e:
 		print "Exception and exit now!", e.args
 		traceback.print_exc(file=sys.stdout)

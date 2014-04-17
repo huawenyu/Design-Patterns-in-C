@@ -1,0 +1,35 @@
+{
+"namespace":"inheritance",
+"path":"inheritance",
+"classes": {
+	"parent":{
+		"members": [
+			["virtual",  "void", "v_override_who", ""],
+			["virtual",  "void", "v_ancestor", ""],
+			["routine",  "void", "method_work", ""],
+			["variable", "char", "name", "[32]"]
+		],
+
+		"inheritance": {
+			"child":{
+				"members": [
+					["virtual",  "void", "v_child_right", "const char *"],
+					["override", "", "v_override_who"]
+				],
+				"inheritance": {
+					"grandgirl":{
+						"members": [
+							["override", "", "v_override_who"]
+						]
+					},
+					"grandson":{
+						"members": [
+							["override", "", "v_override_who"]
+						]
+					}
+				}
+			}
+		}
+	}
+}
+}
