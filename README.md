@@ -145,6 +145,7 @@ SOFTWARE.
 ## TODOS
 
 * move 'static ops' into init-function
+* move class from top to bottom where just before the function declare
 * framework-lib cooperate with client:
   - caps: template drive
   - DI: dependence on abstract interface
