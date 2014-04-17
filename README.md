@@ -148,6 +148,8 @@ SOFTWARE.
 * move class from top to bottom where just before the function declare
 * framework-lib cooperate with client:
   - caps: template drive
+    + can be simple interface which implement by client and used by class, is callback-functions
+    + can be simple factory which implement by client and used by class to create itself, such as client's memory implements
   - DI: dependence on abstract interface
   - derive (instance embed): inheritance as-A
   - client-ops: AI (argument injection)
