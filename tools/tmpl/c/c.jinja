@@ -1,34 +1,20 @@
 {% extends '_source.jinja' %}
+{% import '_macro.jinja' as func %}
 
-{% block ops_func -%}
-{% for func_rtn, func, func_params in members %}
-{%- if func_params %}
-static {{ func_rtn }} {{ name }}_ops_{{ func }}(struct {{ name }} *{{ name }}, {{ func_params }})
-{
-	printf("{{ name }}::{{ func }}()\n");
-}
-{%- else %}
-static {{ func_rtn }} {{ name }}_ops_{{ func }}(struct {{ name }} *{{ name }})
-{
-	printf("{{ name }}::{{ func }}()\n");
-}
-{% endif %}
-{% endfor %}
-{% endblock ops_func %}
+{%- block method -%}
+	{{- func.macro_loop_functions(name,'static',methods,'impl','printf') -}}
+{%- endblock -%}
 
-{% block ops_func_set -%}
-{% endblock ops_func_set %}
+{%- block ops_func -%}
+	{{- func.macro_loop_functions(name,'static',virtuals,'impl','printf') -}}
+{%- endblock -%}
 
-{% block init -%}
-{% endblock init %}
+{%- block ops_func_set -%}
+{%- endblock -%}
 
+{%- block init -%}
+{%- endblock -%}
 
-static struct {{ name }}_ops {{ name }}_ops = { /* NULL is virtual method */
-	.prepare = {{ name }}_ops_prepare,
-};
-
-void {{ name }}_init(struct {{ name }} *{{ name }})
-{
-	{{ name }}->ops = &{{ name }}_ops;
-}
-
+{%- block routine -%}
+	{{- func.macro_loop_functions(name,'static',routines,'impl','printf') -}}
+{%- endblock -%}

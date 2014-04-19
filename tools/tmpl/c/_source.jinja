@@ -2,13 +2,14 @@
 #include <myobj.h>
 #include "{{ name }}.h"
 
-{% if _enable_virtual -%}
-{% block ops_func -%}
-{% endblock ops_func %}
+{% block method %}{% endblock -%}
 
-{% block ops_func_set -%}
-{% endblock ops_func_set %}
+{% if _have_vtable_new -%}
+	{%- block ops_func %}{% endblock -%}
+
+	{%- block ops_func_set %}{% endblock -%}
 {% endif -%}
 
-{% block init -%}
-{% endblock init %}
+{% block init %}{% endblock -%}
+
+{% block routine %}{% endblock -%}

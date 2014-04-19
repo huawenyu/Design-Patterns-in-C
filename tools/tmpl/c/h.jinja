@@ -1,38 +1,17 @@
 {% extends '_header.jinja' %}
+{% import '_macro.jinja' as func %}
 
 
 {% block vars %}
-{%- for var_scope,var_type,var_name,var_arr in vars -%}
-	{{ var_type }} {{ var_name }}{{ var_arr }};
-{%- endfor -%}
-{% endblock vars %}
+	{{- func.macro_loop_functions(name,'',vars,'var','') -}}
+{% endblock %}
 
 
-{% block ops_func_ptr %}
-{%- for func_scope,rtn_type,func,func_args in virtuals -%}
-	{%- if func_args -%}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ func_args }});
-	{%- else -%}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
-	{%- endif -%}
-{%- endfor -%}
-{% endblock ops_func_ptr %}
+{% block vtable_item %}
+	{{- func.macro_loop_functions(name,'',virtuals,'declare','') -}}
+{% endblock %}
 
-
-{% block ops_func_call %}
-{%- for func_scope,rtn_type,func,func_args in virtuals -%}
-static inline
-{%- if func_args %}
-{{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }}, {{ func_args }})
-{
-	{{ name }}->ops->{{ func }}({{ name }}, {{ func_args }});
-}
-{%- else %}
-{{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }})
-{
-	{{ name }}->ops->{{ func }}({{ name }});
-}
-{% endif -%}
-{% endfor %}
-{% endblock ops_func_call %}
+{% block vtable_helper_item %}
+	{{- func.macro_loop_functions(name,'static inline',virtuals,'impl','ops') -}}
+{% endblock %}
 

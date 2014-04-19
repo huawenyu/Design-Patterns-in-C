@@ -1,39 +1,35 @@
-{%- include '../autogen_.jinja' ignore missing -%}
+{% extends '__header.jinja' %}
 
-#ifndef {{ NAME }}_H_
-#define {{ NAME }}_H_
 
-{% if _enable_virtual -%}
+{% block forward_declare %}{% if _have_vtable_new -%}
 struct {{ name }}_ops;
-{% endif -%}
+{% endif %}{% endblock -%}
 
+
+{% block class_definition %}
 struct {{ name }} {
-	{% if _enable_virtual -%}
-	struct {{ name }}_ops *ops;
-	{% endif -%}
+	{% if _have_vtable_new -%}struct {{ name }}_ops *ops;{% endif -%}
 
-	{% block vars %}
-	{% endblock vars %}
+	{% block vars %}{% endblock %}
 };
+{% endblock %}
 
-{% if _enable_virtual -%}
+
+{% block vtable_declare %}{% if _have_vtable_new -%}
 struct {{ name }}_ops {
-	{% block ops_func_ptr -%}
-	{% endblock ops_func_ptr %}
+	{% block vtable_item %}{% endblock %}
 
-	{%- if _enable_super -%}
-	{% block ops_super_ptr -%}
-	{% endblock ops_super_ptr %}
-	{%- endif %}
+	{% if _have_super_ref %}struct {{ name }}_ops *super;{% endif %}
 };
-{%- endif %}
+{%- endif %}{% endblock %}
 
+
+{% block class_init %}
 void {{ name }}_init(struct {{ name }} *);
+{% endblock %}
 
-{% if _enable_virtual -%}
-{% block ops_func_call %}
-{% endblock ops_func_call %}
-{% endif -%}
 
-#endif /* {{ NAME }}_H_ */
+{% block vtable_helper %}{% if _have_vtable_new -%}
+	{% block vtable_helper_item %}{% endblock %}
+{% endif %}{% endblock %}
 

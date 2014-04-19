@@ -1,0 +1,13 @@
+{%- include '../autogen_.jinja' ignore missing -%}
+
+#ifndef {{ NAME }}_H_
+#define {{ NAME }}_H_
+
+{% block forward_declare %}{% endblock -%}
+{% block class_definition %}{% endblock %}
+{% block vtable_declare %}{% endblock %}
+{% block class_init %}{% endblock %}
+{% block vtable_helper %}{% endblock %}
+
+#endif /* {{ NAME }}_H_ */
+

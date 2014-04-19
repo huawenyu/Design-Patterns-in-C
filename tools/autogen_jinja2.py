@@ -159,11 +159,17 @@ def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, fin
 		#function = ['public', 'void', 'do_something', '']
 		for one_virtual in one_super[mysyn.m_dict['virtual']]:
 			if func_name == one_virtual[mysyn.func.name] and len(my_direct_parents) > 0:
+				# use direct parent as key
 				if not my_supers.has_key(my_direct_parents[0]):
 					my_supers[my_direct_parents[0]] = odict()
+
+				# the value is function's array
 				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
 					my_supers[my_direct_parents[0]][one_super['name']] = []
-				my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
+
+				copy_virtual = copy.deepcopy(one_virtual)
+				my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual + my_direct_parents)
+
 				return True
 
 		if find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
@@ -315,6 +321,7 @@ def render_namespace(input_file, code_style, output_dir):
 		parse_override_function(myclasses_array_dict)
 		flush_unused_and_makeup(myclasses_array_dict)
 		print json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+
 		render_array_to_file(myclasses_array_dict, code_style, output_dir)
 	except Exception, e:
 		print "Exception and exit now!", e.args
