@@ -5,14 +5,45 @@
 	{{- func.macro_loop_functions(name,'static',methods,'impl','printf') -}}
 {%- endblock -%}
 
-{%- block ops_func -%}
+{%- block vtable_impl -%}
 	{{- func.macro_loop_functions(name,'static',virtuals,'impl','printf') -}}
 {%- endblock -%}
 
-{%- block ops_func_set -%}
+{%- block vtable_set -%}
+static struct {{ name }}_ops {{ name }}_ops = {
+{{ func.macro_loop_functions(name,'',virtuals ,'assign','') -}}
+};
 {%- endblock -%}
 
-{%- block init -%}
+
+{%- block supers %}{% if supers -%}
+	{%- for parent_name,parent_vtables in supers.iteritems() -%}
+		{%- for vtable_class_name,vtable_functions in parent_vtables.iteritems() -%}
+			{{- func.macro_loop_functions(name,'static',vtable_functions ,'impl','printf') -}}
+{{ x }}
+static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
+{{ func.macro_loop_functions(name,'',vtable_functions ,'assign','') -}}
+};
+		{%- endfor -%}
+	{%- endfor -%}
+{%- endif -%}{% endblock -%}
+
+
+{%- block init %}
+
+void {{ name }}_init(struct {{ name }} *{{ name }})
+{
+{%- if supers -%}
+	{%- for parent_name,parent_vtables in supers.iteritems() %}
+	{{ parent_name }}_init(&{{ name }}.{{ parent_name }});
+	CLASS_OPS_INIT({{ name }}.{{ parent_name }}.ops, {{ parent_name }}_ops;
+	{% endfor -%}
+{%- endif -%}
+
+{%- if _have_vtable_new %}
+	{{ name }}->ops = &{{ name }}_ops;
+{%- endif %}
+}
 {%- endblock -%}
 
 {%- block routine -%}

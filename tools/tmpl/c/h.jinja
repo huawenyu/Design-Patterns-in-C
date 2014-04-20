@@ -2,16 +2,7 @@
 {% import '_macro.jinja' as func %}
 
 
-{% block vars %}
-	{{- func.macro_loop_functions(name,'',vars,'var','') -}}
-{% endblock %}
-
-
-{% block vtable_item %}
-	{{- func.macro_loop_functions(name,'',virtuals,'declare','') -}}
-{% endblock %}
-
-{% block vtable_helper_item %}
-	{{- func.macro_loop_functions(name,'static inline',virtuals,'impl','ops') -}}
-{% endblock %}
+{%- block vars %}{{- func.macro_loop_functions(name,'',vars,'var','') -}}{% endblock -%}
+{%- block vtable_item %}{{- func.macro_loop_functions(name,'',virtuals,'declare','') -}}{% endblock -%}
+{%- block vtable_helper_item %}{{- func.macro_loop_functions(name,'static inline',virtuals,'impl','ops') -}}{% endblock -%}
 

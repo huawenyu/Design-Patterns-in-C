@@ -120,6 +120,9 @@ def render_array_to_file(myclasses_array_dict, code_style, output_dir):
 
 def flush_unused_and_makeup(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
+		# make dummy for jinja
+		class_detail['x'] = ''
+
 		if class_detail.has_key(mysyn.sub_classes):
 			class_detail.pop(mysyn.sub_classes, None)
 		if class_detail.has_key(mysyn.m_dict['override']):
@@ -167,8 +170,9 @@ def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, fin
 				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
 					my_supers[my_direct_parents[0]][one_super['name']] = []
 
-				copy_virtual = copy.deepcopy(one_virtual)
-				my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual + my_direct_parents)
+				my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
+				#copy_virtual = copy.deepcopy(one_virtual)
+				#my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual + my_direct_parents)
 
 				return True
 
@@ -336,7 +340,7 @@ if __name__ == '__main__':
 	# arguments parser
 	parser = argparse.ArgumentParser(description='Code Generater for GoF')
 	parser.add_argument('--file', metavar='input file', help='Input Design Pattern File', required=True)
-	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='autogen_code')
+	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='code')
 	parser.add_argument('--code', metavar='code type', help='Language Choose', choices=['c','cplus','java','csharp'], required=False, default='c')
 	args = vars(parser.parse_args())
 

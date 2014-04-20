@@ -1,9 +1,9 @@
-{% extends '__header.jinja' %}
+{%- extends '__header.jinja' -%}
 
 
-{% block forward_declare %}{% if _have_vtable_new -%}
-struct {{ name }}_ops;
-{% endif %}{% endblock -%}
+{%- block forward_declare %}{% if _have_vtable_new -%}
+struct {{ name }}_ops;{{ NEWLINE }}
+{%- endif %}{% endblock -%}
 
 
 {% block class_definition %}
@@ -15,11 +15,11 @@ struct {{ name }} {
 {% endblock %}
 
 
-{% block vtable_declare %}{% if _have_vtable_new -%}
+{% block vtable_declare %}{% if _have_vtable_new %}
 struct {{ name }}_ops {
-	{% block vtable_item %}{% endblock %}
+	{%- block vtable_item %}{% endblock -%}
 
-	{% if _have_super_ref %}struct {{ name }}_ops *super;{% endif %}
+	{%- if _have_super_ref %}struct {{ name }}_ops *super;{% endif %}
 };
 {%- endif %}{% endblock %}
 

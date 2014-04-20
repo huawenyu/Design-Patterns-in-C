@@ -30,6 +30,6 @@ Release
 tools/const.pyc
 tools/odict.pyc
 tools/tmpl/autogen_.jinja
-tools/autogen_code
+tools/code
 *.log
 log*

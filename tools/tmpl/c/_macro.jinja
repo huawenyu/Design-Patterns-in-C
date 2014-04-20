@@ -20,15 +20,13 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 {################################}
 {%- macro macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args) %}
-
-{{ qualifier }}
 {% if func_args -%}
-{{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }}, {{ func_args }})
+{{ qualifier }} {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }}, {{ func_args }})
 {
 	{{ caller() }}
 }
 {% else -%}
-{{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }})
+{{ qualifier }} {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }})
 {
 	{{ caller() }}
 }
@@ -37,13 +35,19 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {################################}
-{%- macro macro_function_declare(name,qualifier,func_scope,rtn_type,func,func_args) %}
-{% if func_args -%}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ func_args }});
-{% else -%}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
-{% endif -%}
-{%- endmacro %}
+{%- macro macro_function_declare(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{%- if func_args %}
+{{ x }}	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ func_args }});
+{%- else %}
+{{ x }}	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
+{%- endif -%}
+{%- endmacro -%}
+
+
+{################################}
+{%- macro macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{{ x }}	.{{ func }} = {{ name }}_{{ func }},
+{% endmacro -%}
 
 
 {################################}
@@ -63,6 +67,8 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 			{{- macro_variable(name,qualifier,func_scope,rtn_type,func,func_args) -}}
 		{%- elif mode == "declare" -%}
 			{{- macro_function_declare(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+		{%- elif mode == "assign" -%}
+			{{- macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args) -}}
 		{%- elif mode == "impl" -%}
 			{%- call macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args) -%}
 				{%- if impl_as == "ops" -%}

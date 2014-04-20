@@ -5,10 +5,11 @@
 {% block method %}{% endblock -%}
 
 {% if _have_vtable_new -%}
-	{%- block ops_func %}{% endblock -%}
-
-	{%- block ops_func_set %}{% endblock -%}
+{%- block vtable_impl %}{% endblock -%}
+{%- block vtable_set %}{% endblock -%}
 {% endif -%}
+
+{% block supers %}{% endblock -%}
 
 {% block init %}{% endblock -%}
 
