@@ -1,48 +1,48 @@
-## extends '__header.jinja'
+{%- extends '__header.jinja' -%}
 
 
-## block forward_declare
-## if _have_vtable_new
-struct {{ name }}_ops;{{ NEWLINE }}
-## endif
-## endblock
+{%- block forward_declare -%}
+{%- if _have_vtable_new -%}
+struct {{ name }}_ops;
+{%- endif -%}
+{%- endblock -%}
 
 
-## block class_definition
+{%- block class_definition -%}
 struct {{ name }} {
-	## if _have_vtable_new
+	{%- if _have_vtable_new %}
 	struct {{ name }}_ops *ops;
-	## endif
+	{%- endif -%}
 
-	## block vars
-	## endblock
+	{%- block vars -%}
+	{%- endblock %}
 };
-## endblock
+{%- endblock -%}
 
 
-## block vtable_declare
-## if _have_vtable_new
+{%- block vtable_declare -%}
+{%- if _have_vtable_new -%}
 struct {{ name }}_ops {
-	## block vtable_item
-	## endblock
+	{%- block vtable_item -%}
+	{%- endblock -%}
 
-	## if _have_super_ref
+	{%- if _have_super_ref -%}
 	struct {{ name }}_ops *super;
-	## endif
+	{%- endif %}
 };
-## endif
-## endblock
+{%- endif -%}
+{%- endblock -%}
 
 
-## block class_init
+{%- block class_init -%}
 void {{ name }}_init(struct {{ name }} *);
-## endblock
+{%- endblock -%}
 
 
-## block vtable_helper
-## if _have_vtable_new
-	## block vtable_helper_item
-	## endblock
-## endif
-## endblock
+{%- block vtable_helper -%}
+{%- if _have_vtable_new -%}
+	{%- block vtable_helper_item -%}
+	{%- endblock -%}
+{%- endif -%}
+{%- endblock -%}
 

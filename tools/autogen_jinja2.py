@@ -169,12 +169,11 @@ def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, fin
 
 				# the value is function's array
 				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
-					my_supers[my_direct_parents[0]][one_super['name']] = []
+					my_supers[my_direct_parents[0]][one_super['name']] = odict()
 
-				#my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
-				copy_virtual = copy.deepcopy(one_virtual)
-				copy_virtual[mysyn.func.scope] = my_direct_parents.join('.')
-				my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual)
+				my_supers[my_direct_parents[0]][one_super['name']]['detail'] = '.'.join(my_direct_parents)
+				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']] = []
+				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']].append(one_virtual)
 
 				return True
 

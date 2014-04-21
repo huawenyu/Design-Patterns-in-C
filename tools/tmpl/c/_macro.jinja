@@ -1,101 +1,101 @@
 {# function generate temple macro list
-ref:	{% import '_macro.jinja' as func
+ref:	{%- import '_macro.jinja' as func -%}
 use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 #}
 
-{################################}
-## macro macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,func_args)
-## if func_args
-{{ name }}->ops->{{ func }}({{ name }}, {{ func_args }});
-## else
-{{ name }}->ops->{{ func }}({{ name }});
-## endif
-## endmacro
+{##################################}
+{%- macro macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{%- if func_args %}
+	{{ name }}->ops->{{ func }}({{ name }}, {{ func_args }});
+{%- else %}
+	{{ name }}->ops->{{ func }}({{ name }});
+{%- endif -%}
+{%- endmacro -%}
 
 
-{################################}
-## macro macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,func_args)
+{##################################}
+{%- macro macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,func_args) -%}
 printf("{{ qualifier }} {{ rtn_type }} {{ name }}::{{ func }}()\n");
-## endmacro
+{% endmacro -%}
 
 
-{################################}
-## macro macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args)
-## if qualifier
+{##################################}
+{%- macro macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args) %}
+{% if qualifier %}
 {{ qualifier }}
-## endif
-## if func_args
+{%- endif -%}
+{% if func_args %}
 {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }}, {{ func_args }})
 {
-	{{ caller() -}}
+	{{ caller() }}
 }
-## else
+{% else %}
 {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *{{ name }})
 {
-	{{ caller() -}}
+	{{ caller() }}
 }
-## endif
-## endmacro
+{%- endif -%}
+{%- endmacro -%}
 
 
-{################################}
-## macro macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,func_args)
-## if func_args
+{##################################}
+{%- macro macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{%- if func_args %}
 	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ func_args }});
-## else
+{%- else %}
 	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
-## endif
-## endmacro
+{%- endif -%}
+{%- endmacro -%}
 
 
-{################################}
-## macro macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,func_args)
-## if func_args
+{##################################}
+{%- macro macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{%- if func_args %}
 {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *, {{ func_args }});
-## else
+{%- else %}
 {{ rtn_type }} {{ name }}_{{ func }}(struct {{ name }} *);
-## endif
-## endmacro
+{%- endif -%}
+{%- endmacro -%}
 
 
-{################################}
-## macro macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args)
-	.{{ func }} = {{ name }}_{{ func }},
-## endmacro
+{##################################}
+{%- macro macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+{{ x }}	.{{ func }} = {{ name }}_{{ func }},
+{% endmacro -%}
 
 
-{################################}
-## macro macro_variable(name,qualifier,func_scope,rtn_type,func,func_args)
+{##################################}
+{%- macro macro_variable(name,qualifier,func_scope,rtn_type,func,func_args) %}
 	{{ rtn_type }} {{ func }}{{ func_args }};
-## endmacro
+{%- endmacro -%}
 
 
-{#################################
+{##################################}
 @qualifier static inline
 @functions forearch functions list
 @mode implement as [ops|printf]
 #}
-## macro macro_loop_functions(name,qualifier,functions,mode,impl_as)
-	## for func_scope,rtn_type,func,func_args in functions
-		## if mode == "var"
-			{{- macro_variable(name,qualifier,func_scope,rtn_type,func,func_args) }}
-		## elif mode == "declare"
-			## if impl_as == "ops"
-				{{- macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) }}
-			## elif impl_as == "func"
-				{{- macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,func_args) }}
-			## endif
-		## elif mode == "assign"
-			{{- macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args) }}
-		## elif mode == "impl"
-			## call macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args)
-				## if impl_as == "ops"
-					{{- macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) }}
-				## elif impl_as == "printf"
-					{{- macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,func_args) }}
-				## endif
-			## endcall
-		## endif
-	## endfor
-## endmacro
+{%- macro macro_loop_functions(name,qualifier,functions,mode,impl_as) -%}
+	{%- for func_scope,rtn_type,func,func_args in functions -%}
+		{%- if mode == "var" -%}
+			{{- macro_variable(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+		{%- elif mode == "declare" -%}
+			{%- if impl_as == "ops" -%}
+				{{- macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+			{%- elif impl_as == "func" -%}
+				{{- macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+			{%- endif -%}
+		{%- elif mode == "assign" -%}
+			{{- macro_function_assign(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+		{%- elif mode == "impl" -%}
+			{%- call macro_function_impl(name,qualifier,func_scope,rtn_type,func,func_args) -%}
+				{%- if impl_as == "ops" -%}
+					{{- macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+				{%- elif impl_as == "printf" -%}
+					{{- macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,func_args) -}}
+				{%- endif -%}
+			{%- endcall -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endmacro -%}
 
