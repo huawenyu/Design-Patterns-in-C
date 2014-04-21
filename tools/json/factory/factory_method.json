@@ -2,7 +2,7 @@
 "namespace":"factory_method",
 "path":"factory_method",
 "classes": {
-	"product":{"file":"", "supers":[],
+	"product":{
 		"members": [
 			["virtual",  "void", "do_it", "int a, int b"],
 			["variable", "char", "name", "[32]"]

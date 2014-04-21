@@ -121,9 +121,6 @@ def render_array_to_file(myclasses_array_dict, code_style, output_dir):
 
 def flush_unused_and_makeup(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
-		# make dummy for jinja
-		class_detail['x'] = ''
-
 		if class_detail.has_key(mysyn.sub_classes):
 			class_detail.pop(mysyn.sub_classes, None)
 		if class_detail.has_key(mysyn.m_dict['override']):

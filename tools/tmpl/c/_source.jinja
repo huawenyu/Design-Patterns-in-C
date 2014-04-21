@@ -1,6 +1,15 @@
 
+#include <stdio.h>
+#include <string.h>
 #include <myobj.h>
 #include "{{ name }}.h"
+{# class dependency #}
+{%- if supers -%}
+{%- for parent_name,parent_vtables in supers.iteritems() -%}
+#include "{{ parent_name }}.h"
+{%- endfor -%}
+{%- endif -%}
+
 
 {%- block method -%}
 {%- endblock -%}
