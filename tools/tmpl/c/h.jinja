@@ -1,18 +1,66 @@
 {%- extends '_header.jinja' -%}
 {%- import '_macro.jinja' as func -%}
 
-{%- block vars -%}
-	{{- func.macro_loop_functions(name,'',vars,'var','') -}}
+{%- block includes -%}
+{# class dependency #}
+{%- if supers -%}
+	{%- for parent_name,parent_vtables in supers.iteritems() -%}
+#include "{{ parent_name }}.h"
+	{%- endfor -%}
+{%- endif -%}
 {%- endblock -%}
 
-{%- block vtable_item -%}
-	{{- func.macro_loop_functions(name,'',virtuals,'declare','ops') -}}
+{%- block forward_declare -%}
+{%- if _have_vtable_new -%}
+struct {{ name }}_ops;
+{%- endif -%}
 {%- endblock -%}
+
+
+{%- block class_definition -%}
+struct {{ name }} {
+	{%- if supers -%}
+		{%- for parent_name,parent_vtables in supers.iteritems() %}
+	struct {{ parent_name }} {{ parent_name }};
+		{%- endfor -%}
+	{%- endif -%}
+
+	{%- if _have_vtable_new %}
+	struct {{ name }}_ops *ops;
+	{%- endif -%}
+
+	{{- func.macro_loop_functions(name,'',vars,'var','') }}
+};
+{%- endblock -%}
+
+
+{%- block vtable_declare -%}
+{%- if _have_vtable_new -%}
+struct {{ name }}_ops {
+	{%- block parents %}{% endblock -%}
+	{{- func.macro_loop_functions(name,'',virtuals,'declare','ops') -}}
+
+	{%- if _have_super_ref %}
+	struct {{ name }}_ops *super;
+	{%- endif %}
+};
+{%- endif -%}
+{%- endblock -%}
+
+
+{%- block class_init -%}
+void {{ name }}_init(struct {{ name }} *);
+{%- endblock -%}
+
 
 {%- block routines -%}
 	{{- func.macro_loop_functions(name,'',routines,'declare','func') -}}
 {%- endblock -%}
 
-{%- block vtable_helper_item -%}
+
+{%- block vtable_helper -%}
+{%- if _have_vtable_new -%}
 	{{- func.macro_loop_functions(name,'static inline',virtuals,'impl','ops') -}}
+{%- endif -%}
 {%- endblock -%}
+

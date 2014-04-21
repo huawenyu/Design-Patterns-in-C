@@ -20,10 +20,10 @@ static struct {{ name }}_ops {{ name }}_ops = {
 {%- if supers -%}
 {%- for parent_name,parent_vtables in supers.iteritems() -%}
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() -%}
-		{{- func.macro_loop_functions(name,'static',vtable_class_detail['virtuals'] ,'impl','printf') }}
+		{{- func.macro_loop_functions(vtable_class_name,'static',vtable_class_detail['virtuals'] ,'impl','printf') }}
 {# parent ops #}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
-	{{ func.macro_loop_functions(name,'',vtable_class_detail['virtuals'] ,'assign','') }}
+	{{ func.macro_loop_functions(vtable_class_name,'',vtable_class_detail['virtuals'] ,'assign','') }}
 };
 {# end parent ops #}
 	{%- endfor -%}
@@ -39,9 +39,9 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 	memset({{ name }}, sizeof(*{{ name }}), 0);
 {%- if supers -%}
 {%- for parent_name,parent_vtables in supers.iteritems() %}
-	{{ parent_name }}_init(&{{ name }}.{{ parent_name }});
+	{{ parent_name }}_init(&{{ name }}->{{ parent_name }});
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() %}
-	CLASS_OPS_INIT({{ name }}.{{ vtable_class_detail['detail'] }}.ops, {{ vtable_class_name }}_ops);
+	CLASS_OPS_INIT({{ name }}->{{ vtable_class_detail['detail'] }}.ops, {{ vtable_class_name }}_ops);
 	{%- endfor -%}
 {%- endfor -%}
 {% endif -%}
