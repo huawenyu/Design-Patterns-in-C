@@ -1,51 +1,53 @@
-{% extends '_source.jinja' %}
-{% import '_macro.jinja' as func %}
+## extends '_source.jinja'
+## import '_macro.jinja' as func
 
-{%- block method -%}
-	{{- func.macro_loop_functions(name,'static',methods,'impl','printf') -}}
-{%- endblock -%}
+## block method
+{{ func.macro_loop_functions(name,'static',methods,'impl','printf') }}
+## endblock
 
-{%- block vtable_impl -%}
-	{{- func.macro_loop_functions(name,'static',virtuals,'impl','printf') -}}
-{%- endblock -%}
+## block vtable_impl
+{{ func.macro_loop_functions(name,'static',virtuals,'impl','printf') }}
+## endblock
 
-{%- block vtable_set -%}
+## block vtable_set
 static struct {{ name }}_ops {{ name }}_ops = {
-{{ func.macro_loop_functions(name,'',virtuals ,'assign','') -}}
+{{ func.macro_loop_functions(name,'',virtuals ,'assign','') }}
 };
-{%- endblock -%}
+## endblock
 
 
-{%- block supers %}{% if supers -%}
-	{%- for parent_name,parent_vtables in supers.iteritems() -%}
-		{%- for vtable_class_name,vtable_functions in parent_vtables.iteritems() -%}
-			{{- func.macro_loop_functions(name,'static',vtable_functions ,'impl','printf') -}}
-{{ x }}
+## block supers
+## if supers
+## for parent_name,parent_vtables in supers.iteritems()
+	## for vtable_class_name,vtable_functions in parent_vtables.iteritems()
+		{{- func.macro_loop_functions(name,'static',vtable_functions ,'impl','printf') }}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
-{{ func.macro_loop_functions(name,'',vtable_functions ,'assign','') -}}
+{{ func.macro_loop_functions(name,'',vtable_functions ,'assign','') }}
 };
-		{%- endfor -%}
-	{%- endfor -%}
-{%- endif -%}{% endblock -%}
+	## endfor
+## endfor
+## endif
+## endblock
 
 
-{%- block init %}
+## block init
 
 void {{ name }}_init(struct {{ name }} *{{ name }})
 {
-{%- if supers -%}
-	{%- for parent_name,parent_vtables in supers.iteritems() %}
+## if supers
+	## for parent_name,parent_vtables in supers.iteritems()
 	{{ parent_name }}_init(&{{ name }}.{{ parent_name }});
+	{# should change from parent_name to vtable_class_name #}
 	CLASS_OPS_INIT({{ name }}.{{ parent_name }}.ops, {{ parent_name }}_ops;
-	{% endfor -%}
-{%- endif -%}
+	## endfor
+## endif
 
-{%- if _have_vtable_new %}
+## if _have_vtable_new
 	{{ name }}->ops = &{{ name }}_ops;
-{%- endif %}
+## endif
 }
-{%- endblock -%}
+## endblock
 
-{%- block routine -%}
-	{{- func.macro_loop_functions(name,'static',routines,'impl','printf') -}}
-{%- endblock -%}
+## block routine
+	{{- func.macro_loop_functions(name,'',routines,'impl','printf') }}
+## endblock

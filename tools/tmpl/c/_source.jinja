@@ -2,15 +2,22 @@
 #include <myobj.h>
 #include "{{ name }}.h"
 
-{% block method %}{% endblock -%}
+## block method
+## endblock
 
-{% if _have_vtable_new -%}
-{%- block vtable_impl %}{% endblock -%}
-{%- block vtable_set %}{% endblock -%}
-{% endif -%}
+## if _have_vtable_new
+	## block vtable_impl
+	## endblock
 
-{% block supers %}{% endblock -%}
+	## block vtable_set
+	## endblock
+## endif
 
-{% block init %}{% endblock -%}
+## block supers
+## endblock
 
-{% block routine %}{% endblock -%}
+## block init
+## endblock
+
+## block routine
+## endblock

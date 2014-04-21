@@ -103,6 +103,7 @@ def render_class_to_file(templateVars, code_style, output_dir):
 	# Setup jinja2 render template
 	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
 	templateEnv = jinja2.Environment( loader=templateLoader )
+	templateEnv.line_statement_prefix = '##'
 	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,output_dir))
 
 
@@ -170,9 +171,10 @@ def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, fin
 				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
 					my_supers[my_direct_parents[0]][one_super['name']] = []
 
-				my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
-				#copy_virtual = copy.deepcopy(one_virtual)
-				#my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual + my_direct_parents)
+				#my_supers[my_direct_parents[0]][one_super['name']].append(one_virtual)
+				copy_virtual = copy.deepcopy(one_virtual)
+				copy_virtual[mysyn.func.scope] = my_direct_parents.join('.')
+				my_supers[my_direct_parents[0]][one_super['name']].append(copy_virtual)
 
 				return True
 
