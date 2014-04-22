@@ -37,6 +37,8 @@
 #define __CLASS_TOSTRING(x) __CLASS_STRINGIFY(x)
 #define __CLASS_WHERE __FILE__ ":" __CLASS_TOSTRING(__LINE__)
 
+#define __CLASS_VIRTUAL_VALID_STR(the_number) "vtable's virtual function index["the_number"] must be defined in whether super or derive class, <or> maybe vtable ops have super but not-init with super"
+#define __CLASS_VIRTUAL_CASE(number) case number: assert(super_class_ops[sz] && __CLASS_VIRTUAL_VALID_STR(__CLASS_STRINGIFY(number))); break;
 /* copy func-ptr array when src-ops[*] (!0) */
 #define __CLASS_COPY_OPS(dst,src,offset) \
 { \
@@ -53,8 +55,28 @@
 	while ((--sz) >= 0) { \
 		if (derive_class_ops[sz]) \
 			super_class_ops[sz] = derive_class_ops[sz]; \
-		else \
-			assert(super_class_ops[sz] && "vtable's virtual function must be defined in whether super or derive class, <or> maybe vtable ops have super but not-init with super"); \
+		else {\
+			switch (sz) { \
+			__CLASS_VIRTUAL_CASE(0)\
+			__CLASS_VIRTUAL_CASE(1)\
+			__CLASS_VIRTUAL_CASE(2)\
+			__CLASS_VIRTUAL_CASE(3)\
+			__CLASS_VIRTUAL_CASE(4)\
+			__CLASS_VIRTUAL_CASE(5)\
+			__CLASS_VIRTUAL_CASE(6)\
+			__CLASS_VIRTUAL_CASE(7)\
+			__CLASS_VIRTUAL_CASE(8)\
+			__CLASS_VIRTUAL_CASE(9)\
+			__CLASS_VIRTUAL_CASE(10)\
+			__CLASS_VIRTUAL_CASE(11)\
+			__CLASS_VIRTUAL_CASE(12)\
+			__CLASS_VIRTUAL_CASE(13)\
+			__CLASS_VIRTUAL_CASE(14)\
+			__CLASS_VIRTUAL_CASE(15)\
+			default: \
+				assert(super_class_ops[sz] && __CLASS_VIRTUAL_VALID_STR(__CLASS_STRINGIFY(more))); break; \
+			} \
+		} \
 	} \
 }
 
