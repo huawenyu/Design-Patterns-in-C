@@ -2,16 +2,16 @@
 {%- import '_macro.jinja' as func -%}
 
 {%- block method -%}
-{{ func.macro_loop_functions(name,'static',methods,'impl','printf') }}
+{{ func.macro_loop_functions(name,'static',methods,'%s_%s','impl','printf') }}
 {%- endblock -%}
 
 {%- block vtable_impl -%}
-{{ func.macro_loop_functions(name,'static',virtuals,'impl','printf') }}
+{{ func.macro_loop_functions(name,'static',virtuals,'%s_ops_%s','impl','printf') }}
 {%- endblock -%}
 
 {%- block vtable_set %}
 static struct {{ name }}_ops {{ name }}_ops = {
-{{ func.macro_loop_functions(name,'',virtuals ,'assign','') }}
+{{ func.macro_loop_functions(name,'',virtuals ,'%s_ops_%s','assign','') }}
 };
 {%- endblock -%}
 
@@ -20,10 +20,10 @@ static struct {{ name }}_ops {{ name }}_ops = {
 {%- if supers -%}
 {%- for parent_name,parent_vtables in supers.iteritems() -%}
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() -%}
-		{{- func.macro_loop_functions(vtable_class_name,'static',vtable_class_detail['virtuals'] ,'impl','printf') }}
+		{{- func.macro_loop_functions(vtable_class_name,'static',vtable_class_detail['virtuals'],'%s_ops_%s','impl','printf') }}
 {# parent ops #}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
-	{{ func.macro_loop_functions(vtable_class_name,'',vtable_class_detail['virtuals'] ,'assign','') }}
+	{{ func.macro_loop_functions(vtable_class_name,'',vtable_class_detail['virtuals'],'%s_ops_%s','assign','') }}
 };
 {# end parent ops #}
 	{%- endfor -%}
@@ -54,5 +54,5 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 {%- endblock -%}
 
 {%- block routine -%}
-	{{- func.macro_loop_functions(name,'',routines,'impl','printf') }}
+	{{- func.macro_loop_functions(name,'',routines,'%s_%s','impl','printf') }}
 {%- endblock -%}
