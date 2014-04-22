@@ -33,3 +33,5 @@ tools/tmpl/autogen_.jinja
 tools/code
 *.log
 log*
+*TAGS
+*cscope.files
