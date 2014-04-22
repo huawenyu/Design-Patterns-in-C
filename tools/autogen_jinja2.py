@@ -66,7 +66,7 @@ mysyn.m_dict = {\
 
 # cat-category
 mysyn.func_mode = enum('_None', '_cat', '_cat_name', 'cat_type_name', 'cat_type_name_args')
-mysyn.func =      enum('scope', 'type', 'name', 'args')
+mysyn.func =      enum('scope', 'type', 'name', 'params', 'args')
 
 
 def render_one_to_file(x, dir_name, files):
@@ -223,7 +223,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		if one_inputclass.has_key(mysyn.members):
 			for member_input in one_inputclass[mysyn.members]:
 				member_category = ''
-				member_detail = ['public', '', '', '']
+				member_detail = ['public', '', '', '', '']
 
 				member_mode = len(member_input)
 				if member_mode == mysyn.func_mode.cat_type_name:
@@ -232,19 +232,33 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					member_detail[mysyn.func.name] = member_input[2]
 				elif member_mode == mysyn.func_mode.cat_type_name_args:
 					member_category = member_input[0]
-					member_detail[mysyn.func.type] = member_input[1]
-					member_detail[mysyn.func.name] = member_input[2]
-					member_detail[mysyn.func.args] = member_input[3]
+					member_detail[mysyn.func.type]  = member_input[1]
+					member_detail[mysyn.func.name]  = member_input[2]
+					member_detail[mysyn.func.params]= member_input[3]
+
+					if member_category != 'variable':
+						params_str = member_input[3]
+						params = params_str.split(',')
+						args = []
+						for one_param in params:
+							parts = one_param.split(' ')
+							if len(parts) < 2:
+								raise Exception('class {0} member_input {1} params {2} error'.\
+								  format(myclass_name, member_input, params_str))
+							args.append(parts[-1])
+							args.append(', ')
+						args.pop() # remove the last comma
+						member_detail[mysyn.func.args] = ''.join(args)
 				else:
-					raise Exception('member_input size is {0} greater than 4: {1}'.\
-					format(member_input, member_mode))
+					raise Exception('class {0} member_input size is {1} greater than 4: {2}'.\
+					  format(myclass_name, member_input, member_mode))
 
 				#@TODO check member_name conflict
 				if one_myclass.has_key(mysyn.m_dict[member_category]):
 					one_myclass[mysyn.m_dict[member_category]].append(member_detail)
 				else:
-					raise Exception('members of category *{0}* not exist'.\
-						format(mysyn.m_dict[member_category]))
+					raise Exception('class {0} members of category *{1}* not exist'.\
+					  format(myclass_name, mysyn.m_dict[member_category]))
 
 		''' **Just needed by C code.**
 		1. "enable_super" come from config

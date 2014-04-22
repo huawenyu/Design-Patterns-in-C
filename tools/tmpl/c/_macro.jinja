@@ -5,9 +5,9 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 {% include '_common.jinja' %}
 
 {##################################}
-{%- macro macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -%}
-{%- if func_args %}
-	{{ name }}->ops->{{ func }}({{ name }}, {{ func_args }});
+{%- macro macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -%}
+{%- if args %}
+	{{ name }}->ops->{{ func }}({{ name }}, {{ args }});
 {%- else %}
 	{{ name }}->ops->{{ func }}({{ name }});
 {%- endif -%}
@@ -23,7 +23,7 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {##################################}
-{%- macro macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,format_str,func_args) %}
+{%- macro macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,format_str,params,args) %}
 	printf("{{ qualifier }} {{ rtn_type }} {{ name }}::{{ func }}()\n");
 	{%- if rtn_type[-1] == '*' %}
 	return 0;
@@ -36,12 +36,12 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {##################################}
-{%- macro macro_function_impl(name,qualifier,func_scope,rtn_type,func,format_str,func_args) %}
+{%- macro macro_function_impl(name,qualifier,func_scope,rtn_type,func,format_str,params,args) %}
 {% if qualifier %}
 {{ qualifier }}
 {%- endif -%}
-{% if func_args %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *{{ name }}, {{ func_args }})
+{% if params %}
+{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *{{ name }}, {{ params }})
 {
 	{{ caller() }}
 }
@@ -55,9 +55,9 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {##################################}
-{%- macro macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -%}
-{%- if func_args %}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ func_args }});
+{%- macro macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -%}
+{%- if params %}
+	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ params }});
 {%- else %}
 	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
 {%- endif -%}
@@ -65,9 +65,9 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {##################################}
-{%- macro macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -%}
-{%- if func_args %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *, {{ func_args }});
+{%- macro macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -%}
+{%- if params %}
+{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *, {{ params }});
 {%- else %}
 {{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *);
 {%- endif -%}
@@ -75,14 +75,14 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 
 
 {##################################}
-{%- macro macro_function_assign(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -%}
+{%- macro macro_function_assign(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -%}
 {{ x }}	.{{ func }} = {{ format_str|format(name,func) }},
 {% endmacro -%}
 
 
 {##################################}
-{%- macro macro_variable(name,qualifier,func_scope,rtn_type,func,format_str,func_args) %}
-	{{ rtn_type }} {{ func }}{{ func_args }};
+{%- macro macro_variable(name,qualifier,func_scope,rtn_type,func,format_str,params,args) %}
+	{{ rtn_type }} {{ func }}{{ params }};
 {%- endmacro -%}
 
 
@@ -92,23 +92,23 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 @mode implement as [ops|printf]
 #}
 {%- macro macro_loop_functions(name,qualifier,functions,format_str,mode,impl_as) -%}
-	{%- for func_scope,rtn_type,func,func_args in functions -%}
+	{%- for func_scope,rtn_type,func,params,args in functions -%}
 		{%- if mode == "var" -%}
-			{{- macro_variable(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+			{{- macro_variable(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 		{%- elif mode == "declare" -%}
 			{%- if impl_as == "ops" -%}
-				{{- macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+				{{- macro_function_declare_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 			{%- elif impl_as == "func" -%}
-				{{- macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+				{{- macro_function_declare_as_func(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 			{%- endif -%}
 		{%- elif mode == "assign" -%}
-			{{- macro_function_assign(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+			{{- macro_function_assign(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 		{%- elif mode == "impl" -%}
-			{%- call macro_function_impl(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -%}
+			{%- call macro_function_impl(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -%}
 				{%- if impl_as == "ops" -%}
-					{{- macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+					{{- macro_function_impl_as_ops(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 				{%- elif impl_as == "printf" -%}
-					{{- macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,format_str,func_args) -}}
+					{{- macro_function_impl_as_printf(name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
 				{%- endif -%}
 			{%- endcall -%}
 		{%- endif -%}

@@ -48,13 +48,13 @@
 	_Static_assert(sizeof(dst) == sizeof(src), _STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #src " copy ops should be same type"); \
 	type_dst = type_src; \
 	type_src = type_dst; \
-	fptr *psrc = (fptr*)(&(src)); \
-	fptr *pdst = (fptr*)(&(dst)); \
+	fptr *derive_class_ops = (fptr*)(&(src)); \
+	fptr *super_class_ops = (fptr*)(&(dst)); \
 	while ((--sz) >= 0) { \
-		if (psrc[sz]) \
-			pdst[sz] = psrc[sz]; \
+		if (derive_class_ops[sz]) \
+			super_class_ops[sz] = derive_class_ops[sz]; \
 		else \
-			assert(pdst[sz]); \
+			assert(super_class_ops[sz] && "vtable's virtual function must be defined in whether super or derive class, <or> maybe vtable ops have super but not-init with super"); \
 	} \
 }
 
@@ -69,7 +69,7 @@
 			ops = l_super_ops; \
 		} \
 	} \
-	assert(ptr);
+	assert(ptr && "init should call super class's init first: which will sure it's valid ops pointer-to vtable");
 
 #define __CLASS_OPS_INIT(ptr, ops, offset) \
 	__CLASS_OPS_INIT_COMN(ptr, ops, offset) \
@@ -107,7 +107,7 @@
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
 			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as super member, should be the last element"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
-	assert(l_super != &ops); \
+	assert(l_super != &ops && "dead-loop: super pointer to itself"); \
 	ptr = &ops;
 
 /**Initial with static-member
@@ -134,7 +134,7 @@
 			+ sizeof((ops).m_super) + sizeof((ops).m_static), \
 			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), m_super), m_super, l_super) \
-	assert(l_super != &ops); \
+	assert(l_super != &ops && "dead-loop: super pointer to itself"); \
 	ptr = &ops;
 
 /**Call super method
@@ -151,7 +151,7 @@
  */
 #define CLASS_SUPER_OPS(ptr, function, ops, super, ...) do{\
 	typeof((ptr)->ops) l_ops = (ptr)->ops; \
-	assert((ptr)->ops->super); \
+	assert((ptr)->ops->super && "invalid super pointer: check whether init with super macro"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
 		(ptr)->ops->function(ptr, ##__VA_ARGS__); \

@@ -7,7 +7,7 @@
 			["virtual",  "void", "do_it", "int a, int b"],
 			["variable", "char", "name", "[32]"]
 		],
-		"enable_super":"True",
+		"enable_super":"False",
 
 		"inheritance": {
 			"concrete_product_1":{
