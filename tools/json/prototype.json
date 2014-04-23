@@ -1,0 +1,33 @@
+# http://www.apwebco.com/gofpatterns/creational/Prototype.html
+{
+"classes": {
+	"product":{
+		"members": [
+			["virtual", "clone", "struct product *"]
+			["virtual", "get_description", "void"]
+			["virtual", "get_sku", "void"]
+		],
+
+		"inheritance": {
+			"book":{
+				"members": [ ["override",  "<ALL>"],
+					["routine", "get_pages_num", "int"]
+ 				]
+			},
+			"disk":{
+				"members": [ ["override",  "<ALL>"],
+					["routine", "get_duration", "int"]
+ 				]
+			}
+		}
+	},
+
+	"product_cache":{
+		"includes":["book", "disk"],
+		"members": [
+			["routine", "make_animal", "void", "struct animal_builder *builder"],
+			["var", "name", "char", "[32]"]
+		]
+	}
+}
+}
