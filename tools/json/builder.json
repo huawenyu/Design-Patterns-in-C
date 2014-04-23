@@ -1,0 +1,62 @@
+{
+"namespace":"builder",
+"path":"builder",
+"classes": {
+	"animal":{
+		"members": [
+			["virtual", "void", "eat"]
+		],
+
+		"inheritance": {
+			"kitten":{
+				"members": [
+					["override", "", "eat"]
+				]
+			},
+			"monkey":{
+				"members": [
+					["override", "", "eat"]
+				]
+			}
+		}
+	},
+
+	"animal_builder":{
+		"members": [
+			["virtual",  "void", "build_header", ""],
+			["virtual",  "void", "build_body", ""],
+			["virtual",  "void", "build_leg", ""],
+			["virtual",  "void", "build_arm", ""],
+			["virtual",  "void", "build_tail", ""]
+		],
+
+		"inheritance": {
+			"animal_builder_monkey":{
+				"members": [
+					["override",  "", "build_header", ""],
+					["override",  "", "build_body", ""],
+					["override",  "", "build_leg", ""],
+					["override",  "", "build_arm", ""],
+					["override",  "", "build_tail", ""]
+				]
+			},
+			"animal_builder_kitten":{
+				"members": [
+					["override",  "", "build_header", ""],
+					["override",  "", "build_body", ""],
+					["override",  "", "build_leg", ""],
+					["override",  "", "build_arm", ""],
+					["override",  "", "build_tail", ""]
+				]
+			}
+		}
+	},
+
+	"kid":{
+		"members": [
+			["routine", "void", "make_animal", "struct animal_builder *builder"],
+			["variable", "char", "name", "[32]"]
+		]
+	}
+}
+}

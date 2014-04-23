@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <myobj.h>
+{% if supers %}#include <myobj.h>{% endif %}
 #include "{{ name }}.h"
 
 {%- block method -%}

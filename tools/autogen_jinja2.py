@@ -236,17 +236,29 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					member_detail[mysyn.func.name]  = member_input[2]
 					member_detail[mysyn.func.params]= member_input[3]
 
-					if member_category != 'variable':
+					if member_input[3] and member_category != 'variable':
 						params_str = member_input[3]
 						params = params_str.split(',')
 						args = []
 						for one_param in params:
-							parts = one_param.split(' ')
-							if len(parts) < 2:
+							find = False
+							for idx in range(len(one_param)-1, 0, -1):
+								one_char = one_param[idx]
+								if one_char >= 'a' and one_char <= 'z' \
+								   or one_char >= 'A' and one_char <= 'Z' \
+								   or one_char >= '0' and one_char <= '9' \
+								   or one_char == '_':
+									pass
+								else:
+									find = True
+									args.append(one_param[(idx+1):])
+									args.append(', ')
+									break
+
+							if not find:
 								raise Exception('class {0} member_input {1} params {2} error'.\
 								  format(myclass_name, member_input, params_str))
-							args.append(parts[-1])
-							args.append(', ')
+
 						args.pop() # remove the last comma
 						member_detail[mysyn.func.args] = ''.join(args)
 				else:
