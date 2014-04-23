@@ -12,7 +12,7 @@ TARGET_PROG := main
 DEBUG       := y #y
 INC_DIR     := #$(DIR1) $(DIR2) ...
 MACROS      := 
-CFLAGS      := -m32 -Wall -Werror -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wunused-value -Wno-unused-parameter\
+CFLAGS      := -m32 -Wall -Werror -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wunused-value -Wno-unused-parameter -Wformat \
   -Wfloat-equal -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -Wredundant-decls
 LDFLAGS     := -m32
 
