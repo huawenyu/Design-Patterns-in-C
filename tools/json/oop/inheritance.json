@@ -4,27 +4,27 @@
 "classes": {
 	"parent":{
 		"members": [
-			["virtual",  "void", "v_override_who", ""],
-			["virtual",  "void", "v_ancestor", ""],
-			["routine",  "void", "method_work", ""],
-			["variable", "char", "name", "[32]"]
+			["virtual",  "v_override_who", "void"],
+			["virtual",  "v_ancestor"    , "void"],
+			["routine",  "method_work"   , "void"],
+			["variable", "name"          , "char", "[32]"]
 		],
 
 		"inheritance": {
 			"child":{
 				"members": [
-					["virtual",  "void", "v_child_right", "const char *"],
-					["override", "", "v_override_who"]
+					["virtual",  "v_child_right", "void", "const char *"],
+					["override", "v_override_who"]
 				],
 				"inheritance": {
 					"grandgirl":{
 						"members": [
-							["override", "", "v_override_who"]
+							["override", "v_override_who"]
 						]
 					},
 					"grandson":{
 						"members": [
-							["override", "", "v_override_who"]
+							["override", "v_override_who"]
 						]
 					}
 				}

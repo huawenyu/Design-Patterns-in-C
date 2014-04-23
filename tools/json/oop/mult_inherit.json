@@ -2,25 +2,25 @@
 "classes": {
 	"employee":{
 		"members": [
-			["virtual",  "void", "wage", ""],
-			["virtual",  "void", "level", ""],
-			["variable",  "int", "wage", ""],
-			["variable",  "int", "level", ""]
+			["virtual",  "wage",  "void"],
+			["virtual",  "level", "void"],
+			["variable", "wage",  "int"],
+			["variable", "level", "int"]
 		]
 	},
 	"person":{
 		"members": [
-			["virtual",  "void", "name", ""],
-			["virtual",  "void", "age", ""],
-			["variable",  "char", "name", "[32]"],
-			["variable",  "int", "age", ""]
+			["virtual",  "name", "void", ""],
+			["virtual",  "age",  "void", ""],
+			["variable", "name", "char", "[32]"],
+			["variable", "age",  "int",  ""]
 		]
 	},
 	"teacher":{
 		"supers": ["person", "employee"],
 		"members": [
-			["override",  "", "name", ""],
-			["override",  "", "level", ""]
+			["override",  "name"],
+			["override",  "level"]
 		]
 	}
 }
