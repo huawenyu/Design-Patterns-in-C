@@ -208,7 +208,6 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', 'anonymouse')
 		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name'] = myclass_name
-		one_myclass['NAME'] = myclass_name.upper()
 		one_myclass['includes'] = get_value_else_default(one_inputclass, 'includes', [])
 
 		supers = odict()
