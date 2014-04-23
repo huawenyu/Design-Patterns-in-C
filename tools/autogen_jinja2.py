@@ -62,10 +62,11 @@ mysyn.m_dict = {\
 'method'  :'methods',\
 'virtual' :'virtuals',\
 'override':'overrides',\
+'var'     :'vars',\
 'variable':'vars'}
 
 # cat-category
-mysyn.func_mode = enum('_None', '_cat', '_cat_name', 'cat_type_name', 'cat_type_name_args')
+mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args')
 mysyn.func =      enum('scope', 'type', 'name', 'params', 'args')
 
 
@@ -146,10 +147,10 @@ def convert_to_class(myclasses_array_dict, class_name):
 
 
 # find function's protocol from super's vtable
-# @find_my_supers begin search from this class's supers
+# @find_the_supers begin search from this class's supers
 # @is_a_class come from override's type field, means the vtable should search first from is_a_class
-# @my_direct_parent must be contain in this_class's supers
-def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, find_the_supers, is_a_class, my_direct_parents):
+# @my_direct_parents must be contain in this_class's supers
+def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, find_the_supers, is_a_class, my_direct_parents):
 	one_class = convert_to_class(myclasses_array_dict, find_the_supers)
 	for super_name in one_class['supers'].keys():
 		my_direct_parents.append(super_name)
@@ -169,12 +170,13 @@ def find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, fin
 					my_supers[my_direct_parents[0]][one_super['name']] = odict()
 
 				my_supers[my_direct_parents[0]][one_super['name']]['detail'] = '.'.join(my_direct_parents)
-				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']] = []
+				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(mysyn.m_dict['virtual']):
+					my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']] = []
 				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']].append(one_virtual)
 
 				return True
 
-		if find_vtable_entry_by_function(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
+		if find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
 			return True
 		my_direct_parents.pop()
 	return False
@@ -184,7 +186,7 @@ def parse_override_function(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
 		#override = ['public', 'base_class', 'do_something', '']
 		for override in class_detail[mysyn.m_dict['override']]:
-			if not find_vtable_entry_by_function(class_detail, \
+			if not find_virtual_prototype_by_name(class_detail, \
 			  override[mysyn.func.name], myclasses_array_dict, \
 			  class_detail['name'], override[mysyn.func.type], []):
 				raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
@@ -207,6 +209,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name'] = myclass_name
 		one_myclass['NAME'] = myclass_name.upper()
+		one_myclass['includes'] = get_value_else_default(one_inputclass, 'includes', [])
 
 		supers = odict()
 		one_myclass['supers'] = supers
@@ -226,17 +229,20 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 				member_detail = ['public', '', '', '', '']
 
 				member_mode = len(member_input)
-				if member_mode == mysyn.func_mode.cat_type_name:
+				if member_mode == mysyn.func_mode.cat_name:
 					member_category = member_input[0]
-					member_detail[mysyn.func.type] = member_input[1]
-					member_detail[mysyn.func.name] = member_input[2]
-				elif member_mode == mysyn.func_mode.cat_type_name_args:
+					member_detail[mysyn.func.name] = member_input[1]
+				elif member_mode == mysyn.func_mode.cat_name_type:
 					member_category = member_input[0]
-					member_detail[mysyn.func.type]  = member_input[1]
-					member_detail[mysyn.func.name]  = member_input[2]
+					member_detail[mysyn.func.name] = member_input[1]
+					member_detail[mysyn.func.type] = member_input[2]
+				elif member_mode == mysyn.func_mode.cat_name_type_args:
+					member_category = member_input[0]
+					member_detail[mysyn.func.name]  = member_input[1]
+					member_detail[mysyn.func.type]  = member_input[2]
 					member_detail[mysyn.func.params]= member_input[3]
 
-					if member_input[3] and member_category != 'variable':
+					if member_input[3] and member_category != 'var':
 						params_str = member_input[3]
 						params = params_str.split(',')
 						args = []
@@ -267,7 +273,12 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 				#@TODO check member_name conflict
 				if one_myclass.has_key(mysyn.m_dict[member_category]):
-					one_myclass[mysyn.m_dict[member_category]].append(member_detail)
+					# process override all
+					if member_category == 'override' and member_detail[mysyn.func.name] == '<ALL>':
+						one_myclass[mysyn.m_dict['override']] += mysuper[mysyn.m_dict['override']]
+						one_myclass[mysyn.m_dict['override']] += mysuper[mysyn.m_dict['virtual']]
+					else:
+						one_myclass[mysyn.m_dict[member_category]].append(member_detail)
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, mysyn.m_dict[member_category]))
@@ -338,17 +349,19 @@ def render_namespace(input_file, code_style, output_dir):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
 		input_dict = json.load(open(input_file), object_pairs_hook=collections.OrderedDict)
-		#print 'NAMESPACE loading:',json.dumps(input_dict, sort_keys=False, indent=2)
+		#print 'LOADING:',json.dumps(input_dict, sort_keys=False, indent=3)
 
 		context_dict_tree = convert_namespace_to_tree(\
 		  os.path.splitext(os.path.basename(input_file))[0], input_dict)
-		#print json.dumps(context_dict_tree, sort_keys=False, indent=2)
+		#print 'JSON CONVERT TO TREE:',json.dumps(context_dict_tree, sort_keys=False, indent=3)
 
 		myclasses_array_dict = odict()
 		convert_to_array_dict(myclasses_array_dict, context_dict_tree)
+		#print 'JSON CONVERT TO ARRAY:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		parse_override_function(myclasses_array_dict)
+		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		flush_unused_and_makeup(myclasses_array_dict)
-		print json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		render_array_to_file(myclasses_array_dict, code_style, output_dir)
 	except Exception, e:

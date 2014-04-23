@@ -1,7 +1,13 @@
 {%- extends '_header.jinja' -%}
 {%- import '_macro.jinja' as func -%}
 
-{%- block includes -%}
+{%- block include -%}
+{%- if includes -%}
+	{%- for one_include in includes -%}
+#include "{{ one_include }}.h"
+	{%- endfor -%}
+{%- endif -%}
+
 {# class dependency #}
 {%- if supers -%}
 	{%- for parent_name,parent_vtables in supers.iteritems() -%}
