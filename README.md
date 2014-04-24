@@ -144,6 +144,9 @@ SOFTWARE.
 
 ## TODOS
 
+* myobj.h copy_ops_offset to exclude static, let client initial it's static
+* python uml object support
+* manual about oop's basic principle
 * move 'static ops' into init-function
 * move class from top to bottom where just before the function declare
 * framework-lib cooperate with client:
