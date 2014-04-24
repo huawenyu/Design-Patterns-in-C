@@ -24,7 +24,7 @@ tools
 |-- README.md
 `-- tmpl                <<< the templates using jinja2
     `-- c               <<< used for generate C code
-        |-- c.jinja     <<<      for code {class-name}.c 
+        |-- c.jinja     <<<      for code {class-name}.c
         |-- _header.jinja <      beginwith "_" means no-render, normal used by other template or as super template
         `-- h.jinja     <<<      for code {class-name}.h
 ```
@@ -35,52 +35,44 @@ tools
 ```
 $ cd tools  
 $ cat json/factory-method.json  
-{
-"namespace":"factory_method",
-"path":"factory_method",
-"classes": {
-	"product":{"file":"", "super":"",
-		"members": [
-			["virtual",  "void", "do_it", "int a, int b"],
-			["variable", "char", "name", "[32]"]
-		],
-		"enable_super":"True",
 
-		"inheritance": {
-			"concrete_product_1":{
-				"members": [
-					["override", "do_it"]
-				]
-			},
-			"concrete_product_2":{
-				"members": [
-					["override", "do_it"]
-				]
-			}
-		}
-	},
+1.	{
+2.	"classes": {
+3.		"product":{
+4.			"members": [
+5.				["virtual", "do_it","void", "int a, int b"],
+6.				["var",     "name", "char", "[32]"]
+7.			],
+8.			"enable_super":"False",
+9.	
+10.			"inheritance": {
+11.				"concrete_product_1":{
+12.					"members": [ ["override", "<ALL>"] ]
+13.				},
+14.				"concrete_product_2":{
+15.					"members": [ ["override", "<ALL>"] ]
+16.				}
+17.			}
+18.		},
+19.	
+20.		"product_factory":{
+21.			"members": [
+22.				["virtual", "create", "struct product*"],
+23.				["routine", "do_it", "void" ]
+24.			],
+25.	
+26.			"inheritance": {
+27.				"product_factory_1":{
+28.					"members": [ ["override", "<ALL>"] ]
+29.				},
+30.				"product_factory_2":{
+31.					"members": [ ["override", "<ALL>"] ]
+32.				}
+33.			}
+34.		}
+35.	}
+36.	}
 
-	"product_factory":{
-		"members": [
-			["virtual", "struct product*", "create"],
-			["method",  "void", "do_it"]
-		],
-
-		"inheritance": {
-			"product_factory_1":{
-				"members": [
-					["override", "create"]
-				]
-			},
-			"product_factory_2":{
-				"members": [
-					["override", "create"]
-				]
-			}
-		}
-	}
-}
-}
 ```
 
 2. Create template code using jinja2 Template Engine
@@ -90,6 +82,7 @@ $ cat json/factory-method.json
 $ tree tmpl       
 tmpl
 `-- c
+    |-- _source.jinja
     |-- c.jinja
     |-- _header.jinja
     `-- h.jinja

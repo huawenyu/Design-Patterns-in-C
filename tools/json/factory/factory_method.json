@@ -5,7 +5,7 @@
 	"product":{
 		"members": [
 			["virtual",  "do_it","void", "int a, int b"],
-			["variable", "name", "char", "[32]"]
+			["var",      "name", "char", "[32]"]
 		],
 		"enable_super":"False",
 
@@ -22,7 +22,7 @@
 	"product_factory":{
 		"members": [
 			["virtual", "create", "struct product*"],
-			["method",  "do_it", "void" ]
+			["routine", "do_it",  "void" ]
 		],
 
 		"inheritance": {

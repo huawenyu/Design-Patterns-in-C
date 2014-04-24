@@ -4,16 +4,16 @@
 		"members": [
 			["virtual",  "wage",  "void"],
 			["virtual",  "level", "void"],
-			["variable", "wage",  "int"],
-			["variable", "level", "int"]
+			["var", "wage",  "int"],
+			["var", "level", "int"]
 		]
 	},
 	"person":{
 		"members": [
 			["virtual",  "name", "void", ""],
 			["virtual",  "age",  "void", ""],
-			["variable", "name", "char", "[32]"],
-			["variable", "age",  "int",  ""]
+			["var", "name", "char", "[32]"],
+			["var", "age",  "int",  ""]
 		]
 	},
 	"teacher":{

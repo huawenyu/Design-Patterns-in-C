@@ -57,13 +57,13 @@ mysyn.members = 'members'  #
 mysyn.sub_classes = 'inheritance'  #
 
 # Must match one by one
-mysyn.m_dict = {\
-'routine' :'routines',\
-'method'  :'methods',\
-'virtual' :'virtuals',\
+mysyn.m_dict = {       \
+'routine' :'routines', \
+'method'  :'methods',  \
+'virtual' :'virtuals', \
 'override':'overrides',\
-'var'     :'vars',\
-'variable':'vars'}
+'static'  :'statics',  \
+'var'     :'vars'}
 
 # cat-category
 mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args')
@@ -270,7 +270,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					raise Exception('class {0} member_input size is {1} greater than 4: {2}'.\
 					  format(myclass_name, member_input, member_mode))
 
-				#@TODO check member_name conflict
+				#@TODO warning member_name conflict
 				if one_myclass.has_key(mysyn.m_dict[member_category]):
 					# process override all
 					if member_category == 'override' and member_detail[mysyn.func.name] == '<ALL>':
@@ -365,7 +365,7 @@ def render_namespace(input_file, code_style, output_dir):
 		render_array_to_file(myclasses_array_dict, code_style, output_dir)
 	except Exception, e:
 		print "Exception and exit now!", e.args
-		traceback.print_exc(file=sys.stdout)
+		#traceback.print_exc(file=sys.stdout)
 		sys.exit(0)
 
 

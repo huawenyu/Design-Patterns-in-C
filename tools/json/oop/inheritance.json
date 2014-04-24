@@ -7,7 +7,7 @@
 			["virtual",  "v_override_who", "void"],
 			["virtual",  "v_ancestor"    , "void"],
 			["routine",  "method_work"   , "void"],
-			["variable", "name"          , "char", "[32]"]
+			["var", "name"          , "char", "[32]"]
 		],
 
 		"inheritance": {
