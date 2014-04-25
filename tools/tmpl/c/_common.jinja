@@ -18,3 +18,35 @@
 	'Auto generate to show Design Pattern in C'
 	] %}
 
+{##################################}
+{%- macro get_copyright(copyright) -%}
+	{%- if not copyright %}{% set copyright=copyright_t %}{% endif -%}
+	{%- for one_line in copyright %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_author(author) -%}
+	{%- if not author %}{% set author=author_t %}{% endif -%}
+	{%- for one_line in author %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_date(date) -%}
+	{%- if not date %}{% set date=date_t %}{% endif -%}
+{{- date -}}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_summary(summary) -%}
+	{%- if not summary %}{% set summary=summary_t %}{% endif -%}
+	{%- for one_line in summary %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}

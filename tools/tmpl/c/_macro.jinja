@@ -2,19 +2,17 @@
 ref:	{%- import '_macro.jinja' as func -%}
 use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 #}
-{% include '_common.jinja' %}
+{%- import '_common.jinja' as header -%}
 
 {# file header #}
 {%- macro file_header(file,copyright,author,date,summary) %}
 /**
- * {{ file }}  {{ author }}  {{ date }}
-{% for one_line in copyright %}
- * {{ one_line }}
-{% endfor %}
+ * {{ file }}  {{ header.get_date(date) -}}
+{{- header.get_author(author) }}
  *
-{% for one_line in summary %}
- * {{ one_line }}
-{% endfor %}
+{{- header.get_copyright(copyright) }}
+ *
+{{- header.get_summary(summary) }}
  */
 {%- endmacro -%}
 
