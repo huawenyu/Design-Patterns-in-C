@@ -71,7 +71,7 @@ mysyn.func =      enum('scope', 'type', 'name', 'params', 'args')
 
 
 def render_one_to_file(x, dir_name, files):
-	templateEnv,templateVars,output_dir = x
+	templateEnv,templateVars,code_style,output_dir = x
 
 	for one_file in files :
 		if not one_file.startswith('_') and one_file.endswith('jinja'):
@@ -80,7 +80,7 @@ def render_one_to_file(x, dir_name, files):
 
 			# open file
 			ext = os.path.splitext(one_file)[0] # use filename as output file extension
-			output_abs_file = os.path.abspath('{0}/{1}/{2}.{3}'.format(output_dir, templateVars['path'], templateVars['file'], ext))
+			output_abs_file = os.path.abspath('{0}/{1}/{2}/{3}.{4}'.format(output_dir, code_style, templateVars['path'], templateVars['file'], ext))
 			output_abs_dir = os.path.dirname(output_abs_file)
 			if not os.path.exists(output_abs_dir):
 				os.makedirs(output_abs_dir)
@@ -100,12 +100,14 @@ def render_class_to_file(templateVars, code_style, output_dir):
 		tmpl_dir = 'tmpl/java/'
 	elif code_style == 'csharp':
 		tmpl_dir = 'tmpl/csharp/'
+	elif code_style == 'python':
+		tmpl_dir = 'tmpl/python/'
 
 	# Setup jinja2 render template
 	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
 	templateEnv = jinja2.Environment( loader=templateLoader )
 	templateEnv.line_statement_prefix = '##'
-	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,output_dir))
+	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,code_style,output_dir))
 
 
 def get_value_else_default(rdict, key, def_val):
@@ -120,14 +122,32 @@ def render_array_to_file(myclasses_array_dict, code_style, output_dir):
 		render_class_to_file(class_detail, code_style, output_dir)
 
 
+# if language already support oop, continue makeup
+def makeeasy_for_oop_language(myclasses_array_dict):
+	for class_name, class_detail in myclasses_array_dict.iteritems():
+		if class_detail.has_key('_have_super_ref'):
+			class_detail.pop('_have_super_ref', None)
+		if class_detail.has_key('_have_vtable_new'):
+			class_detail.pop('_have_vtable_new', None)
+
+		supers = class_detail['supers']
+		class_detail['supers'] = []
+		overrides = []
+		class_detail[mysyn.m_dict['override']] = overrides
+		for super_name,super_detail in supers.iteritems():
+			class_detail['supers'].append(super_name)
+			for vtable_name,vtable_detail in super_detail.iteritems():
+				if vtable_detail.has_key(mysyn.m_dict['virtual']):
+					overrides += vtable_detail[mysyn.m_dict['virtual']]
+		class_detail[mysyn.m_dict['override']] = overrides
+
+
 def flush_unused_and_makeup(myclasses_array_dict):
 	for class_name, class_detail in myclasses_array_dict.iteritems():
 		if class_detail.has_key(mysyn.sub_classes):
 			class_detail.pop(mysyn.sub_classes, None)
 		if class_detail.has_key(mysyn.m_dict['override']):
 			class_detail.pop(mysyn.m_dict['override'], None)
-		if class_detail.has_key('supers') and len(class_detail['supers']) == 0:
-			class_detail.pop('supers', None)
 		for members in mysyn.m_dict.values(): # avoid None Error
 			if class_detail.has_key(members):
 				if len(class_detail[members]) > 0:
@@ -205,10 +225,11 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass = odict()
 		myclass_dict[myclass_name] = one_myclass
 		one_myclass['path'] = get_value_else_default(mysuper, 'path', '.')
-		one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', 'anonymouse')
+		one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
 		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name'] = myclass_name
 		one_myclass['includes'] = get_value_else_default(one_inputclass, 'includes', [])
+		one_myclass['comment'] = get_value_else_default(one_inputclass, 'comment', '')
 
 		supers = odict()
 		one_myclass['supers'] = supers
@@ -360,12 +381,19 @@ def render_namespace(input_file, code_style, output_dir):
 		parse_override_function(myclasses_array_dict)
 		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		flush_unused_and_makeup(myclasses_array_dict)
-		print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		if code_style == 'c':
+			print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		elif code_style == 'cplus' or \
+		     code_style == 'java' or \
+		     code_style == 'csharp' or \
+			 code_style == 'python' :
+			makeeasy_for_oop_language(myclasses_array_dict)
+			print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		render_array_to_file(myclasses_array_dict, code_style, output_dir)
 	except Exception, e:
 		print "Exception and exit now!", e.args
-		#traceback.print_exc(file=sys.stdout)
+		traceback.print_exc(file=sys.stdout)
 		sys.exit(0)
 
 
@@ -377,7 +405,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Code Generater for GoF')
 	parser.add_argument('--file', metavar='input file', help='Input Design Pattern File', required=True)
 	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='code')
-	parser.add_argument('--code', metavar='code type', help='Language Choose', choices=['c','cplus','java','csharp'], required=False, default='c')
+	parser.add_argument('--code', metavar='code type', help='Language Choose', choices=['c','cplus','java','csharp','python'], required=False, default='c')
 	args = vars(parser.parse_args())
 
 	render_namespace(args['file'], args['code'], args['dir'])

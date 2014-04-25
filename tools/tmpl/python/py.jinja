@@ -1,0 +1,29 @@
+#!/usr/bin/python
+
+{%- macro macro_variable(func,format_str,params,args) %}
+	{{ rtn_type }} {{ func }}{{ params }};
+{%- endmacro -%}
+
+{%- macro macro_loop_functions(functions) -%}
+	{%- for func_scope,rtn_type,func,params,args in functions -%}
+		{%- if mode == "var" -%}
+			{{- macro_variable(name,abstract_name,qualifier,func_scope,rtn_type,func,format_str,params,args) -}}
+		{%- elif mode == "declare" -%}
+		{%- endif -%}
+	{%- endfor -%}
+{%- endmacro -%}
+
+
+class {{ name }}{% if supers %}({{ supers|join(', ') }}){% endif %}:
+	{% if comment %}'{{ comment }}'{% endif %}
+	instance_count = 0
+
+	def __init__(self):
+		self.name = name
+		self.salary = salary
+
+	def displayCount(self):
+		print "Total Employee %d" % Employee.empCount
+
+   def displayEmployee(self):
+	   print "Name : ", self.name,  ", Salary: ", self.salary

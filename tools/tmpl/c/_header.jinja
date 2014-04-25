@@ -1,7 +1,7 @@
 {%- include '../autogen_.jinja' ignore missing -%}
 
-#ifndef __{{ upper(name) }}_H__
-#define __{{ upper(name) }}_H__
+#ifndef __{{ name.upper() }}_H__
+#define __{{ name.upper() }}_H__
 
 {% block include %}{% endblock %}
 
@@ -14,5 +14,5 @@
 {% block routines %}{% endblock %}
 {% block vtable_helper %}{% endblock %}
 
-#endif /* __{{ upper(name) }}_H__ */
+#endif /* __{{ name.upper() }}_H__ */
 
