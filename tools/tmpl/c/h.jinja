@@ -1,5 +1,15 @@
 {%- extends '_header.jinja' -%}
+{%- include '_common.jinja' -%}
 {%- import '_macro.jinja' as func -%}
+
+{% block file_header %}{% if add_file_header -%}
+	{%- if not copyright -%}{% set copyright=copyright_t %}{%- endif -%}
+	{%- if not author -%}{% set author=author_t %}{%- endif -%}
+	{%- if not date -%}{% set date=date_t %}{%- endif -%}
+	{%- if not summary -%}{% set summary=summary_t %}{%- endif -%}
+
+	{{- func.file_header(file_header_name,copyright_t,author_t,date_t,summary_t) -}}
+{% endif %}{% endblock %}
 
 {%- block include -%}
 {%- if includes -%}
@@ -59,8 +69,8 @@ void {{ name }}_init(struct {{ name }} *);
 {%- endblock -%}
 
 
-{%- block routines -%}
-	{{- func.macro_loop_functions(name,routines,mode='declare',impl_as='func',format_str='%s_%s') -}}
+{%- block public_methods -%}
+	{{- func.macro_loop_functions(name,methods,mode='declare',impl_as='func',format_str='%s_%s') -}}
 {%- endblock -%}
 
 

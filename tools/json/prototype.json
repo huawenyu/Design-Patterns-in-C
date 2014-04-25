@@ -10,12 +10,12 @@
 		"inheritance": {
 			"book":{
 				"members": [ ["override",  "<ALL>"],
-					["routine", "get_pages_num", "int"]
+					["method", "get_pages_num", "int"]
  				]
 			},
 			"disk":{
 				"members": [ ["override",  "<ALL>"],
-					["routine", "get_duration", "int"]
+					["method", "get_duration", "int"]
  				]
 			}
 		}
@@ -24,8 +24,9 @@
 	"product_cache":{
 		"includes":["book", "disk"],
 		"members": [
-			["routine", "make_animal", "void", "struct animal_builder *builder"],
-			["var", "name", "char", "[32]"]
+			["static_var",    "product_list", "struct product *", "[32]", "private"],
+			["static_method", "load_cache",   "void",             "",     "public"]
+			["static_method", "get_product",  "struct product *", "",     "public"]
 		]
 	}
 }

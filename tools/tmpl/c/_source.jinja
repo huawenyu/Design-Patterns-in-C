@@ -1,11 +1,11 @@
-
+{% block file_header %}{% endblock %}
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 {% if supers %}#include <myobj.h>{% endif %}
 #include "{{ name }}.h"
 
-{%- block method -%}
+{%- block private_method -%}
 {%- endblock -%}
 
 {%- if _have_vtable_new -%}
@@ -22,5 +22,5 @@
 {%- block init -%}
 {%- endblock -%}
 
-{%- block routine -%}
+{%- block public_method -%}
 {%- endblock -%}
