@@ -63,7 +63,7 @@ mysyn.m_dict = {       \
 'static_method':'methods',  \
 'override'     :'overrides',\
 'var'          :'vars', \
-'static_var'   :'statics' \
+'static_var'   :'vars' \
 }
 
 # cat-category
@@ -242,7 +242,10 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['name']      = myclass_name
 		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
 		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
+
+		# used as C generate helper
 		one_myclass['_have_super_ref'] = False
+		one_myclass['_have_vtable_new'] = False
 
 		supers = odict()
 		one_myclass['supers'] = supers
@@ -317,6 +320,8 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 						one_myclass[mysyn.m_dict[member_category]].append(member_detail)
 						if member_category == 'static_method' or member_category == 'static_var':
 							member_detail[mysyn.func.static] = 'True'
+							if member_category == 'static_var':
+								one_myclass['_have_vtable_new'] = True
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, mysyn.m_dict[member_category]))
@@ -336,7 +341,6 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 			  - the parent must have enable_super already
 			  - The generated code should init with super
 		'''
-		one_myclass['_have_super_ref'] = False
 		if one_myclass['supers']: # As derive class
 			if mysuper.has_key('_have_super_ref') and mysuper['_have_super_ref'] == True: # if parent support super, child should be init with super
 				one_myclass['_have_super_ref'] = True
@@ -348,10 +352,9 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		
 		'''
 		"_have_vtable_new" is auto-gen field used to control code-gen
-		    - means the class add new virtual function for itself and it's derive classes
+		    - means the class add new virtual function or static-member-variable itself
 		    - The generated code should have a new vtable (for C code)
 		'''
-		one_myclass['_have_vtable_new'] = False
 		if len(one_myclass[mysyn.m_dict['virtual']]) > 0:
 			one_myclass['_have_vtable_new'] = True
 

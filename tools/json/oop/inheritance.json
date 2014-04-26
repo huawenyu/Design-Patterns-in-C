@@ -1,30 +1,41 @@
 {
-"namespace":"inheritance",
-"path":"inheritance",
+"add_file_header":"True",
 "classes": {
 	"parent":{
 		"members": [
-			["virtual",  "v_override_who", "void"],
-			["virtual",  "v_ancestor"    , "void"],
-			["routine",  "method_work"   , "void"],
-			["var", "name"          , "char", "[32]"]
+			["virtual",      "pub_v_func1", "void", "", "public"],
+			["virtual",      "pub_v_func2", "void", "", "public"],
+			["virtual",      "pri_v_func3", "void", "", "private"],
+			["virtual",      "pri_v_func4", "void", "", "private"],
+			["method",       "pub_m_func1", "void", "", "public"],
+			["static_method","static_pub_m_func2", "void", "", "public"],
+			["method",       "pri_m_func3", "void", "", "private"],
+			["static_method","static_pri_m_func4", "void", "", "private"],
+			["var",          "pub_data1",   "int",  "", "public"],
+			["var",          "pri_data2",   "int",  "", "private"],
+			["static_var",   "static_pub_data3",   "int",  "", "public"],
+			["static_var",   "static_pri_data4",   "int",  "", "private"]
 		],
 
 		"inheritance": {
 			"child":{
 				"members": [
-					["virtual",  "v_child_right", "void", "const char *"],
-					["override", "v_override_who"]
+					["override",  "<ALL>"],
+
+					["var",          "pub_data1",   "int",  "", "public"],
+					["var",          "pri_data2",   "int",  "", "private"],
+					["static_var",   "static_pub_data3",   "int",  "", "public"],
+					["static_var",   "static_pri_data4",   "int",  "", "private"]
 				],
 				"inheritance": {
 					"grandgirl":{
 						"members": [
-							["override", "v_override_who"]
+							["override",  "<ALL>"]
 						]
 					},
 					"grandson":{
 						"members": [
-							["override", "v_override_who"]
+							["override",  "<ALL>"]
 						]
 					}
 				}

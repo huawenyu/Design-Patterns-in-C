@@ -1,101 +1,108 @@
 {# function generate temple macro list
 ref:	{%- import '_macro.jinja' as func -%}
-use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 #}
 {%- import '_common.jinja' as header -%}
+
+{# used as helper for format or split #}
+{%- set SPACE = ' ' -%}
 
 {# file header #}
 {%- macro file_header(file,copyright,author,date,summary) %}
 /**
  * {{ file }}  {{ header.get_date(date) -}}
-{{- header.get_author(author) }}
+   {{- header.get_author(author) }}
  *
-{{- header.get_copyright(copyright) }}
+   {{- header.get_copyright(copyright) }}
  *
-{{- header.get_summary(summary) }}
+   {{- header.get_summary(summary) }}
  */
 {%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_impl_as_ops(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -%}
-{%- if args %}
-	{{ name }}->ops->{{ func }}({{ name }}, {{ args }});
-{%- else %}
-	{{ name }}->ops->{{ func }}({{ name }});
-{%- endif -%}
-
-	{%- if rtn_type[-1] == '*' %}
+{%- macro macro_function_return_value(args) -%}
+	{%- if args.func_rtn_type[-1] == '*' %}
 	return 0;
-	{%- elif rtn_type == 'char *' %}
+	{%- elif args.func_rtn_type == 'char *' %}
 	return 0;
-	{%- elif rtn_type == 'int' %}
+	{%- elif args.func_rtn_type == 'int' %}
 	return 0;
 	{%- endif -%}
 {%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_impl_as_printf(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) %}
-	printf("{{ name }}::{{ func }}()\n");
-	{%- if rtn_type[-1] == '*' %}
-	return 0;
-	{%- elif rtn_type == 'char *' %}
-	return 0;
-	{%- elif rtn_type == 'int' %}
-	return 0;
+{%- macro macro_function_impl_as_ops(args) -%}
+	{%- if args.func_args %}
+	{{ args.name }}->ops->{{ args.func }}({{ args.name }}, {{ args.func_args }});
+	{%- else %}
+	{{ args.name }}->ops->{{ args.func }}({{ args.name }});
 	{%- endif -%}
-{% endmacro -%}
+
+	{{- macro_function_return_value(args) -}}
+{%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_impl(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) %}
-{% if qualifier %}
-{{ qualifier }}
+{%- macro macro_function_impl_as_printf(args) %}
+	printf("{{ args.name }}::{{ args.func }}()\n");
+	{{- macro_function_return_value(args) -}}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro macro_function_impl(args) %}
+{% if args.req_qualifier %}{{ args.req_qualifier }}{{- SPACE -}}{%- endif -%}
+{{- args.func_rtn_type }}{{- SPACE -}}
+{{- args.func_format_str|format(args.name,args.func) -}}
+(
+{%- if args.func_is_static == 'False' -%}
+struct{{- SPACE -}}
+	{%- if args.abstract_name -%} {{- args.abstract_name -}}
+	{%- else -%}{{- args.name -}}
+	{%- endif -%}
+	{{- SPACE -}}*
+	{%- if args.abstract_name -%}{{- args.abstract_name -}}
+	{%- else -%}{{- args.name -}}
+	{%- endif -%}
 {%- endif -%}
-{% if params %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {% if abstract_name %}{{ abstract_name }}{% else %}{{ name }}{% endif %} *{% if abstract_name %}{{ abstract_name }}{% else %}{{ name }}{% endif %}, {{ params }})
+{%- if args.func_params -%}, {{ args.func_params }}{%- endif -%}
+)
 {
-	{{ caller() }}
+{{- caller() }}
 }
-{% else %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {% if abstract_name %}{{ abstract_name }}{% else %}{{ name }}{% endif %} *{% if abstract_name %}{{ abstract_name }}{% else %}{{ name }}{% endif %})
-{
-	{{ caller() }}
-}
-{%- endif -%}
 {%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_declare_as_ops(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -%}
-{%- if params %}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *, {{ params }});
-{%- else %}
-	{{ rtn_type }} (*{{ func }})(struct {{ name }} *);
-{%- endif -%}
+{%- macro macro_function_declare_as_ops(args) %}
+	{{ args.func_rtn_type }} (*{{ args.func }})(struct {{ args.name }} *
+	{%- if args.func_params %}, {{ args.func_params }}{%- endif %});
 {%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_declare_as_func(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -%}
-{%- if params %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *, {{ params }});
-{%- else %}
-{{ rtn_type }} {{ format_str|format(name,func) }}(struct {{ name }} *);
+{%- macro macro_function_declare_as_func(args) %}
+{{ args.func_rtn_type }}{{- SPACE -}}
+{{- args.func_format_str|format(args.name,args.func) -}}
+(
+{%- if args.func_is_static == 'False' -%}
+	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*
 {%- endif -%}
+	{%- if args.func_params %}, {{ args.func_params }}{%- endif -%}
+);
 {%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_function_assign(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -%}
-{{ I }}	.{{ func }} = {{ format_str|format(name,func) }},
-{% endmacro -%}
+{%- macro macro_function_assign(args) %}
+	.{{ args.func }} = {{ args.func_format_str|format(args.name,args.func) }},
+{%- endmacro -%}
 
 
 {##################################}
-{%- macro macro_variable(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) %}
-	{{ rtn_type }} {{ func }}{{ params }};
+{%- macro macro_variable(args) %}
+	{{ args.func_rtn_type }} {{ args.func }}{{ args.func_params }};
 {%- endmacro -%}
 
 
@@ -108,27 +115,41 @@ use:	{{ func.macro_loop_functions(name,'static',routines,'printf') }}
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(name,functions,mode,scope='public',static='False',impl_as='',qualifier='',abstract_name='',format_str='') -%}
-	{%- for func_scope,is_static,rtn_type,func,params,args in functions -%}
+{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',abstract_name='') -%}
+	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args in functions -%}
+
+	{%- set format_str='%s_%s' -%}
+	{%- if category == "virtuals" -%}{%- set format_str='%s_ops_%s' -%}{%- endif -%}
+
+	{%- set args={'name':name, 'abstract_name':abstract_name, 'category':category,
+		'req_scope':scope, 'req_static':static, 'req_qualifier':qualifier,
+		'func_scope':func_scope,'func_is_static':func_is_static,
+		'func_rtn_type':func_rtn_type,'func':func,'func_format_str':format_str,
+		'func_params':func_params,'func_args':func_args} -%}
+
+	{%- if (args.req_scope == 'None' or args.func_scope == args.req_scope)
+			and (args.req_static == 'None' or args.func_is_static == args.req_static) -%}
+
 		{%- if mode == "var" -%}
-			{{- macro_variable(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
+			{{- macro_variable(args) -}}
 		{%- elif mode == "declare" -%}
-			{%- if impl_as == "ops" -%}
-				{{- macro_function_declare_as_ops(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
-			{%- elif impl_as == "func" -%}
-				{{- macro_function_declare_as_func(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
-			{%- endif -%}
+			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}{%- endif -%}
+			{%- if category == "methods" -%}{{- macro_function_declare_as_func(args) -}}{%- endif -%}
 		{%- elif mode == "assign" -%}
-			{{- macro_function_assign(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
-		{%- elif mode == "impl" -%}
-			{%- call macro_function_impl(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -%}
-				{%- if impl_as == "ops" -%}
-					{{- macro_function_impl_as_ops(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
-				{%- elif impl_as == "printf" -%}
-					{{- macro_function_impl_as_printf(name,scope,static,abstract_name,qualifier,func_scope,is_static,rtn_type,func,format_str,params,args) -}}
-				{%- endif -%}
+			{{- macro_function_assign(args) -}}
+		{%- elif mode == "impl-ops" -%}
+			{%- call macro_function_impl(args) -%}
+				{{- macro_function_impl_as_ops(args) -}}
 			{%- endcall -%}
+		{%- elif mode == "impl-print" -%}
+			{%- call macro_function_impl(args) -%}
+				{{- macro_function_impl_as_printf(args) -}}
+			{%- endcall -%}
+		{%- else -%}
+			autogen-template error: jinja template macro_loop_functions's mode value invalid: {{ mode }}
 		{%- endif -%}
+
+	{%- endif -%}
 	{%- endfor -%}
 {%- endmacro -%}
 

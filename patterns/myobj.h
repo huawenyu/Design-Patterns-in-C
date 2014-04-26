@@ -7,8 +7,6 @@
 /**class support macro:
  * CLASS_OPS_INIT(ptr, ops)
  * CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member)
- * CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member)
- * CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static)
  *
  * container_of(ptr, type, member)
  *
@@ -112,8 +110,6 @@
  *  - polymorphism
  * @PRE ptr have inited pointer to super-class ops
  * @see CLASS_OPS_INIT_WITH_SUPER support super ptr-to parent's ops
- * @see CLASS_OPS_INIT_WITH_STATIC support static member
- * @see CLASS_OPS_INIT_SUPER_STATIC support super and static member
  */
 #define CLASS_OPS_INIT(ptr, ops) \
 	__CLASS_OPS_INIT(ptr, ops, sizeof(ops)) \
@@ -129,33 +125,6 @@
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
 			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as super member, should be the last element"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
-	assert(l_super != &ops && "dead-loop: super pointer to itself"); \
-	ptr = &ops;
-
-/**Initial with static-member
- * @PRE ptr have inited pointer to super-class ops
- * @PRE the member be the last element of struct, keep align
- * @member as static-member, can be object or object-ptr
- */
-#define CLASS_OPS_INIT_WITH_STATIC(ptr, ops, member) \
-	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as static member should be the last element and keep align"); \
-	__CLASS_OPS_INIT(ptr, ops, offsetof(typeof(ops), member)) \
-	ptr = &ops;
-
-/**Initial with super and static-member
- * @PRE ptr have inited pointer to super-class ops
- * @PRE order should be func-ptr+m_super+m_static, keep align
- * @member as static-member, can be object or object-ptr
- */
-#define CLASS_OPS_INIT_SUPER_STATIC(ptr, ops, m_super, m_static) \
-	typeof(ptr) l_super = ptr; \
-	_Static_assert(offsetof(typeof(ops), m_super) < offsetof(typeof(ops), m_static), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #m_super " as super member should before static member " #m_static); \
-	_Static_assert(sizeof(ops) == offsetof(typeof(ops), m_super) \
-			+ sizeof((ops).m_super) + sizeof((ops).m_static), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #m_super "+" #m_static " should be the last element and keep align"); \
-	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), m_super), m_super, l_super) \
 	assert(l_super != &ops && "dead-loop: super pointer to itself"); \
 	ptr = &ops;
 

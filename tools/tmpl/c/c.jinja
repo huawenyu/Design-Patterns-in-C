@@ -6,16 +6,16 @@
 {% endif %}{% endblock %}
 
 {%- block private_method -%}
-{{ func.macro_loop_functions(name,methods,mode='impl',impl_as='printf',qualifier='static',format_str='%s_%s') }}
+{{ func.macro_loop_functions(name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
 
 {%- block vtable_impl -%}
-{{ func.macro_loop_functions(name,virtuals,mode='impl',impl_as='printf',qualifier='static',format_str='%s_ops_%s') }}
+{{ func.macro_loop_functions(name,virtuals,'virtuals',mode='impl-print',qualifier='static') }}
 {%- endblock -%}
 
 {%- block vtable_set %}
 static struct {{ name }}_ops {{ name }}_ops = {
-{{ func.macro_loop_functions(name,virtuals,mode='assign',format_str='%s_ops_%s') }}
+	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='assign') }}
 };
 {%- endblock -%}
 
@@ -24,10 +24,10 @@ static struct {{ name }}_ops {{ name }}_ops = {
 {%- if supers -%}
 {%- for parent_name,parent_vtables in supers.iteritems() -%}
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() -%}
-		{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],mode='impl',impl_as='printf',abstract_name=vtable_class_name,qualifier='static',format_str='%s_ops_%s') }}
+		{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,qualifier='static') }}
 {# parent ops #}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
-	{{ func.macro_loop_functions(name,vtable_class_detail['virtuals'],mode='assign',abstract_name=vtable_class_name,format_str='%s_ops_%s') }}
+	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='assign',abstract_name=vtable_class_name) }}
 };
 {# end parent ops #}
 	{%- endfor -%}
@@ -58,5 +58,5 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 {%- endblock -%}
 
 {%- block public_method -%}
-	{{- func.macro_loop_functions(name,routines,mode='impl',impl_as='printf',format_str='%s_%s') }}
+	{{- func.macro_loop_functions(name,methods,'methods',mode='impl-print',scope='public') }}
 {%- endblock -%}

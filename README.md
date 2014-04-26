@@ -6,6 +6,24 @@ This will be a repository of
 * Implement the Design Patterns of **GoF**(Gang of Four) in C.  
 * Provide script to auto generate Design Patterns into different code style: C, C++, Java, C#, python-uml
 
+## C oop implement:
+
+```
++ have implemented
+* can implement, but not need
+
+====================================================
+                   private protected public  static
+---------------------------+---------+------+-------
+method
+  virtual                              +
+  routine             +                +       +
+variable
+  member              *                +       +
+====================================================
+
+```
+
 ## Quick Start:
 
 ```
@@ -18,6 +36,7 @@ $ ./Release/main  <<< else run this
 Auto Generate class source/header
 $ cd tools
 $ ./autogen_jinja2.py --file json/factory-method.json 
+
 ```
 
 ## OOP basic:

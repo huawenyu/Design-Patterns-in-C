@@ -5,22 +5,12 @@
 {% if supers %}#include <myobj.h>{% endif %}
 #include "{{ name }}.h"
 
-{%- block private_method -%}
-{%- endblock -%}
-
+{% block private_method %}{% endblock %}
 {%- if _have_vtable_new -%}
-	{%- block vtable_impl -%}
-	{%- endblock -%}
-
-	{%- block vtable_set -%}
-	{%- endblock -%}
+	{%- block vtable_impl %}{% endblock -%}
+	{%- block vtable_set %}{% endblock -%}
 {%- endif -%}
+{% block supers %}{% endblock %}
 
-{%- block supers -%}
-{%- endblock -%}
-
-{%- block init -%}
-{%- endblock -%}
-
-{%- block public_method -%}
-{%- endblock -%}
+{% block init %}{% endblock %}
+{% block public_method %}{% endblock %}
