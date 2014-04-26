@@ -1,4 +1,5 @@
 {
+"add_file_header":"True",
 "namespace":"builder",
 "path":"builder",
 "classes": {
@@ -39,7 +40,7 @@
 	"kid":{
 		"includes":["animal_builder"],
 		"members": [
-			["routine", "make_animal", "void", "struct animal_builder *builder"],
+			["method", "make_animal", "void", "struct animal_builder *builder"],
 			["var", "name", "char", "[32]"]
 		]
 	}

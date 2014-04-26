@@ -41,7 +41,7 @@ import jinja2
 import pprint
 import const as mysyn
 from odict import odict
-
+from time import gmtime, strftime
 
 def enum(*sequential, **named):
 	enums = dict(zip(sequential, range(len(sequential))), **named)
@@ -58,16 +58,17 @@ mysyn.sub_classes = 'inheritance'  #
 
 # Must match one by one
 mysyn.m_dict = {       \
-'routine' :'routines', \
-'method'  :'methods',  \
-'virtual' :'virtuals', \
-'override':'overrides',\
-'static'  :'statics',  \
-'var'     :'vars'}
+'virtual'      :'virtuals', \
+'method'       :'methods',  \
+'static_method':'methods',  \
+'override'     :'overrides',\
+'var'          :'vars', \
+'static_var'   :'statics' \
+}
 
 # cat-category
-mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args')
-mysyn.func =      enum('scope', 'type', 'name', 'params', 'args')
+mysyn.func =      enum('static', 'scope', 'type', 'name', 'params', 'args')
+mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope',)
 
 
 def render_one_to_file(x, dir_name, files):
@@ -75,16 +76,20 @@ def render_one_to_file(x, dir_name, files):
 
 	for one_file in files :
 		if not one_file.startswith('_') and one_file.endswith('jinja'):
-			templ_file = templateEnv.get_template(one_file)
-			output_text = templ_file.render( templateVars )
-
 			# open file
 			ext = os.path.splitext(one_file)[0] # use filename as output file extension
-			output_abs_file = os.path.abspath('{0}/{1}/{2}/{3}.{4}'.format(output_dir, code_style, templateVars['path'], templateVars['file'], ext))
+			output_abs_file = os.path.abspath(\
+			  '{0}/{1}/{2}/{3}.{4}'.format(\
+			  output_dir, code_style, templateVars['path'], \
+			  templateVars['file'], ext))
+			file_header_name = '{0}.{1}'.format(templateVars['file'], ext)
 			output_abs_dir = os.path.dirname(output_abs_file)
 			if not os.path.exists(output_abs_dir):
 				os.makedirs(output_abs_dir)
 
+			templateVars['file_header_name'] = file_header_name
+			templ_file = templateEnv.get_template(one_file)
+			output_text = templ_file.render( templateVars )
 			f = open(output_abs_file, 'w')
 			f.write(output_text)
 			f.close()
@@ -224,12 +229,20 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 	for myclass_name, one_inputclass in input_dict.iteritems():
 		one_myclass = odict()
 		myclass_dict[myclass_name] = one_myclass
-		one_myclass['path'] = get_value_else_default(mysuper, 'path', '.')
+
+		one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
+		one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
+		one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
+		one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
+		one_myclass['summary']   = get_value_else_default(mysuper, 'summary', [])
+
+		one_myclass['path']      = get_value_else_default(mysuper, 'path', '.')
 		one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
-		one_myclass['file'] = get_value_else_default(one_inputclass, 'file', myclass_name)
-		one_myclass['name'] = myclass_name
-		one_myclass['includes'] = get_value_else_default(one_inputclass, 'includes', [])
-		one_myclass['comment'] = get_value_else_default(one_inputclass, 'comment', '')
+		one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
+		one_myclass['name']      = myclass_name
+		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
+		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
+		one_myclass['_have_super_ref'] = False
 
 		supers = odict()
 		one_myclass['supers'] = supers
@@ -246,21 +259,24 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		if one_inputclass.has_key(mysyn.members):
 			for member_input in one_inputclass[mysyn.members]:
 				member_category = ''
-				member_detail = ['public', '', '', '', '']
+				member_detail = ['False', 'public', '', '', '', '']
 
 				member_mode = len(member_input)
-				if member_mode == mysyn.func_mode.cat_name:
+				if  member_mode == mysyn.func_mode.cat_name:
 					member_category = member_input[0]
 					member_detail[mysyn.func.name] = member_input[1]
 				elif member_mode == mysyn.func_mode.cat_name_type:
 					member_category = member_input[0]
 					member_detail[mysyn.func.name] = member_input[1]
 					member_detail[mysyn.func.type] = member_input[2]
-				elif member_mode == mysyn.func_mode.cat_name_type_args:
+				elif member_mode == mysyn.func_mode.cat_name_type_args or \
+				     member_mode == mysyn.func_mode.cat_name_type_args_scope:
 					member_category = member_input[0]
 					member_detail[mysyn.func.name]  = member_input[1]
 					member_detail[mysyn.func.type]  = member_input[2]
 					member_detail[mysyn.func.params]= member_input[3]
+					if member_mode == mysyn.func_mode.cat_name_type_args_scope:
+						member_detail[mysyn.func.scope]= member_input[4]
 
 					if member_input[3] and member_category != 'var':
 						params_str = member_input[3]
@@ -270,10 +286,10 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 							find = False
 							for idx in range(len(one_param)-1, 0, -1):
 								one_char = one_param[idx]
-								if one_char >= 'a' and one_char <= 'z' \
-								   or one_char >= 'A' and one_char <= 'Z' \
-								   or one_char >= '0' and one_char <= '9' \
-								   or one_char == '_':
+								if one_char >= 'a' and one_char <= 'z' or \
+								   one_char >= 'A' and one_char <= 'Z' or \
+								   one_char >= '0' and one_char <= '9' or \
+								   one_char == '_':
 									pass
 								else:
 									find = True
@@ -293,12 +309,14 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 				#@TODO warning member_name conflict
 				if one_myclass.has_key(mysyn.m_dict[member_category]):
-					# process override all
+					# override <ALL>
 					if member_category == 'override' and member_detail[mysyn.func.name] == '<ALL>':
 						one_myclass[mysyn.m_dict['override']] += mysuper[mysyn.m_dict['override']]
 						one_myclass[mysyn.m_dict['override']] += mysuper[mysyn.m_dict['virtual']]
 					else:
 						one_myclass[mysyn.m_dict[member_category]].append(member_detail)
+						if member_category == 'static_method' or member_category == 'static_var':
+							member_detail[mysyn.func.static] = 'True'
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, mysyn.m_dict[member_category]))
@@ -353,6 +371,14 @@ def convert_namespace_to_tree(def_path, input_dict):
 	mysuper = odict()
 	context_dict_tree = odict()
 
+	# file header or comments
+	mysuper['add_file_header'] = get_value_else_default(input_dict, 'add_file_header', False)
+	mysuper['copyright'] = get_value_else_default(input_dict, 'copyright', [])
+	mysuper['author'] = get_value_else_default(input_dict, 'author', []) # author with email
+	mysuper['date'] = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+	mysuper['summary'] = get_value_else_default(input_dict, 'summary', [])
+
+	# generate path
 	mysuper['path'] = get_value_else_default(input_dict, 'path', def_path)
 	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', def_path)
 	mysuper['enable_super'] = 'False'
@@ -381,7 +407,8 @@ def render_namespace(input_file, code_style, output_dir):
 		parse_override_function(myclasses_array_dict)
 		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		flush_unused_and_makeup(myclasses_array_dict)
-		if code_style == 'c':
+
+		if code_style == 'c':  # language not support oop
 			print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		elif code_style == 'cplus' or \
 		     code_style == 'java' or \

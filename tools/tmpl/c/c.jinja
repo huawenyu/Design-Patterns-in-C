@@ -1,7 +1,11 @@
 {%- extends '_source.jinja' -%}
 {%- import '_macro.jinja' as func -%}
 
-{%- block method -%}
+{% block file_header %}{% if add_file_header -%}
+	{{- func.file_header(file_header_name,copyright,author,date,summary) -}}
+{% endif %}{% endblock %}
+
+{%- block private_method -%}
 {{ func.macro_loop_functions(name,methods,mode='impl',impl_as='printf',qualifier='static',format_str='%s_%s') }}
 {%- endblock -%}
 
@@ -53,6 +57,6 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 {# end init implement #}
 {%- endblock -%}
 
-{%- block routine -%}
+{%- block public_method -%}
 	{{- func.macro_loop_functions(name,routines,mode='impl',impl_as='printf',format_str='%s_%s') }}
 {%- endblock -%}

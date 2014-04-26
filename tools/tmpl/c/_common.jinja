@@ -1,1 +1,52 @@
+{# used as helper for format or split #}
 {% set I = '' %}
+
+{# file header #}
+{% set copyright_t=[
+	'Copyright (C) 2000-2014 All Right Reserved',
+	'',
+	'THIS CODE AND INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY',
+	'KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE',
+	'IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A',
+	'PARTICULAR PURPOSE.'
+	] %}
+{% set author_t=[
+	'anonymouse(anonymouse@email)'
+	] %}
+{% set date_t='now' %}
+{% set summary_t=[
+	'Auto generate to show Design Pattern in C'
+	] %}
+
+{##################################}
+{%- macro get_copyright(copyright) -%}
+	{%- if not copyright %}{% set copyright=copyright_t %}{% endif -%}
+	{%- for one_line in copyright %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_author(author) -%}
+	{%- if not author %}{% set author=author_t %}{% endif -%}
+	{%- for one_line in author %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_date(date) -%}
+	{%- if not date %}{% set date=date_t %}{% endif -%}
+{{- date -}}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_summary(summary) -%}
+	{%- if not summary %}{% set summary=summary_t %}{% endif -%}
+	{%- for one_line in summary %}
+ * {{ one_line }}
+	{%- endfor -%}
+{%- endmacro -%}
