@@ -301,7 +301,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 									break
 
 							if not find:
-								raise Exception('class {0} member_input {1} params {2} error'.\
+								raise Exception('class {0} member {1} params \'{2}\' error: no type or name'.\
 								  format(myclass_name, member_input, params_str))
 
 						args.pop() # remove the last comma

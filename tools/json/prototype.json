@@ -2,20 +2,29 @@
 "classes": {
 	"product":{
 		"members": [
-			["virtual", "clone", "struct product *"]
-			["virtual", "get_description", "void"]
-			["virtual", "get_sku", "void"]
+			["virtual", "clone", "struct product *"],
+			["virtual", "set_description", "void", "const char *desc"],
+			["virtual", "set_sku", "void", "const char *sku"],
+			["virtual", "get_description", "char *"],
+			["virtual", "get_sku", "char *"],
+
+			["var",     "description", "char", "[32]"],
+			["var",     "sku", "char", "[32]"]
 		],
 
 		"inheritance": {
 			"book":{
 				"members": [ ["override",  "<ALL>"],
-					["method", "get_pages_num", "int"]
+					["method", "set_pages_num", "void", "int pages"],
+					["method", "get_pages_num", "int"],
+					["var",    "pages_num",     "int"]
  				]
 			},
 			"disk":{
 				"members": [ ["override",  "<ALL>"],
-					["method", "get_duration", "int"]
+					["method", "set_duration", "void", "int duration"],
+					["method", "get_duration", "int"],
+					["var",    "duration",     "int"]
  				]
 			}
 		}
@@ -24,9 +33,10 @@
 	"product_cache":{
 		"includes":["book", "disk"],
 		"members": [
+			["static_var",    "product_list_sz", "int", "", "private"],
 			["static_var",    "product_list", "struct product *", "[32]", "private"],
-			["static_method", "load_cache",   "void",             "",     "public"]
-			["static_method", "get_product",  "struct product *", "",     "public"]
+			["static_method", "load_cache",   "void"],
+			["static_method", "get_product",  "struct product *", "const char *sku"]
 		]
 	}
 }

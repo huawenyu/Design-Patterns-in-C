@@ -7,7 +7,7 @@
 
 {%- block include -%}
 {%- if includes -%}
-	{%- for one_include in includes -%}
+	{%- for one_include in includes %}
 #include "{{ one_include }}.h"
 	{%- endfor -%}
 {%- endif -%}
@@ -71,7 +71,7 @@ void {{ name }}_init(struct {{ name }} *);
 
 {%- block vtable_helper -%}
 {%- if _have_vtable_new -%}
-	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='impl-ops',qualifier='static inline') -}}
+	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='impl-ops',qualifier='static inline',format_str='%s_%s') -}}
 {%- endif -%}
 {%- endblock -%}
 

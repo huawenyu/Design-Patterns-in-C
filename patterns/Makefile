@@ -1,6 +1,7 @@
 ###########################################################
 # MAKEFILE FOR C PROJECT
 # Auto include sub dir
+# Auto exclude dir or file begin with underscore
 # 32bit: "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
 ###########################################################
 
@@ -31,7 +32,7 @@ MV    := mv
 # init includes & sources & objects & depends
 INC_PARAMS  := $(foreach d, $(INC_DIR), -I$d)
 MACRO_PARAMS:= $(foreach d, $(MACROS), -D$d)
-sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h")
+sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_")
 sources_c   := $(filter %.c, $(sources_all))
 sources_cpp := $(filter %.cpp, $(sources_all))
 sources_h   := $(filter %.h, $(sources_all))

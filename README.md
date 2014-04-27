@@ -9,8 +9,6 @@ This will be a repository of
 ## C oop implement:
 
 ```
-+ have implemented
-* can implement, but not need
 
 ====================================================
                    private protected public  static
@@ -19,8 +17,10 @@ method
   virtual                              +
   routine             +                +       +
 variable
-  member              *                +       +
+  member              -                +       +
 ====================================================
++ have implemented
+- can implemented with body-handle pattern, but ...
 
 ```
 

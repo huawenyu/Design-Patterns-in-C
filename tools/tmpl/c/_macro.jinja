@@ -32,14 +32,11 @@ ref:	{%- import '_macro.jinja' as func -%}
 
 
 {##################################}
-{%- macro macro_function_impl_as_ops(args) -%}
-	{%- if args.func_args %}
-	{{ args.name }}->ops->{{ args.func }}({{ args.name }}, {{ args.func_args }});
-	{%- else %}
-	{{ args.name }}->ops->{{ args.func }}({{ args.name }});
-	{%- endif -%}
-
-	{{- macro_function_return_value(args) -}}
+{%- macro macro_function_impl_as_ops(args) %}
+	{% if args.func_rtn_type != 'void' -%}return{{ SPACE }}{%- endif -%}
+	{{- args.name }}->ops->{{ args.func -}}({{- args.name -}}
+		{%- if args.func_args %}, {{ args.func_args }}{%- endif -%}
+	);
 {%- endmacro -%}
 
 
@@ -56,7 +53,11 @@ ref:	{%- import '_macro.jinja' as func -%}
 {{- args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func) -}}
 (
+{%- set l_have_params = False -%}
+
 {%- if args.func_is_static == 'False' -%}
+	{%- set l_have_params = True -%}
+
 struct{{- SPACE -}}
 	{%- if args.abstract_name -%} {{- args.abstract_name -}}
 	{%- else -%}{{- args.name -}}
@@ -66,7 +67,15 @@ struct{{- SPACE -}}
 	{%- else -%}{{- args.name -}}
 	{%- endif -%}
 {%- endif -%}
-{%- if args.func_params -%}, {{ args.func_params }}{%- endif -%}
+
+{%- if args.func_params -%}
+	{%- set l_have_params = True -%}
+
+	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{{- args.func_params -}}
+{%- endif -%}
+
+{%- if not l_have_params -%}void{%- endif -%}
 )
 {
 {{- caller() }}
@@ -86,10 +95,20 @@ struct{{- SPACE -}}
 {{ args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func) -}}
 (
+{%- set l_have_params = False -%}
+
 {%- if args.func_is_static == 'False' -%}
+	{%- set l_have_params = True -%}
 	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*
 {%- endif -%}
-	{%- if args.func_params %}, {{ args.func_params }}{%- endif -%}
+
+{%- if args.func_params -%}
+	{%- set l_have_params = True -%}
+	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{{- args.func_params -}}
+{%- endif -%}
+
+{%- if not l_have_params -%}void{%- endif -%}
 );
 {%- endmacro -%}
 
@@ -115,11 +134,18 @@ struct{{- SPACE -}}
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',abstract_name='') -%}
+{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',format_str='None',abstract_name='') -%}
+	{%- set l_have_items = False -%}
+
 	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args in functions -%}
 
-	{%- set format_str='%s_%s' -%}
-	{%- if category == "virtuals" -%}{%- set format_str='%s_ops_%s' -%}{%- endif -%}
+	{%- if format_str == "None" -%}
+		{%- set format_str='%s_%s' -%}
+
+		{%- if category == "virtuals" -%}
+			{%- set format_str='%s_ops_%s' -%}
+		{%- endif -%}
+	{%- endif -%}
 
 	{%- set args={'name':name, 'abstract_name':abstract_name, 'category':category,
 		'req_scope':scope, 'req_static':static, 'req_qualifier':qualifier,
@@ -136,6 +162,7 @@ struct{{- SPACE -}}
 			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}{%- endif -%}
 			{%- if category == "methods" -%}{{- macro_function_declare_as_func(args) -}}{%- endif -%}
 		{%- elif mode == "assign" -%}
+			{%- set l_have_items = True -%}
 			{{- macro_function_assign(args) -}}
 		{%- elif mode == "impl-ops" -%}
 			{%- call macro_function_impl(args) -%}
@@ -151,5 +178,13 @@ struct{{- SPACE -}}
 
 	{%- endif -%}
 	{%- endfor -%}
+
+	{# pad empty if needed #}
+	{%- if not l_have_items %}
+		{%- if mode == "assign" -%}
+			0
+		{%- endif -%}
+	{%- endif -%}
+
 {%- endmacro -%}
 
