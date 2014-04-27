@@ -32,7 +32,12 @@ MV    := mv
 # init includes & sources & objects & depends
 INC_PARAMS  := $(foreach d, $(INC_DIR), -I$d)
 MACRO_PARAMS:= $(foreach d, $(MACROS), -D$d)
-sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_")
+ifndef $(target)
+  sources_all := $(shell find . -maxdepth 1 -name "*.c" -o -name "*.cpp" -o -name "*.h")
+  sources_all += $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_" | grep $(target))
+else
+  sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_")
+endif
 sources_c   := $(filter %.c, $(sources_all))
 sources_cpp := $(filter %.cpp, $(sources_all))
 sources_h   := $(filter %.h, $(sources_all))

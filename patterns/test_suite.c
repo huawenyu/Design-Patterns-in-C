@@ -136,18 +136,22 @@ void my_test_suite_open()
 {
 	my_test_suite_init(&my_test_suite);
 
+	/*
+	extern void inheritance_test(void); inheritance_test();
+	extern void mult_inherit_test(void); mult_inherit_test();
+
 	extern void strategy_test(void); strategy_test();
 	extern void chain_of_responsibility_test(void); chain_of_responsibility_test();
 
-	//extern void factory_static_test(void); factory_static_test();
-	//extern void factory_simple_test(void); factory_simple_test();
-	//extern void factory_method_test(void); factory_method_test();
-	//extern void abstract_factory_family_objest_test(void); abstract_factory_family_objest_test();
-	//extern void abstract_factory_two_dimension_test(void); abstract_factory_two_dimension_test();
-	extern void inheritance_test(void); inheritance_test();
-	extern void mult_inherit_test(void); mult_inherit_test();
-	//extern void factory_method_gof_test(void); factory_method_gof_test();
-	//extern void builder_test(void); builder_test();
+	extern void factory_static_test(void); factory_static_test();
+	extern void factory_simple_test(void); factory_simple_test();
+	extern void factory_method_test(void); factory_method_test();
+	extern void factory_method_gof_test(void); factory_method_gof_test();
+	extern void abstract_factory_family_objest_test(void); abstract_factory_family_objest_test();
+	extern void abstract_factory_two_dimension_test(void); abstract_factory_two_dimension_test();
+
+	extern void builder_test(void); builder_test();
+	*/
 	extern void prototype_test(void); prototype_test();
 }
 

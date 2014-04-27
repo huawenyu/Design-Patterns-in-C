@@ -29,13 +29,39 @@ variable
 ```
 Make
 $ cd patterns
-$ make             <<< build project
-$ ./Debug/main	   <<< if Makefile set Debug=y, run this
-$ ./Release/main  <<< else run this
+$ vi test_suite.c  <<< comment the left, just leave the pattern we want to test, here is prototype
+
+	void my_test_suite_open()
+	{
+		my_test_suite_init(&my_test_suite);
+
+		/*
+		extern void inheritance_test(void); inheritance_test();
+		extern void mult_inherit_test(void); mult_inherit_test();
+
+		extern void strategy_test(void); strategy_test();
+		extern void chain_of_responsibility_test(void); chain_of_responsibility_test();
+
+		extern void factory_static_test(void); factory_static_test();
+		extern void factory_simple_test(void); factory_simple_test();
+		extern void factory_method_test(void); factory_method_test();
+		extern void factory_method_gof_test(void); factory_method_gof_test();
+		extern void abstract_factory_family_objest_test(void); abstract_factory_family_objest_test();
+		extern void abstract_factory_two_dimension_test(void); abstract_factory_two_dimension_test();
+
+		extern void builder_test(void); builder_test();
+		*/
+		extern void prototype_test(void); prototype_test();
+	}
+
+$ make target=prototype  <<< build one pattern
+$ ./Debug/main	         <<< if Makefile set Debug=y, run this
+$ ./Release/main         <<< else run this
+$ make clean
 
 Auto Generate class source/header
 $ cd tools
-$ ./autogen_jinja2.py --file json/factory-method.json 
+$ ./autogen_jinja2.py --file json/factory-method.json    <<< the generated code in dir ./tools/code/c/factory-method/*
 
 ```
 
