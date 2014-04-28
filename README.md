@@ -27,8 +27,9 @@ variable
 ## Quick Start:
 
 ```
-Make
-$ cd patterns
+Make a pattern
+--------------
+
 $ vi test_suite.c  <<< comment the others, for example, pattern 'prototype'
 
 	void my_test_suite_open()
@@ -48,9 +49,11 @@ $ ./Debug/main	         <<< if Makefile set Debug=y, run this
 $ ./Release/main         <<< else run this
 $ make clean
 
-Auto Generate class source/header
+Auto Generate class
+-------------------
+
 $ cd tools
-$ ./autogen_jinja2.py --file json/factory-method.json    <<< the generated code in dir ./tools/code/c/factory-method/*
+$ ./autogen_jinja2.py --file json/prototype.json    <<< the generated code in dir ./tools/code/c/prototype
 
 ```
 
