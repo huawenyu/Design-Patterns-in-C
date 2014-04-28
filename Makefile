@@ -35,9 +35,9 @@ INC_PARAMS  := $(foreach d, $(INC_DIR), -I$d)
 MACRO_PARAMS:= $(foreach d, $(MACROS), -D$d)
 ifndef $(target)
   sources_all := $(shell find . -maxdepth 1 -name "*.c" -o -name "*.cpp" -o -name "*.h")
-  sources_all += $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_" | grep "/$(target)/")
+  sources_all += $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/tools/" | grep -v "/_" | grep "/$(target)/")
 else
-  sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_")
+  sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/tools/" | grep -v "/_")
 endif
 sources_c   := $(filter %.c, $(sources_all))
 sources_cpp := $(filter %.cpp, $(sources_all))
