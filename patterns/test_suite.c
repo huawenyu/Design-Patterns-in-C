@@ -151,8 +151,9 @@ void my_test_suite_open()
 	extern void abstract_factory_two_dimension_test(void); abstract_factory_two_dimension_test();
 
 	extern void builder_test(void); builder_test();
-	*/
 	extern void prototype_test(void); prototype_test();
+	*/
+	extern void builder_test(void); builder_test();
 }
 
 void my_test_suite_close()

@@ -1,5 +1,6 @@
 ###########################################################
 # MAKEFILE FOR C PROJECT
+# make target=sample    # here sample must be a complete dir's name which will used by grep
 # Auto include sub dir
 # Auto exclude dir or file begin with underscore
 # 32bit: "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32"
@@ -34,7 +35,7 @@ INC_PARAMS  := $(foreach d, $(INC_DIR), -I$d)
 MACRO_PARAMS:= $(foreach d, $(MACROS), -D$d)
 ifndef $(target)
   sources_all := $(shell find . -maxdepth 1 -name "*.c" -o -name "*.cpp" -o -name "*.h")
-  sources_all += $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_" | grep $(target))
+  sources_all += $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_" | grep "/$(target)/")
 else
   sources_all := $(shell find . -name "*.c" -o -name "*.cpp" -o -name "*.h" | grep -v "/_")
 endif
