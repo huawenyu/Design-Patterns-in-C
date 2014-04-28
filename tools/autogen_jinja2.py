@@ -110,7 +110,7 @@ def render_class_to_file(templateVars, code_style, output_dir):
 
 	# Setup jinja2 render template
 	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
-	templateEnv = jinja2.Environment( loader=templateLoader )
+	templateEnv = jinja2.Environment( loader=templateLoader, extensions=["jinja2.ext.do",] )
 	templateEnv.line_statement_prefix = '##'
 	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,code_style,output_dir))
 

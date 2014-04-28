@@ -135,7 +135,7 @@ struct{{- SPACE -}}
 @mode implement as [ops|printf]
 #}
 {%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',format_str='None',abstract_name='') -%}
-	{%- set l_have_items = False -%}
+	{% set l_have_items = [] %}
 
 	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args in functions -%}
 
@@ -162,7 +162,7 @@ struct{{- SPACE -}}
 			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}{%- endif -%}
 			{%- if category == "methods" -%}{{- macro_function_declare_as_func(args) -}}{%- endif -%}
 		{%- elif mode == "assign" -%}
-			{%- set l_have_items = True -%}
+			{% do l_have_items.append(1) %}
 			{{- macro_function_assign(args) -}}
 		{%- elif mode == "impl-ops" -%}
 			{%- call macro_function_impl(args) -%}
