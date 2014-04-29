@@ -7,7 +7,6 @@
 			["virtual",  "do_it","void", "int a, int b"],
 			["var",      "name", "char", "[32]"]
 		],
-		"enable_super":"False",
 
 		"inheritance": {
 			"concrete_product_1":{
@@ -19,17 +18,17 @@
 		}
 	},
 
-	"product_factory":{
+	"factory":{
 		"members": [
-			["virtual", "create", "struct product*"],
-			["routine", "do_it",  "void" ]
+			["virtual", "create", "struct product *"],
+			["method",  "do_it",  "void" ]
 		],
 
 		"inheritance": {
-			"product_factory_1":{
+			"factory_product_1":{
 				"members": [ ["override", "<ALL>"] ]
 			},
-			"product_factory_2":{
+			"factory_product_2":{
 				"members": [ ["override", "<ALL>"] ]
 			}
 		}

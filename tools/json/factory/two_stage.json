@@ -1,0 +1,34 @@
+{
+"add_file_header":"True",
+"namespace":"two_stage",
+"path":"two_stage",
+"classes": {
+	"factory":{
+		"includes": ["product", "domain_class"],
+		"members": [
+			["virtual", "create", "struct product *", "struct domain_class *dc"]
+		],
+
+		"inheritance": {
+			"factory_product":{
+				"includes": ["product", "serializer", "file_access_handler", "domain_class"],
+				"members": [ ["override",  "<ALL>"],
+					["var", "serializer", "struct serializer *", "", "private"],
+					["var", "file_access_handler", "struct file_access_handler *", "", "private"]
+				 ]
+			}
+		}
+	},
+
+	"serializer":{},
+	"file_access_handler":{},
+	"domain_class":{},
+
+	"product":{
+		"members": [
+			["method", "do_something", "void"],
+			["var", "name", "char", "[32]"]
+		]
+	}
+}
+}
