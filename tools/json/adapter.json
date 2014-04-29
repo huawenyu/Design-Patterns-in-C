@@ -1,0 +1,27 @@
+{
+"add_file_header":"True",
+"namespace":"adapter",
+"path":"adapter",
+"classes": {
+	"target":{
+		"members": [
+			["virtual", "request", "void"]
+		],
+
+		"inheritance": {
+			"adapter":{
+				"includes":["adaptee"],
+				"members": [ ["override",  "<ALL>"],
+				["var", "_adaptee", "struct adaptee *", "", "private"]
+				]
+			}
+		}
+	},
+
+	"adaptee":{
+		"members": [
+			["method", "specific_request",  "void"]
+		]
+	}
+}
+}

@@ -7,9 +7,9 @@
 
 {%- block include -%}
 {%- if includes -%}
-	{%- for one_include in includes %}
+{%- for one_include in includes %}
 #include "{{ one_include }}.h"
-	{%- endfor -%}
+{% endfor -%}
 {%- endif -%}
 
 {# class dependency #}
