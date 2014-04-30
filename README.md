@@ -20,7 +20,7 @@ variable
   member              -                +       +
 ====================================================
 + have implemented
-- can implemented with body-handle pattern, but ...
+- can implemented with the "handle/body" idiom, but ...
 
 ```
 

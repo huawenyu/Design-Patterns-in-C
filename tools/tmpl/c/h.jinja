@@ -5,20 +5,22 @@
 	{{- func.file_header(file_header_name,copyright,author,date,summary) -}}
 {% endif %}{% endblock %}
 
+
 {%- block include -%}
-{%- if includes -%}
-{%- for one_include in includes %}
+	{%- if includes -%}
+		{%- for one_include in includes %}
 #include "{{ one_include }}.h"
-{% endfor -%}
-{%- endif -%}
+		{%- endfor -%}
+	{%- endif -%}
 
 {# class dependency #}
-{%- if supers -%}
-	{%- for parent_name,parent_vtables in supers.iteritems() -%}
+	{%- if supers -%}
+		{%- for parent_name,parent_vtables in supers.iteritems() %}
 #include "{{ parent_name }}.h"
-	{%- endfor -%}
-{%- endif -%}
+		{%- endfor -%}
+	{%- endif -%}
 {%- endblock -%}
+
 
 {%- block forward_declare -%}
 {%- if _have_vtable_new -%}
