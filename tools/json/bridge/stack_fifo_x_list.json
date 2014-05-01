@@ -1,17 +1,18 @@
 {
 "add_file_header":"True",
-"namespace":"builder",
-"path":"builder",
+"namespace":"bridge_stack",
+"path":"bridge_stack",
 "classes": {
 	"node":{
 		"members": [
-			["var", "value", "int"],
+			["var", "val", "int"],
 			["var", "prev", "struct node *"],
 			["var", "next", "struct node *"]
 		]
 	},
 
 	"stack":{
+		"includes":["stack_impl"],
 		"members": [
 			["virtual", "push", "void", "int val"],
 			["virtual", "pop", "int"],
@@ -20,41 +21,47 @@
 			["virtual", "is_full", "int"],
 			["var", "_impl", "struct stack_impl *", "", "private"]
 		],
+		"enable_super":"True",
 
 		"inheritance": {
 			"stack_hanoi":{
-				"members": [ ["override",  "<ALL>"] ]
+				"members": [ ["override",  "push"] ]
 			},
 			"stack_fifo":{
-				"members": [ ["override",  "<ALL>"] ]
+				"members": [ ["override",  "pop"] ]
 			}
 		}
 	},
 
 	"stack_impl":{
 		"members": [
-			["virtual", "build_header",  "void"],
-			["virtual", "build_body"  ,  "void"],
-			["virtual", "build_leg"   ,  "void"],
-			["virtual", "build_arm"   ,  "void"],
-			["virtual", "build_tail"  ,  "void"]
+			["virtual", "push", "void", "int val"],
+			["virtual", "pop", "int"],
+			["virtual", "top", "int"],
+			["virtual", "is_empty", "int"],
+			["virtual", "is_full", "int"]
 		],
 
 		"inheritance": {
-			"stack_array":{
-				"members": [ ["override",  "<ALL>"] ]
+			"stack_impl_array":{
+				"members": [ ["override",  "<ALL>"],
+					["var", "items", "int", "[32]", "private"],
+					["var", "total", "int", "", "private"]
+				]
 			},
-			"stack_list":{
-				"members": [ ["override",  "<ALL>"] ]
+			"stack_impl_list":{
+				"includes":["node"],
+				"members": [ ["override",  "<ALL>"],
+					["var", "nodes", "struct node *", "", "private"]
+				]
 			}
 		}
 	},
 
 	"bridge":{
-		"includes":["animal_builder"],
+		"includes":["stack_hanoi", "stack_fifo", "stack_array", "stack_list"],
 		"members": [
-			["method", "make_animal", "void", "struct animal_builder *builder"],
-			["var", "name", "char", "[32]"]
+			["method", "main_entry", "void"]
 		]
 	}
 }
