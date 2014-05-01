@@ -20,7 +20,7 @@
 	"teacher":{
 		"supers": ["person", "employee"],
 		"members": [
-			["override",  "<ALL>"]
+			["override", "<ALL>"]
 		]
 	}
 }

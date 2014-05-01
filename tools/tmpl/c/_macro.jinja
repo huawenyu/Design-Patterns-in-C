@@ -42,31 +42,20 @@ ref:	{%- import '_macro.jinja' as func -%}
 
 {##################################}
 {%- macro macro_function_impl_as_printf(args) %}
-	{%- if args.func == 'free' %}
-	struct {{ args.name }} *l_{{ args.name }} = container_of(
-		{%- if args.abstract_name -%}{{- args.abstract_name -}}
-		{%- else -%}{{- args.name -}}
-		{%- endif -%}
-		, typeof(*l_{{ args.name }}),
-		{%- if args.abstract_name -%}{{- args.abstract_name -}}
-		{%- else -%}{{- args.name -}}
-		{%- endif -%}
-		);
-	{%- endif %}
 	printf("{{ args.name }}::{{ args.func }}()\n");
 
 	{%- if args.func == '_destructor' %}
-	CLASS_SUPER(
-		{%- if args.abstract_name -%}{{- args.abstract_name -}}
-		{%- else -%}{{- args.name -}}
-		{%- endif -%}
-		, _destructor);
+	/** pseudocode: careful about mult-inherit
+	... do_something() to put resources ...
+	CLASS_SUPER({{- args.name -}}, _destructor);
+	*/
 	{%- elif args.func == 'free' %}
-		{%- if args.abstract_name -%}{{- args.abstract_name -}}
-		{%- else -%}{{- args.name -}}
-		{%- endif -%}
-		__destructor();
+	/** pseudocode: careful about mult-inherit
+	struct {{ args.name }} *l_{{ args.name }} = container_of({{- args.name -}}
+		, typeof(*l_{{ args.name }}), {{ args.abstract_name -}});
+	{{ args.abstract_name }}__destructor({{- args.name -}});
 	free(l_{{ args.name }});
+	*/
 	{%- endif -%}
 	
 	{{- macro_function_return_value(args) -}}

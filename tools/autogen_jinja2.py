@@ -38,7 +38,7 @@ import sys, traceback
 import copy
 import argparse
 import jinja2
-import pprint
+import re
 import const as mysyn
 from odict import odict
 from time import gmtime, strftime
@@ -55,6 +55,7 @@ mysyn.auto_comn_tmpl_file = 'autogen_.jinja'
 mysyn.classes = 'classes'  #
 mysyn.members = 'members'  #
 mysyn.sub_classes = 'inheritance'  #
+mysyn.override_all = '<ALL>'  #
 
 # Must match one by one
 mysyn.m_dict = {       \
@@ -90,6 +91,7 @@ def render_one_to_file(x, dir_name, files):
 			templateVars['file_header_name'] = file_header_name
 			templ_file = templateEnv.get_template(one_file)
 			output_text = templ_file.render( templateVars )
+			output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
 			f = open(output_abs_file, 'w')
 			f.write(output_text)
 			f.close()
@@ -185,7 +187,7 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 		my_supers = my_class['supers']
 		#function = ['public', 'void', 'do_something', '']
 		for one_virtual in one_super[mysyn.m_dict['virtual']]:
-			if (func_name == '<ALL>' \
+			if (func_name == mysyn.override_all \
 			    or func_name == one_virtual[mysyn.func.name]) \
 			   and len(my_direct_parents) > 0:
 				# use direct parent as key
@@ -201,7 +203,8 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 					my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']] = []
 				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']].append(one_virtual)
 
-				return True
+				if (func_name == one_virtual[mysyn.func.name]):
+					return True
 
 		if find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
 			return True
@@ -216,8 +219,9 @@ def parse_override_function(myclasses_array_dict):
 			if not find_virtual_prototype_by_name(one_myclass, \
 			  override[mysyn.func.name], myclasses_array_dict, \
 			  one_myclass['name'], override[mysyn.func.type], []):
-				raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
-					format(one_myclass['name'], override[mysyn.func.name], override[mysyn.func.type]))
+				if override[mysyn.func.name] != mysyn.override_all:
+					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
+						format(one_myclass['name'], override[mysyn.func.name], override[mysyn.func.type]))
 
 
 def parse_support_flag_and_auto_function(myclasses_array_dict):
@@ -311,7 +315,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		for members in mysyn.m_dict.values(): # avoid None Error
 			one_myclass[members]  = []
 
-		if one_myclass['enable_destructor']:
+		if one_myclass['enable_destructor'].lower() == 'true':
 			# 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
 			member_destructor = ['False', 'private', 'void', '_destructor', '', '', \
 				'called by free(): put resources, forward to super.']
