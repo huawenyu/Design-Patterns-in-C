@@ -56,6 +56,12 @@ static int stack_list_ops_is_full(struct stack_impl *stack_impl)
 	printf("stack_list::is_full()\n");
 	return 0;
 }
+static void stack_list_ops_free(struct stack_impl *stack_impl)
+{
+	struct stack_list *list = container_of(stack_impl, typeof(*list), stack_impl);
+	printf("stack_list::free()\n");
+	free(list);
+}
 
 static struct stack_impl_ops stack_impl_ops = {
 	.push = stack_list_ops_push,
@@ -63,13 +69,14 @@ static struct stack_impl_ops stack_impl_ops = {
 	.top = stack_list_ops_top,
 	.is_empty = stack_list_ops_is_empty,
 	.is_full = stack_list_ops_is_full,
+	.free = stack_list_ops_free,
 };
 
 
-void stack_list_init(struct stack_list *stack_list, char *stack_impl)
+void stack_list_init(struct stack_list *stack_list)
 {
 	memset(stack_list, sizeof(*stack_list), 0);
-	stack_impl_init(&stack_list->stack_impl, stack_impl);
-	CLASS_OPS_INIT(stack_list->stack_impl.ops, stack_impl_ops);
+	stack_impl_init(&stack_list->stack_impl);
+	CLASS_OPS_INIT_WITH_SUPER(stack_list->stack_impl.ops, stack_impl_ops, super);
 }
 

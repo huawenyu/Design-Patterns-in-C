@@ -23,6 +23,6 @@ struct stack_list {
 	struct node * nodes;
 };
 
-void stack_list_init(struct stack_list *, char *);
+void stack_list_init(struct stack_list *);
 
 #endif /* __STACK_LIST_H__ */

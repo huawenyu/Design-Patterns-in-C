@@ -43,12 +43,18 @@ static int stack_impl_ops_is_full(struct stack_impl *stack_impl)
 	printf("stack_impl::is_full()\n");
 	return 0;
 }
+static void stack_impl_ops_free(struct stack_impl *stack_impl)
+{
+	printf("stack_impl::free()\n");
+	return 0;
+}
 static struct stack_impl_ops stack_impl_ops = {
 	.push = stack_impl_ops_push,
 	.pop = stack_impl_ops_pop,
 	.top = stack_impl_ops_top,
 	.is_empty = stack_impl_ops_is_empty,
 	.is_full = stack_impl_ops_is_full,
+	.free = stack_impl_ops_free,
 };
 
 void stack_impl_init(struct stack_impl *stack_impl)

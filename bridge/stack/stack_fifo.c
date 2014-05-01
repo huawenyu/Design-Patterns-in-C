@@ -29,11 +29,11 @@ static int stack_fifo_ops_pop(struct stack *stack)
 		return -1; /* assume the data eg 0 */
 	stack_list_init(list);
 	while (!stack_is_empty(stack)) {
-		stack_impl_push(&list->stack_impl, CLASS_SUPER_RTN(stack, stack_pop, int));
+		stack_impl_push(&list->stack_impl, CLASS_SUPER_RTN(stack, pop, int));
 	}
 	rtn = stack_impl_pop(&list->stack_impl);
-	while (!stack_impl_is_empty(list->stack_impl)) {
-		CLASS_SUPER(stack, stack_push, stack_impl_pop(&list->stack_impl));
+	while (!stack_impl_is_empty(&list->stack_impl)) {
+		CLASS_SUPER(stack, push, stack_impl_pop(&list->stack_impl));
 	}
 	return rtn;
 }

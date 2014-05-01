@@ -135,7 +135,7 @@
 	CLASS_SUPER_OPS(ptr, function, ops, super, ##__VA_ARGS__)
 
 #define CLASS_SUPER_RTN(ptr, function, rtn_type, ...) \
-	CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ##__VA_ARGS__)
+	CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ##__VA_ARGS__) \
 
 /**Call super method
  * @ptr the basic class ptr
@@ -154,15 +154,15 @@
 }while(0)
 
 #define CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ...) ({ \
-	rtn_type rtn; \
+	rtn_type __158__super__ops__call__rtn__; \
 	typeof((ptr)->ops) l_ops = (ptr)->ops; \
 	assert((ptr)->ops->super && "invalid super pointer: check whether init with super macro"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
-		rtn = (ptr)->ops->function(ptr, ##__VA_ARGS__); \
+		__158__super__ops__call__rtn__ = (ptr)->ops->function(ptr, ##__VA_ARGS__); \
 	} \
 	(ptr)->ops = l_ops; \
-	rtn; \
+	__158__super__ops__call__rtn__; \
 })
 
 #endif /* __MY_OBJ_H__ */

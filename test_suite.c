@@ -156,7 +156,6 @@ void my_test_suite_open()
 	extern void adapter_test(void); adapter_test();
 	extern void two_stage_test(void); two_stage_test();
 	*/
-	extern void factory_method_gof_test(void); factory_method_gof_test();
 }
 
 void my_test_suite_close()

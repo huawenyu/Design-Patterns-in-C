@@ -28,6 +28,7 @@ static void stack_array_ops_push(struct stack_impl *stack_impl, int val)
 }
 static int stack_array_ops_pop(struct stack_impl *stack_impl)
 {
+	struct stack_array *array = container_of(stack_impl, typeof(*array), stack_impl);
 	printf("stack_array::pop()\n");
 	if (stack_impl_is_empty(stack_impl))
 		return -1;
@@ -43,13 +44,21 @@ static int stack_array_ops_top(struct stack_impl *stack_impl)
 }
 static int stack_array_ops_is_empty(struct stack_impl *stack_impl)
 {
+	struct stack_array *array = container_of(stack_impl, typeof(*array), stack_impl);
 	printf("stack_array::is_empty()\n");
-	return total == 0;
+	return (array->total == 0);
 }
 static int stack_array_ops_is_full(struct stack_impl *stack_impl)
 {
+	struct stack_array *array = container_of(stack_impl, typeof(*array), stack_impl);
 	printf("stack_array::is_full()\n");
-	return total == stack_array_items_size;
+	return (array->total == stack_array_items_size);
+}
+static void stack_array_ops_free(struct stack_impl *stack_impl)
+{
+	struct stack_array *array = container_of(stack_impl, typeof(*array), stack_impl);
+	printf("stack_array::free()\n");
+	free(array);
 }
 
 static struct stack_impl_ops stack_impl_ops = {
@@ -58,6 +67,7 @@ static struct stack_impl_ops stack_impl_ops = {
 	.top = stack_array_ops_top,
 	.is_empty = stack_array_ops_is_empty,
 	.is_full = stack_array_ops_is_full,
+	.free = stack_array_ops_free,
 };
 
 
@@ -65,6 +75,6 @@ void stack_array_init(struct stack_array *stack_array)
 {
 	memset(stack_array, sizeof(*stack_array), 0);
 	stack_impl_init(&stack_array->stack_impl);
-	CLASS_OPS_INIT(stack_array->stack_impl.ops, stack_impl_ops);
+	CLASS_OPS_INIT_WITH_SUPER(stack_array->stack_impl.ops, stack_impl_ops, super);
 }
 

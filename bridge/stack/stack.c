@@ -46,31 +46,37 @@ static int stack_ops_is_full(struct stack *stack)
 	printf("stack::is_full()\n");
 	return stack_impl_is_full(stack->_impl);
 }
+static void stack_ops_free(struct stack *stack)
+{
+	printf("stack::free()\n");
+	return stack_impl_free(stack->_impl);
+}
 static struct stack_ops stack_ops = {
 	.push = stack_ops_push,
 	.pop = stack_ops_pop,
 	.top = stack_ops_top,
 	.is_empty = stack_ops_is_empty,
 	.is_full = stack_ops_is_full,
+	.free = stack_ops_free,
 };
 
-void stack_init(struct stack *stack, char *stack_impl)
+void stack_init(struct stack *stack, const char *stack_impl)
 {
 	struct stack_array *array;
 	struct stack_list *list;
 	memset(stack, sizeof(*stack), 0);
 	stack->ops = &stack_ops;
 
-	_impl = 0;
+	stack->_impl = 0;
 	if (0 == strcmp("array", stack_impl)) {
 		array = malloc(sizeof(*array));
 		stack_array_init(array);
-		_impl = &array->stack_impl;
+		stack->_impl = &array->stack_impl;
 	}
 	else if (0 == strcmp("list", stack_impl)) {
 		list = malloc(sizeof(*list));
-		stack_array_init(list);
-		_impl = &list->stack_impl;
+		stack_list_init(list);
+		stack->_impl = &list->stack_impl;
 	}
 }
 
