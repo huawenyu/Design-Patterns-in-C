@@ -30,6 +30,7 @@ struct {{ name }}_ops;
 
 
 {%- block class_definition -%}
+{% if comment %}/** {{ comment }} */{% endif %}
 struct {{ name }} {
 	{%- if supers -%}
 		{%- for parent_name,parent_vtables in supers.iteritems() %}

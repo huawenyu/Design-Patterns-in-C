@@ -6,7 +6,8 @@
 			["virtual",  "level", "void"],
 			["var", "wage",  "int"],
 			["var", "level", "int"]
-		]
+		],
+		"enable_destructor":"True"
 	},
 	"person":{
 		"members": [
@@ -19,8 +20,7 @@
 	"teacher":{
 		"supers": ["person", "employee"],
 		"members": [
-			["override",  "name"],
-			["override",  "level"]
+			["override",  "<ALL>"]
 		]
 	}
 }

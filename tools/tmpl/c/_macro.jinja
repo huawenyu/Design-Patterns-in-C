@@ -42,13 +42,40 @@ ref:	{%- import '_macro.jinja' as func -%}
 
 {##################################}
 {%- macro macro_function_impl_as_printf(args) %}
+	{%- if args.func == 'free' %}
+	struct {{ args.name }} *l_{{ args.name }} = container_of(
+		{%- if args.abstract_name -%}{{- args.abstract_name -}}
+		{%- else -%}{{- args.name -}}
+		{%- endif -%}
+		, typeof(*l_{{ args.name }}),
+		{%- if args.abstract_name -%}{{- args.abstract_name -}}
+		{%- else -%}{{- args.name -}}
+		{%- endif -%}
+		);
+	{%- endif %}
 	printf("{{ args.name }}::{{ args.func }}()\n");
+
+	{%- if args.func == '_destructor' %}
+	CLASS_SUPER(
+		{%- if args.abstract_name -%}{{- args.abstract_name -}}
+		{%- else -%}{{- args.name -}}
+		{%- endif -%}
+		, _destructor);
+	{%- elif args.func == 'free' %}
+		{%- if args.abstract_name -%}{{- args.abstract_name -}}
+		{%- else -%}{{- args.name -}}
+		{%- endif -%}
+		__destructor();
+	free(l_{{ args.name }});
+	{%- endif -%}
+	
 	{{- macro_function_return_value(args) -}}
 {%- endmacro -%}
 
 
 {##################################}
 {%- macro macro_function_impl(args) %}
+{% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
 {% if args.req_qualifier %}{{ args.req_qualifier }}{{- SPACE -}}{%- endif -%}
 {{- args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func) -}}
@@ -86,12 +113,13 @@ struct{{- SPACE -}}
 {##################################}
 {%- macro macro_function_declare_as_ops(args) %}
 	{{ args.func_rtn_type }} (*{{ args.func }})(struct {{ args.name }} *
-	{%- if args.func_params %}, {{ args.func_params }}{%- endif %});
+	{%- if args.func_params %}, {{ args.func_params }}{%- endif %});{% if args.func_comment %} /** {{ args.func_comment }} */{% endif %}
 {%- endmacro -%}
 
 
 {##################################}
 {%- macro macro_function_declare_as_func(args) %}
+{% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
 {{ args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func) -}}
 (
@@ -121,7 +149,7 @@ struct{{- SPACE -}}
 
 {##################################}
 {%- macro macro_variable(args) %}
-	{{ args.func_rtn_type }} {{ args.func }}{{ args.func_params }};
+	{{ args.func_rtn_type }} {{ args.func }}{{ args.func_params }};{% if args.func_comment %} /** {{ args.func_comment }} */{% endif %}
 {%- endmacro -%}
 
 
@@ -137,7 +165,7 @@ struct{{- SPACE -}}
 {%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',format_str='None',abstract_name='') -%}
 	{% set l_have_items = [] %}
 
-	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args in functions -%}
+	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
 
 	{%- if format_str == "None" -%}
 		{%- set format_str='%s_%s' -%}
@@ -151,7 +179,8 @@ struct{{- SPACE -}}
 		'req_scope':scope, 'req_static':static, 'req_qualifier':qualifier,
 		'func_scope':func_scope,'func_is_static':func_is_static,
 		'func_rtn_type':func_rtn_type,'func':func,'func_format_str':format_str,
-		'func_params':func_params,'func_args':func_args} -%}
+		'func_params':func_params,'func_args':func_args,
+		'func_comment':func_comment} -%}
 
 	{%- if (args.req_scope == 'None' or args.func_scope == args.req_scope)
 			and (args.req_static == 'None' or args.func_is_static == args.req_static) -%}
