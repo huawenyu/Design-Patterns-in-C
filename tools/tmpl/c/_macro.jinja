@@ -42,18 +42,18 @@ ref:	{%- import '_macro.jinja' as func -%}
 
 {##################################}
 {%- macro macro_function_impl_as_printf(args) %}
-	printf("{{ args.name }}::{{ args.func }}()\n");
+	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 
 	{%- if args.func == '_destructor' %}
-	/** pseudocode: careful about mult-inherit
+	/** PSEUDOCODE
 	... do_something() to put resources ...
-	CLASS_SUPER({{- args.name -}}, _destructor);
+	CLASS_SUPER({{- args.first_arg_type -}}, _destructor);
 	*/
 	{%- elif args.func == 'free' %}
-	/** pseudocode: careful about mult-inherit
-	struct {{ args.name }} *l_{{ args.name }} = container_of({{- args.name -}}
-		, typeof(*l_{{ args.name }}), {{ args.abstract_name -}});
-	{{ args.abstract_name }}__destructor({{- args.name -}});
+	/** PSEUDOCODE
+	struct {{ args.name }} *l_{{ args.name }} = container_of({{- args.first_arg_type -}}
+		, typeof(*l_{{ args.name }}), {{ args.first_arg_type }});
+	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
 	free(l_{{ args.name }});
 	*/
 	{%- endif -%}
@@ -67,25 +67,18 @@ ref:	{%- import '_macro.jinja' as func -%}
 {% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
 {% if args.req_qualifier %}{{ args.req_qualifier }}{{- SPACE -}}{%- endif -%}
 {{- args.func_rtn_type }}{{- SPACE -}}
-{{- args.func_format_str|format(args.name,args.func) -}}
+{{- args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
 (
-{%- set l_have_params = False -%}
+{%- set l_have_params = [] -%}
 
 {%- if args.func_is_static == 'False' -%}
-	{%- set l_have_params = True -%}
+	{%- do l_have_params.append(1) -%}
 
-struct{{- SPACE -}}
-	{%- if args.abstract_name -%} {{- args.abstract_name -}}
-	{%- else -%}{{- args.name -}}
-	{%- endif -%}
-	{{- SPACE -}}*
-	{%- if args.abstract_name -%}{{- args.abstract_name -}}
-	{%- else -%}{{- args.name -}}
-	{%- endif -%}
+struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_type -}}
 {%- endif -%}
 
 {%- if args.func_params -%}
-	{%- set l_have_params = True -%}
+	{%- do l_have_params.append(1) -%}
 
 	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
@@ -110,17 +103,17 @@ struct{{- SPACE -}}
 {%- macro macro_function_declare_as_func(args) %}
 {% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
 {{ args.func_rtn_type }}{{- SPACE -}}
-{{- args.func_format_str|format(args.name,args.func) -}}
+{{- args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
 (
-{%- set l_have_params = False -%}
+{%- set l_have_params = [] -%}
 
 {%- if args.func_is_static == 'False' -%}
-	{%- set l_have_params = True -%}
+	{%- do l_have_params.append(1) -%}
 	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*
 {%- endif -%}
 
 {%- if args.func_params -%}
-	{%- set l_have_params = True -%}
+	{%- do l_have_params.append(1) -%}
 	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
 {%- endif -%}
@@ -132,7 +125,7 @@ struct{{- SPACE -}}
 
 {##################################}
 {%- macro macro_function_assign(args) %}
-	.{{ args.func }} = {{ args.func_format_str|format(args.name,args.func) }},
+	.{{ args.func }} = {{ args.func_format_str|format(args.name,args.func ~ args.func_postfix) }},
 {%- endmacro -%}
 
 
@@ -151,7 +144,7 @@ struct{{- SPACE -}}
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',format_str='None',abstract_name='') -%}
+{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='') -%}
 	{% set l_have_items = [] %}
 
 	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
@@ -164,10 +157,16 @@ struct{{- SPACE -}}
 		{%- endif -%}
 	{%- endif -%}
 
-	{%- set args={'name':name, 'abstract_name':abstract_name, 'category':category,
-		'req_scope':scope, 'req_static':static, 'req_qualifier':qualifier,
+	{%- set first_arg_type = name -%}
+	{%- if abstract_name -%}
+		{%- set first_arg_type = abstract_name -%}
+	{%- endif -%}
+
+	{%- set args={'name':name,  'first_arg_type':first_arg_type, 'category':category,
+		'req_scope':scope,      'req_static':static,             'req_qualifier':qualifier,
 		'func_scope':func_scope,'func_is_static':func_is_static,
-		'func_rtn_type':func_rtn_type,'func':func,'func_format_str':format_str,
+		'func_rtn_type':func_rtn_type,
+		'func':func,            'func_postfix':postfix,          'func_format_str':format_str,
 		'func_params':func_params,'func_args':func_args,
 		'func_comment':func_comment} -%}
 
@@ -180,7 +179,7 @@ struct{{- SPACE -}}
 			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}{%- endif -%}
 			{%- if category == "methods" -%}{{- macro_function_declare_as_func(args) -}}{%- endif -%}
 		{%- elif mode == "assign" -%}
-			{% do l_have_items.append(1) %}
+			{%- do l_have_items.append(1) -%}
 			{{- macro_function_assign(args) -}}
 		{%- elif mode == "impl-ops" -%}
 			{%- call macro_function_impl(args) -%}
@@ -191,7 +190,7 @@ struct{{- SPACE -}}
 				{{- macro_function_impl_as_printf(args) -}}
 			{%- endcall -%}
 		{%- else -%}
-			autogen-template error: jinja template macro_loop_functions's mode value invalid: {{ mode }}
+			autogen-template error: jinja template macro_loop_functions mode value invalid: {{ mode }}
 		{%- endif -%}
 
 	{%- endif -%}

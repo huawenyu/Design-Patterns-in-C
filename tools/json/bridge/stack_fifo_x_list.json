@@ -40,7 +40,7 @@
 			["virtual", "pop", "int"],
 			["virtual", "top", "int"],
 			["virtual", "is_empty", "int"],
-			["virtual", "is_full", "int"],
+			["virtual", "is_full", "int"]
 		],
 		"enable_destructor":"True",
 

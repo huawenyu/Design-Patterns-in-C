@@ -39,7 +39,7 @@ import copy
 import argparse
 import jinja2
 import re
-import const as mysyn
+import const as const
 from odict import odict
 from time import gmtime, strftime
 
@@ -51,25 +51,33 @@ def enum(*sequential, **named):
 
 
 # Setup syntax constants
-mysyn.auto_comn_tmpl_file = 'autogen_.jinja'
-mysyn.classes = 'classes'  #
-mysyn.members = 'members'  #
-mysyn.sub_classes = 'inheritance'  #
-mysyn.override_all = '<ALL>'  #
+const.auto_comn_tmpl_file = 'autogen_.jinja'
+const.classes             = 'classes'        #
+const.sub_classes         = 'inheritance'    #
+## member var and method
+const.members             = 'members'        #
+const.override_all        = '<ALL>'          #
+const.m_dict              ={ \
+                            'virtual'      :'virtuals', \
+                            'method'       :'methods',  \
+                            'static_method':'methods',  \
+                            'override'     :'overrides',\
+                            'var'          :'vars', \
+                            'static_var'   :'vars'}
 
-# Must match one by one
-mysyn.m_dict = {       \
-'virtual'      :'virtuals', \
-'method'       :'methods',  \
-'static_method':'methods',  \
-'override'     :'overrides',\
-'var'          :'vars', \
-'static_var'   :'vars' \
-}
-
-# cat-category
-mysyn.func =      enum('static', 'scope', 'type', 'name', 'params', 'args', 'comment')
-mysyn.func_mode = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
+## auto add function:       'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
+const.member_destructor   =['False', 'private', 'void', '_destructor', '', '', \
+                            'called by free(): put resources, forward to super.']
+const.member_free         =['False', 'public', 'void', 'free', '', '', \
+                            'free memory after call destructor().']
+## Flags
+const.config_destructor   = 'enable_destructor'
+const.config_super        = 'enable_super'
+const.control_super       = '_have_super_ref'
+const.control_vtable      = '_have_vtable_new'
+## cat-category
+const.func                = enum('static', 'scope', 'type', 'name', 'params', 'args', 'comment')
+const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
 
 
 def render_one_to_file(x, dir_name, files):
@@ -125,45 +133,49 @@ def get_value_else_default(rdict, key, def_val):
 
 
 def render_array_to_file(myclasses_array_dict, code_style, output_dir):
-	for class_name, class_detail in myclasses_array_dict.iteritems():
-		render_class_to_file(class_detail, code_style, output_dir)
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		render_class_to_file(one_myclass, code_style, output_dir)
 
 
 # if language already support oop, continue makeup
 def makeeasy_for_oop_language(myclasses_array_dict):
-	for class_name, class_detail in myclasses_array_dict.iteritems():
-		if class_detail.has_key('_have_super_ref'):
-			class_detail.pop('_have_super_ref', None)
-		if class_detail.has_key('_have_vtable_new'):
-			class_detail.pop('_have_vtable_new', None)
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if one_myclass.has_key(const.control_super):
+			one_myclass.pop(const.control_super, None)
+		if one_myclass.has_key(const.control_vtable):
+			one_myclass.pop(const.control_vtable, None)
 
-		supers = class_detail['supers']
-		class_detail['supers'] = []
+		supers = one_myclass['supers']
+		one_myclass['supers'] = []
 		overrides = []
-		class_detail[mysyn.m_dict['override']] = overrides
+		one_myclass[const.m_dict['override']] = overrides
 		for super_name,super_detail in supers.iteritems():
-			class_detail['supers'].append(super_name)
+			one_myclass['supers'].append(super_name)
 			for vtable_name,vtable_detail in super_detail.iteritems():
-				if vtable_detail.has_key(mysyn.m_dict['virtual']):
-					overrides += vtable_detail[mysyn.m_dict['virtual']]
-		class_detail[mysyn.m_dict['override']] = overrides
+				if vtable_detail.has_key(const.m_dict['virtual']):
+					overrides += vtable_detail[const.m_dict['virtual']]
+		one_myclass[const.m_dict['override']] = overrides
 
 
 def flush_unused_and_makeup(myclasses_array_dict):
-	for class_name, class_detail in myclasses_array_dict.iteritems():
-		if class_detail.has_key(mysyn.sub_classes):
-			class_detail.pop(mysyn.sub_classes, None)
-		if class_detail.has_key(mysyn.m_dict['override']):
-			class_detail.pop(mysyn.m_dict['override'], None)
-		for members in mysyn.m_dict.values(): # avoid None Error
-			if class_detail.has_key(members):
-				if len(class_detail[members]) > 0:
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if one_myclass.has_key(const.config_destructor):
+			one_myclass.pop(const.config_destructor, None)
+		if one_myclass.has_key(const.config_super):
+			one_myclass.pop(const.config_super, None)
+		if one_myclass.has_key(const.sub_classes):
+			one_myclass.pop(const.sub_classes, None)
+		if one_myclass.has_key(const.m_dict['override']):
+			one_myclass.pop(const.m_dict['override'], None)
+		for members in const.m_dict.values(): # avoid None Error
+			if one_myclass.has_key(members):
+				if len(one_myclass[members]) > 0:
 					members_tuple = []
-					for one_member in class_detail[members]:
+					for one_member in one_myclass[members]:
 						members_tuple.append(tuple(one_member))
-					class_detail[members] = members_tuple
-				elif len(class_detail[members]) == 0:
-					class_detail.pop(members, None)
+					one_myclass[members] = members_tuple
+				elif len(one_myclass[members]) == 0:
+					one_myclass.pop(members, None)
 
 
 def convert_to_class(myclasses_array_dict, class_name):
@@ -183,12 +195,18 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 		my_direct_parents.append(super_name)
 		one_super = convert_to_class(myclasses_array_dict, super_name)
 
-		# find vtable protocol, copy info into our processing class
+		# find vtable protocol in my supers, copy info into my class
 		my_supers = my_class['supers']
 		#function = ['public', 'void', 'do_something', '']
-		for one_virtual in one_super[mysyn.m_dict['virtual']]:
-			if (func_name == mysyn.override_all \
-			    or func_name == one_virtual[mysyn.func.name]) \
+		for one_virtual in one_super[const.m_dict['virtual']]:
+			#   * if name matched, copy
+			#   * if my function name is <ALL>, copy all vtable
+			#   * if vtable function name is 'destructor & free', copy
+			if (func_name == const.override_all \
+			    or func_name == one_virtual[const.func.name] \
+			    or const.member_destructor[const.func.name] == one_virtual[const.func.name] \
+			    or const.member_free[const.func.name] == one_virtual[const.func.name] \
+			   ) \
 			   and len(my_direct_parents) > 0:
 				# use direct parent as key
 				if not my_supers.has_key(my_direct_parents[0]):
@@ -199,11 +217,11 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 					my_supers[my_direct_parents[0]][one_super['name']] = odict()
 
 				my_supers[my_direct_parents[0]][one_super['name']]['detail'] = '.'.join(my_direct_parents)
-				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(mysyn.m_dict['virtual']):
-					my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']] = []
-				my_supers[my_direct_parents[0]][one_super['name']][mysyn.m_dict['virtual']].append(one_virtual)
+				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(const.m_dict['virtual']):
+					my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']] = []
+				my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']].append(one_virtual)
 
-				if (func_name == one_virtual[mysyn.func.name]):
+				if (func_name == one_virtual[const.func.name]):
 					return True
 
 		if find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
@@ -215,28 +233,40 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 def parse_override_function(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
 		# if override_all, flush the others
-		for override in one_myclass[mysyn.m_dict['override']]:
-			if override[mysyn.func.name] == mysyn.override_all:
-				one_myclass[mysyn.m_dict['override']] = []
-				one_myclass[mysyn.m_dict['override']].append(override)
+		for override in one_myclass[const.m_dict['override']]:
+			if override[const.func.name] == const.override_all:
+				one_myclass[const.m_dict['override']] = []
+				one_myclass[const.m_dict['override']].append(override)
 
 		# find override functions prototype
-		for override in one_myclass[mysyn.m_dict['override']]:
+		for override in one_myclass[const.m_dict['override']]:
 			if not find_virtual_prototype_by_name(one_myclass, \
-			  override[mysyn.func.name], myclasses_array_dict, \
-			  one_myclass['name'], override[mysyn.func.type], []):
-				if override[mysyn.func.name] != mysyn.override_all:
+			  override[const.func.name], myclasses_array_dict, \
+			  one_myclass['name'], override[const.func.type], []):
+				if override[const.func.name] != const.override_all:
 					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
-						format(one_myclass['name'], override[mysyn.func.name], override[mysyn.func.type]))
+						format(one_myclass['name'], override[const.func.name], override[const.func.type]))
 
 
 def parse_support_flag_and_auto_function(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		# control flags
+		one_myclass[const.control_super] = False  # config: enable_super
+		one_myclass[const.control_vtable] = False # config: virtual
+
+		'''
+		"_have_vtable_new" is auto-gen field used to control code-gen
+		    - means the class add new virtual function or static-member-variable itself
+		    - The generated code should have a new vtable (for C code)
+		'''
+		if len(one_myclass[const.m_dict['virtual']]) > 0:
+			one_myclass[const.control_vtable] = True
+
 		# if static var, enable have_vtable_new
-		if not one_myclass['_have_vtable_new']:
-			for variable in one_myclass[mysyn.m_dict['var']]:
-				if variable[mysyn.func.static] == 'True':
-					one_myclass['_have_vtable_new'] = True
+		if not one_myclass[const.control_vtable]:
+			for variable in one_myclass[const.m_dict['var']]:
+				if variable[const.func.static] == 'True':
+					one_myclass[const.control_vtable] = True
 					break
 
 		''' **Just needed by C code.**
@@ -252,34 +282,34 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			  - must have super-class which must have enable_super already
 			  - The generated code should init with super
 		'''
-		if not one_myclass['_have_super_ref']:
-			if one_myclass['supers']: # As derive class
-				for super_name in one_myclass['supers'].keys():
-					one_super = convert_to_class(myclasses_array_dict, super_name)
-					if (one_super.has_key('_have_super_ref') and one_super['_have_super_ref'] == True) \
-					    or (one_super.has_key('enable_super') and one_super['enable_super'].lower() == 'true'): # if parent support super, child should be init with super
-						one_myclass['_have_super_ref'] = True
-						break
-			else: # As base class
-				if len(one_myclass[mysyn.m_dict['virtual']]) > 0:
-					if one_myclass['enable_super'].lower() == 'true':
-						one_myclass['_have_super_ref'] = True
+		if one_myclass['supers']: # As derive class
+			for super_name in one_myclass['supers'].keys():
+				one_super = convert_to_class(myclasses_array_dict, super_name)
+				if one_super.has_key(const.config_super) \
+				   and one_super[const.config_super].lower() == 'true':
+					one_myclass[const.control_super] = True
+					break # exit innner supers
+		else: # As base class
+			if len(one_myclass[const.m_dict['virtual']]) > 0:
+				if one_myclass[const.config_super].lower() == 'true':
+					one_myclass[const.control_super] = True
 
-		'''
-		"_have_vtable_new" is auto-gen field used to control code-gen
-		    - means the class add new virtual function or static-member-variable itself
-		    - The generated code should have a new vtable (for C code)
-		'''
-		if not one_myclass['_have_vtable_new']:
-			if len(one_myclass[mysyn.m_dict['virtual']]) > 0:
-				one_myclass['_have_vtable_new'] = True
+	# parse 2-times for supers's flags control_super
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if one_myclass['supers']: # As derive class
+			for super_name,super_class in one_myclass['supers'].iteritems():
+				for vtable_name, vtable in super_class.iteritems():
+					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+					if vtable_class.has_key(const.control_super) \
+					   and vtable_class[const.control_super]:
+					   vtable[const.control_super] = True
 
 
 def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
-	for class_name, class_detail in context_dict_tree.iteritems():
-		myclasses_array_dict[class_name] = class_detail
-		if class_detail.has_key(mysyn.sub_classes):
-			convert_to_array_dict(myclasses_array_dict, class_detail[mysyn.sub_classes])
+	for class_name, one_myclass in context_dict_tree.iteritems():
+		myclasses_array_dict[class_name] = one_myclass
+		if one_myclass.has_key(const.sub_classes):
+			convert_to_array_dict(myclasses_array_dict, one_myclass[const.sub_classes])
 
 
 def convert_to_myclasses(myclass_dict, input_dict, mysuper):
@@ -302,14 +332,10 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 		# used as C generate helper
 		# config flags
-		one_myclass['enable_destructor'] = get_value_else_default(one_inputclass, 'enable_destructor', 'False')
-		one_myclass['enable_super'] = get_value_else_default(one_inputclass, 'enable_super', 'False')
-		if one_myclass['enable_destructor'] == 'True':
-			one_myclass['enable_super'] = 'True'
-		# gen control flags
-		one_myclass['_have_super_ref'] = False  # config: enable_super
-		one_myclass['_have_vtable_new'] = False # config: virtual
-		one_myclass['_have_destructor'] = False # config: enable_destructor
+		one_myclass[const.config_destructor] = get_value_else_default(one_inputclass, const.config_destructor, 'False')
+		one_myclass[const.config_super] = get_value_else_default(one_inputclass, const.config_super, 'False')
+		if one_myclass[const.config_destructor].lower() == 'true':
+			one_myclass[const.config_super] = 'True'
 
 		supers = odict()
 		one_myclass['supers'] = supers
@@ -319,48 +345,43 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 			for super_name in one_inputclass['supers']:
 				supers[super_name] = odict()
 
-		for members in mysyn.m_dict.values(): # avoid None Error
+		for members in const.m_dict.values(): # avoid None Error
 			one_myclass[members]  = []
 
-		if one_myclass['enable_destructor'].lower() == 'true':
-			# 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
-			member_destructor = ['False', 'private', 'void', '_destructor', '', '', \
-				'called by free(): put resources, forward to super.']
-			member_free = ['False', 'public', 'void', 'free', '', '', \
-				'free memory after call destructor().']
-			one_myclass[mysyn.m_dict['virtual']].append(member_destructor);
-			one_myclass[mysyn.m_dict['virtual']].append(member_free);
+		if one_myclass[const.config_destructor].lower() == 'true':
+			one_myclass[const.m_dict['virtual']].append(const.member_destructor);
+			one_myclass[const.m_dict['virtual']].append(const.member_free);
 
 		# split members into functions and vars ...
-		if one_inputclass.has_key(mysyn.members):
-			for member_input in one_inputclass[mysyn.members]:
+		if one_inputclass.has_key(const.members):
+			for member_input in one_inputclass[const.members]:
 				member_category = ''
 				member_detail = ['False', 'public', '', '', '', '','']
 
 				member_mode = len(member_input)
-				if  member_mode == mysyn.func_mode.cat_name:
+				if  member_mode == const.func_mode.cat_name:
 					member_category = member_input[0]
-					member_detail[mysyn.func.name] = member_input[1]
-				elif member_mode == mysyn.func_mode.cat_name_type:
+					member_detail[const.func.name] = member_input[1]
+				elif member_mode == const.func_mode.cat_name_type:
 					member_category = member_input[0]
-					member_detail[mysyn.func.name] = member_input[1]
-					member_detail[mysyn.func.type] = member_input[2]
-				elif member_mode == mysyn.func_mode.cat_name_type_args or \
-					 member_mode == mysyn.func_mode.cat_name_type_args_scope or \
+					member_detail[const.func.name] = member_input[1]
+					member_detail[const.func.type] = member_input[2]
+				elif member_mode == const.func_mode.cat_name_type_args or \
+					 member_mode == const.func_mode.cat_name_type_args_scope or \
 					 member_mode == cat_name_type_args_scope_comment:
 					member_category = member_input[0]
-					member_detail[mysyn.func.name]  = member_input[1]
-					member_detail[mysyn.func.type]  = member_input[2]
-					member_detail[mysyn.func.params]= member_input[3]
+					member_detail[const.func.name]  = member_input[1]
+					member_detail[const.func.type]  = member_input[2]
+					member_detail[const.func.params]= member_input[3]
 
 					# scope and comment
-					if member_mode == mysyn.func_mode.cat_name_type_args_scope or \
-					   member_mode == mysyn.func_mode.cat_name_type_args_scope_comment:
+					if member_mode == const.func_mode.cat_name_type_args_scope or \
+					   member_mode == const.func_mode.cat_name_type_args_scope_comment:
 						if member_input[4]:
-							member_detail[mysyn.func.scope] = member_input[4]
-						if member_mode == mysyn.func_mode.cat_name_type_args_scope_comment:
+							member_detail[const.func.scope] = member_input[4]
+						if member_mode == const.func_mode.cat_name_type_args_scope_comment:
 							if member_input[5]:
-								member_detail[mysyn.func.comment] = member_input[5]
+								member_detail[const.func.comment] = member_input[5]
 
 					if member_input[3] and member_category != 'var':
 						params_str = member_input[3]
@@ -386,26 +407,26 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 								  format(myclass_name, member_input, params_str))
 
 						args.pop() # remove the last comma
-						member_detail[mysyn.func.args] = ''.join(args)
+						member_detail[const.func.args] = ''.join(args)
 				else:
 					raise Exception('class {0} member_input size is {1} greater than 4: {2}'.\
 					  format(myclass_name, member_input, member_mode))
 
 				#@TODO warning member_name conflict
-				if one_myclass.has_key(mysyn.m_dict[member_category]):
-					one_myclass[mysyn.m_dict[member_category]].append(member_detail)
+				if one_myclass.has_key(const.m_dict[member_category]):
+					one_myclass[const.m_dict[member_category]].append(member_detail)
 					if member_category == 'static_method' or member_category == 'static_var':
-						member_detail[mysyn.func.static] = 'True'
+						member_detail[const.func.static] = 'True'
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
-					  format(myclass_name, mysyn.m_dict[member_category]))
+					  format(myclass_name, const.m_dict[member_category]))
 
 		# recursive sub-classes
-		one_myclass[mysyn.sub_classes] = odict()
-		if one_inputclass.has_key(mysyn.sub_classes):
-			sub_inputclass = one_inputclass[mysyn.sub_classes]
+		one_myclass[const.sub_classes] = odict()
+		if one_inputclass.has_key(const.sub_classes):
+			sub_inputclass = one_inputclass[const.sub_classes]
 			sub_myclass = odict()
-			one_myclass[mysyn.sub_classes] = sub_myclass
+			one_myclass[const.sub_classes] = sub_myclass
 			convert_to_myclasses(sub_myclass, sub_inputclass, one_myclass)
 
 	return myclass_dict
@@ -426,8 +447,8 @@ def convert_namespace_to_tree(def_path, input_dict):
 	# generate path
 	mysuper['path'] = get_value_else_default(input_dict, 'path', def_path)
 	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', def_path)
-	mysuper['enable_super'] = 'False'
-	mysuper['enable_destructor'] = 'False'
+	mysuper[const.config_super] = 'False'
+	mysuper[const.config_destructor] = 'False'
 	mysuper['supers'] = []
 	if input_dict.has_key('classes'):
 		convert_to_myclasses(context_dict_tree, input_dict['classes'], mysuper)
