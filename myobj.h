@@ -120,6 +120,9 @@
  * @PRE the member be the last element of struct
  * @member typeof ops-ptr, pointer to parent-class's ops
  */
+#define CLASS_OPS_INIT_SUPER(ptr, ops) \
+	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super)
+
 #define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member) \
 	typeof(ptr) l_super = ptr; \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \

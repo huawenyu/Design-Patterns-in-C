@@ -19,7 +19,6 @@
 			["virtual", "top", "int"],
 			["virtual", "is_empty", "int"],
 			["virtual", "is_full", "int"],
-			["virtual", "free", "void"],
 			["var", "_impl", "struct stack_impl *", "", "private"]
 		],
 		"enable_super":"True",
@@ -42,7 +41,6 @@
 			["virtual", "top", "int"],
 			["virtual", "is_empty", "int"],
 			["virtual", "is_full", "int"],
-			["virtual", "free", "void"]
 		],
 		"enable_destructor":"True",
 
@@ -63,9 +61,9 @@
 	},
 
 	"bridge":{
-		"includes":["stack_hanoi", "stack_fifo", "stack_array", "stack_list"],
+		"includes":["stack_hanoi", "stack_fifo", "stack_impl_array", "stack_impl_list"],
 		"members": [
-			["method", "main_entry", "void"]
+			["static_method", "main_entry", "void"]
 		]
 	}
 }

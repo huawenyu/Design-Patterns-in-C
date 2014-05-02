@@ -16,16 +16,17 @@
 #include <string.h>
 #include <myobj.h>
 #include "stack_fifo.h"
+#include "stack_impl_list.h"
 
 static int stack_fifo_ops_pop(struct stack *stack)
 {
 	int rtn;
-	struct stack_list *list;
+	struct stack_impl_list *list;
 	printf("stack_fifo::pop()\n");
 	list = malloc(sizeof(*list));
 	if (!list)
 		return -1; /* assume the data eg 0 */
-	stack_list_init(list);
+	stack_impl_list_init(list);
 	while (!stack_is_empty(stack)) {
 		stack_impl_push(&list->stack_impl, CLASS_SUPER_RTN(stack, pop, int));
 	}

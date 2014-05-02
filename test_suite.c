@@ -155,7 +155,9 @@ void my_test_suite_open()
 	extern void builder_test(void); builder_test();
 	extern void adapter_test(void); adapter_test();
 	extern void two_stage_test(void); two_stage_test();
+	extern void bridge_stack_test(void); bridge_stack_test();
 	*/
+	extern void bridge_stack_test(void); bridge_stack_test();
 }
 
 void my_test_suite_close()

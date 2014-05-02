@@ -66,15 +66,6 @@ static int stack_impl_ops_is_full(struct stack_impl *stack_impl)
 	return 0;
 }
 
-static void stack_impl_ops_free(struct stack_impl *stack_impl)
-{
-	printf("stack_impl::free()\n");
-	/** pseudocode: careful about mult-inherit
-	struct stack_impl *l_stack_impl = container_of(stack_impl, typeof(*l_stack_impl), );
-	__destructor(stack_impl);
-	free(l_stack_impl);
-	*/
-}
 static struct stack_impl_ops stack_impl_ops = {
 	._destructor = stack_impl_ops__destructor,
 	.free = stack_impl_ops_free,
@@ -83,7 +74,6 @@ static struct stack_impl_ops stack_impl_ops = {
 	.top = stack_impl_ops_top,
 	.is_empty = stack_impl_ops_is_empty,
 	.is_full = stack_impl_ops_is_full,
-	.free = stack_impl_ops_free,
 };
 
 void stack_impl_init(struct stack_impl *stack_impl)

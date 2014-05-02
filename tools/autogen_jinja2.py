@@ -214,7 +214,13 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 
 def parse_override_function(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
-		#override = ['public', 'base_class', 'do_something', '']
+		# if override_all, flush the others
+		for override in one_myclass[mysyn.m_dict['override']]:
+			if override[mysyn.func.name] == mysyn.override_all:
+				one_myclass[mysyn.m_dict['override']] = []
+				one_myclass[mysyn.m_dict['override']].append(override)
+
+		# find override functions prototype
 		for override in one_myclass[mysyn.m_dict['override']]:
 			if not find_virtual_prototype_by_name(one_myclass, \
 			  override[mysyn.func.name], myclasses_array_dict, \

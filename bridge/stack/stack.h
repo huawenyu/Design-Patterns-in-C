@@ -30,7 +30,6 @@ struct stack_ops {
 	int (*top)(struct stack *);
 	int (*is_empty)(struct stack *);
 	int (*is_full)(struct stack *);
-	void (*free)(struct stack *);
 	struct stack_ops *super;
 };
 void stack_init(struct stack *, const char *);
@@ -69,11 +68,6 @@ static inline int stack_is_empty(struct stack *stack)
 static inline int stack_is_full(struct stack *stack)
 {
 	return stack->ops->is_full(stack);
-}
-
-static inline void stack_free(struct stack *stack)
-{
-	stack->ops->free(stack);
 }
 
 #endif /* __STACK_H__ */

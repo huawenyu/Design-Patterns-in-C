@@ -16,6 +16,8 @@
 #include <string.h>
 
 #include "stack.h"
+#include "stack_impl_array.h"
+#include "stack_impl_list.h"
 
 /** called by free(): put resources, forward to super. */
 static void stack_ops__destructor(struct stack *stack)
@@ -25,6 +27,8 @@ static void stack_ops__destructor(struct stack *stack)
 	... do_something() to put resources ...
 	CLASS_SUPER(stack, _destructor);
 	*/
+	if (stack->_impl)
+		stack_impl_free(stack->_impl);
 }
 /** free memory after call destructor(). */
 static void stack_ops_free(struct stack *stack)
@@ -35,6 +39,7 @@ static void stack_ops_free(struct stack *stack)
 	__destructor(stack);
 	free(l_stack);
 	*/
+	stack__destructor(stack);
 }
 
 static void stack_ops_push(struct stack *stack, int val)
@@ -67,15 +72,6 @@ static int stack_ops_is_full(struct stack *stack)
 	return stack_impl_is_full(stack->_impl);
 }
 
-static void stack_ops_free(struct stack *stack)
-{
-	printf("stack::free()\n");
-	/** pseudocode: careful about mult-inherit
-	struct stack *l_stack = container_of(stack, typeof(*l_stack), );
-	__destructor(stack);
-	free(l_stack);
-	*/
-}
 static struct stack_ops stack_ops = {
 	._destructor = stack_ops__destructor,
 	.free = stack_ops_free,
@@ -84,25 +80,24 @@ static struct stack_ops stack_ops = {
 	.top = stack_ops_top,
 	.is_empty = stack_ops_is_empty,
 	.is_full = stack_ops_is_full,
-	.free = stack_ops_free,
 };
 
 void stack_init(struct stack *stack, const char *stack_impl)
 {
-	struct stack_array *array;
-	struct stack_list *list;
+	struct stack_impl_array *array;
+	struct stack_impl_list *list;
 	memset(stack, sizeof(*stack), 0);
 	stack->ops = &stack_ops;
 
 	stack->_impl = 0;
 	if (0 == strcmp("array", stack_impl)) {
 		array = malloc(sizeof(*array));
-		stack_array_init(array);
+		stack_impl_array_init(array);
 		stack->_impl = &array->stack_impl;
-}
+	}
 	else if (0 == strcmp("list", stack_impl)) {
 		list = malloc(sizeof(*list));
-		stack_list_init(list);
+		stack_impl_list_init(list);
 		stack->_impl = &list->stack_impl;
 	}
 }

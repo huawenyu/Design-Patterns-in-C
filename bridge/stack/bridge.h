@@ -16,14 +16,14 @@
 
 #include "stack_hanoi.h"
 #include "stack_fifo.h"
-#include "stack_array.h"
-#include "stack_list.h"
+#include "stack_impl_array.h"
+#include "stack_impl_list.h"
 
 struct bridge {
 };
 
 void bridge_init(struct bridge *);
 
-void bridge_main_entry(struct bridge *);
+void bridge_main_entry(void);
 
 #endif /* __BRIDGE_H__ */

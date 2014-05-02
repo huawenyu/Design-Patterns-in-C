@@ -27,7 +27,6 @@ struct stack_impl_ops {
 	int (*top)(struct stack_impl *);
 	int (*is_empty)(struct stack_impl *);
 	int (*is_full)(struct stack_impl *);
-	void (*free)(struct stack_impl *);
 	struct stack_impl_ops *super;
 };
 void stack_impl_init(struct stack_impl *);
@@ -66,11 +65,6 @@ static inline int stack_impl_is_empty(struct stack_impl *stack_impl)
 static inline int stack_impl_is_full(struct stack_impl *stack_impl)
 {
 	return stack_impl->ops->is_full(stack_impl);
-}
-
-static inline void stack_impl_free(struct stack_impl *stack_impl)
-{
-	stack_impl->ops->free(stack_impl);
 }
 
 #endif /* __STACK_IMPL_H__ */
