@@ -250,7 +250,8 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			if one_myclass['supers']: # As derive class
 				for super_name in one_myclass['supers'].keys():
 					one_super = convert_to_class(myclasses_array_dict, super_name)
-					if one_super.has_key('_have_super_ref') and one_super['_have_super_ref'] == True: # if parent support super, child should be init with super
+					if (one_super.has_key('_have_super_ref') and one_super['_have_super_ref'] == True) \
+					    or (one_super.has_key('enable_super') and one_super['enable_super'].lower() == 'true'): # if parent support super, child should be init with super
 						one_myclass['_have_super_ref'] = True
 						break
 			else: # As base class

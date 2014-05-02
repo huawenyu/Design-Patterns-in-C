@@ -1,6 +1,5 @@
-
 /**
- * node.c  2014-04-30 16:29:05
+ * node.c  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -25,4 +24,3 @@ void node_init(struct node *node, int val)
 	node->prev = node;
 	node->next = node;
 }
-

@@ -1,6 +1,5 @@
-
 /**
- * bridge.c  2014-04-30 16:29:05
+ * bridge.c  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -18,13 +17,10 @@
 
 #include "bridge.h"
 
-
-
 void bridge_init(struct bridge *bridge)
 {
 	memset(bridge, sizeof(*bridge), 0);
 }
-
 
 void bridge_main_entry(struct bridge *bridge)
 {

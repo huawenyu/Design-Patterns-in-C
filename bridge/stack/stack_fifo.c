@@ -1,6 +1,5 @@
-
 /**
- * stack_fifo.c  2014-04-30 16:29:05
+ * stack_fifo.c  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -16,7 +15,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <myobj.h>
-#include "stack_list.h"
 #include "stack_fifo.h"
 
 static int stack_fifo_ops_pop(struct stack *stack)
@@ -49,4 +47,3 @@ void stack_fifo_init(struct stack_fifo *stack_fifo, char *stack_impl)
 	stack_init(&stack_fifo->stack, stack_impl);
 	CLASS_OPS_INIT_WITH_SUPER(stack_fifo->stack.ops, stack_ops, super);
 }
-

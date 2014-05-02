@@ -1,6 +1,5 @@
-
 /**
- * node.h  2014-04-30 16:29:05
+ * node.h  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -21,5 +20,6 @@ struct node {
 	struct node * next;
 };
 void node_init(struct node *, int val);
+
 
 #endif /* __NODE_H__ */

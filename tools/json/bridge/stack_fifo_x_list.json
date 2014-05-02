@@ -23,6 +23,7 @@
 			["var", "_impl", "struct stack_impl *", "", "private"]
 		],
 		"enable_super":"True",
+		"enable_destructor":"True",
 
 		"inheritance": {
 			"stack_hanoi":{
@@ -43,7 +44,7 @@
 			["virtual", "is_full", "int"],
 			["virtual", "free", "void"]
 		],
-		"enable_super":"True",
+		"enable_destructor":"True",
 
 		"inheritance": {
 			"stack_impl_array":{

@@ -1,6 +1,5 @@
-
 /**
- * stack_hanoi.c  2014-04-30 16:29:05
+ * stack_hanoi.c  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -17,7 +16,6 @@
 #include <string.h>
 #include <myobj.h>
 #include "stack_hanoi.h"
-
 
 static void stack_hanoi_ops_push(struct stack *stack, int val)
 {
@@ -43,4 +41,3 @@ void stack_hanoi_init(struct stack_hanoi *stack_hanoi, char *stack_impl)
 	CLASS_OPS_INIT_WITH_SUPER(stack_hanoi->stack.ops, stack_ops, super);
 	stack_hanoi->rejects = 0;
 }
-

@@ -1,6 +1,5 @@
-
 /**
- * stack.c  2014-04-30 16:29:05
+ * stack.c  2014-05-02 01:32:58
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -17,41 +16,69 @@
 #include <string.h>
 
 #include "stack.h"
-#include "stack_array.h"
-#include "stack_list.h"
 
+/** called by free(): put resources, forward to super. */
+static void stack_ops__destructor(struct stack *stack)
+{
+	printf("stack::_destructor()\n");
+	/** pseudocode: careful about mult-inherit
+	... do_something() to put resources ...
+	CLASS_SUPER(stack, _destructor);
+	*/
+}
+/** free memory after call destructor(). */
+static void stack_ops_free(struct stack *stack)
+{
+	printf("stack::free()\n");
+	/** pseudocode: careful about mult-inherit
+	struct stack *l_stack = container_of(stack, typeof(*l_stack), );
+	__destructor(stack);
+	free(l_stack);
+	*/
+}
 
 static void stack_ops_push(struct stack *stack, int val)
 {
 	printf("stack::push()\n");
 	stack_impl_push(stack->_impl, val);
 }
+
 static int stack_ops_pop(struct stack *stack)
 {
 	printf("stack::pop()\n");
 	return stack_impl_pop(stack->_impl);
 }
+
 static int stack_ops_top(struct stack *stack)
 {
 	printf("stack::top()\n");
 	return stack_impl_top(stack->_impl);
 }
+
 static int stack_ops_is_empty(struct stack *stack)
 {
 	printf("stack::is_empty()\n");
 	return stack_impl_is_empty(stack->_impl);
 }
+
 static int stack_ops_is_full(struct stack *stack)
 {
 	printf("stack::is_full()\n");
 	return stack_impl_is_full(stack->_impl);
 }
+
 static void stack_ops_free(struct stack *stack)
 {
 	printf("stack::free()\n");
-	return stack_impl_free(stack->_impl);
+	/** pseudocode: careful about mult-inherit
+	struct stack *l_stack = container_of(stack, typeof(*l_stack), );
+	__destructor(stack);
+	free(l_stack);
+	*/
 }
 static struct stack_ops stack_ops = {
+	._destructor = stack_ops__destructor,
+	.free = stack_ops_free,
 	.push = stack_ops_push,
 	.pop = stack_ops_pop,
 	.top = stack_ops_top,
@@ -72,7 +99,7 @@ void stack_init(struct stack *stack, const char *stack_impl)
 		array = malloc(sizeof(*array));
 		stack_array_init(array);
 		stack->_impl = &array->stack_impl;
-	}
+}
 	else if (0 == strcmp("list", stack_impl)) {
 		list = malloc(sizeof(*list));
 		stack_list_init(list);
