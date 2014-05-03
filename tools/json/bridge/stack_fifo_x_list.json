@@ -60,11 +60,9 @@
 		}
 	},
 
-	"bridge":{
+	"test":{
 		"includes":["stack_hanoi", "stack_fifo", "stack_impl_array", "stack_impl_list"],
-		"members": [
-			["static_method", "main_entry", "void"]
-		]
+		"templates":["_test"]
 	}
 }
 }

@@ -1,48 +1,45 @@
 {
 "add_file_header":"True",
-"namespace":"builder",
-"path":"builder",
+"namespace":"bridge_shape",
+"path":"bridge_shape",
 "classes": {
-	"animal":{
+	"shape":{
+		"enable_destructor":"True",
+		"includes":["color"],
 		"members": [
-			["virtual", "eat", "void"]
+			["var", "_color", "struct color *", "", "private"],
+
+			["virtual", "draw", "void", ""]
 		],
 
 		"inheritance": {
-			"kitten":{
+			"shape_rectangle":{
 				"members": [ ["override",  "<ALL>"] ]
 			},
-			"monkey":{
+			"shape_circle":{
 				"members": [ ["override",  "<ALL>"] ]
 			}
 		}
 	},
 
-	"animal_builder":{
+	"color":{
 		"members": [
-			["virtual", "build_header",  "void"],
-			["virtual", "build_body"  ,  "void"],
-			["virtual", "build_leg"   ,  "void"],
-			["virtual", "build_arm"   ,  "void"],
-			["virtual", "build_tail"  ,  "void"]
+			["virtual", "render", "void"]
 		],
 
 		"inheritance": {
-			"animal_builder_monkey":{
+			"color_blue":{
 				"members": [ ["override",  "<ALL>"] ]
 			},
-			"animal_builder_kitten":{
+			"color_red":{
 				"members": [ ["override",  "<ALL>"] ]
 			}
 		}
 	},
 
-	"kid":{
-		"includes":["animal_builder"],
-		"members": [
-			["method", "make_animal", "void", "struct animal_builder *builder"],
-			["var", "name", "char", "[32]"]
-		]
+	"test":{
+		"includes":["color_blue", "color_red", "shape_rectangle", "shape_circle"],
+		"templates":["_test"]
 	}
 }
 }

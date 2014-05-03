@@ -90,7 +90,7 @@ def render_one_to_file(x, dir_name, files):
 			filename = os.path.splitext(one_file)[0] # use filename as output file extension
 			ext = os.path.splitext(one_file)[1] # use filename as output file extension
 			for tmpl in templateVars['templates']:
-				if filename == tmpl:
+				if filename == tmpl or one_file == tmpl:
 					# open file
 					output_abs_file = os.path.abspath(\
 					  '{0}/{1}/{2}/{3}{4}'.format(\
@@ -351,6 +351,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 		one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
 		one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
+		one_myclass['trace']     = get_value_else_default(one_inputclass, 'trace', False)
 		one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
 		one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
 		one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
@@ -471,18 +472,19 @@ def convert_namespace_to_tree(def_path, input_dict):
 	context_dict_tree = odict()
 
 	# file header or comments
-	mysuper['add_file_header'] = get_value_else_default(input_dict, 'add_file_header', False)
-	mysuper['copyright'] = get_value_else_default(input_dict, 'copyright', [])
-	mysuper['author'] = get_value_else_default(input_dict, 'author', []) # author with email
-	mysuper['date'] = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-	mysuper['summary'] = get_value_else_default(input_dict, 'summary', [])
+	mysuper['add_file_header']  = get_value_else_default(input_dict, 'add_file_header', False)
+	mysuper['trace']            = get_value_else_default(input_dict, 'trace', False)
+	mysuper['copyright']        = get_value_else_default(input_dict, 'copyright', [])
+	mysuper['author']           = get_value_else_default(input_dict, 'author', []) # author with email
+	mysuper['date']             = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d", gmtime()))
+	mysuper['summary']          = get_value_else_default(input_dict, 'summary', [])
 
 	# generate path
-	mysuper['path'] = get_value_else_default(input_dict, 'path', def_path)
-	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', def_path)
+	mysuper['path']             = get_value_else_default(input_dict, 'path', def_path)
+	mysuper['namespace']        = get_value_else_default(input_dict, 'namespace', def_path)
 	mysuper[const.config_super] = 'False'
 	mysuper[const.config_destructor] = 'False'
-	mysuper['supers'] = []
+	mysuper['supers']           = []
 	if input_dict.has_key('classes'):
 		convert_to_myclasses(context_dict_tree, input_dict['classes'], mysuper)
 

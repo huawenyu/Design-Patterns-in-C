@@ -6,6 +6,7 @@
 
 #include <mycommon.h>
 #include <myobj.h>
+{% if trace %}#include <mytrace.h>{% endif %}
 #include <test_suite.h>
 {%- if includes -%}
 	{%- for one_include in includes %}

@@ -47,11 +47,13 @@ ref:	{%- import '_macro.jinja' as func -%}
 		{%- if args.abstract_path %}
 	/** PSEUDOCODE
 	... do_something() to put resources ...
-	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	CLASS_SUPER({{- args.first_arg_type -}}, _destructor);
 	*/
 		{%- else %}
-	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 		{%- endif %}
 	{%- elif args.func == 'free' %}
 	TODO(Please add our **free** code here ...)
@@ -60,13 +62,15 @@ ref:	{%- import '_macro.jinja' as func -%}
 	struct {{ args.name }} *a_{{ args.name }} = container_of({{- args.first_arg_type -}}
 		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
 	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
-	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	free(a_{{ args.name }});
 	*/
 		{%- else %}
 	/** PSEUDOCODE
 	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
-	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	free({{ args.first_arg_type }});
 	*/
 		{%- endif %}
@@ -76,7 +80,8 @@ ref:	{%- import '_macro.jinja' as func -%}
 		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
 	*/
 		{%- endif %}
-	printf("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	{%- endif -%}
 	
 	{{- macro_function_return_value(args) -}}
@@ -165,7 +170,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='') -%}
+{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='',trace='') -%}
 	{% set l_have_items = [] %}
 
 	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
@@ -190,7 +195,9 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		'func_scope':func_scope,'func_is_static':func_is_static, 'func_rtn_type':func_rtn_type,
 		'func':func,            'func_postfix':postfix,          'func_format_str':format_str,
 		'func_params':func_params,'func_args':func_args,
-		'func_comment':func_comment} -%}
+		'func_comment':func_comment,
+		'trace':trace,
+		} -%}
 
 	{%- if (args.req_scope == 'None' or args.func_scope == args.req_scope)
 			and (args.req_static == 'None' or args.func_is_static == args.req_static) -%}
