@@ -30,23 +30,25 @@ variable
 Make a pattern
 --------------
 
-$ vi test_suite.c  <<< comment the others, for example, pattern 'prototype'
+$ make target=prototype     <<< build one pattern
+<OR>
+$ make target=bridge/shape  <<< build one pattern
+$ ./Debug/main              <<< if Makefile set Debug=y, run this, if json.trace=True, output pretty with indent
 
-	void my_test_suite_open()
-	{
-		my_test_suite_init(&my_test_suite);
+	=TESTSUITE=BEGIN[Design Pattern TestSuite] total 1 fail 0 at 0
+	         test_main_entry
+	            color_blue_init()
+	            shape_rectangle_init()
+	               shape_rectangle::draw()
+	                  shape::draw()
+	                        color_blue::render()
+	                     shape_rectangle::_destructor()
+	                        shape::_destructor()
+	               shape_rectangle::free()
+	=TESTSUITE= [ OK ] 0    Test bridge_shape
 
-		/*
-		extern void inheritance_test(void); inheritance_test();
-		extern void builder_test(void); builder_test();
-		......
-		*/
-		extern void prototype_test(void); prototype_test();
-	}
+	=TESTSUITE= END [Design Pattern TestSuite] total 1 fail 0 at 1
 
-$ make target=prototype  <<< build one pattern
-$ ./Debug/main	         <<< if Makefile set Debug=y, run this
-$ ./Release/main         <<< else run this
 $ make clean
 
 Auto Generate class
@@ -181,36 +183,19 @@ SOFTWARE.
 ## TODOS
 
 oop:
-http://www.apwebco.com/gofpatterns/creational/Prototype.html
 http://www.codeproject.com/Articles/22769/Introduction-to-Object-Oriented-Programming-Concep
 http://www.tutorialspoint.com/cplusplus/cpp_object_oriented.htm
 http://oopsconcepts.blogspot.ca/
 
-* myobj.h copy_ops_offset to exclude static, let client initial it's static
 * python uml object support
 * manual about oop's basic principle
 * manual about oop C's implement:
 ```
-scope           catergory
--------------------------------------------------------------------
-class           virtual         if-protected -> no candy inline
-*object
-private         method
-protected
-*public         routine
-                static(class+public)
-                var             if-private -> body_impl
-
 ops -> vtable
 caps -> DI (construct)
 client -> DI (argument)
 
-enable_super
-enable_free
-
 ```
-* move 'static ops' into init-function
-* move class from top to bottom where just before the function declare
 * framework-lib cooperate with client:
   - caps: template drive
     + can be simple interface which implement by client and used by class, is callback-functions
