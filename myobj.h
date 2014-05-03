@@ -25,6 +25,11 @@
 #define container_of(ptr, type, member) \
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
+/*
+#define DO_PRAGMA(x) _Pragma (#x)
+#define TODO(x) DO_PRAGMA(message ("TODO - " #x))
+*/
+
 /* get error message file info */
 #define __CLASS_CONCAT(s1, s2) s1##s2
 #define __CLASS_CONCAT_2(s1, s2) __CLASS_CONCAT(s1, s2)
@@ -35,7 +40,8 @@
 #define __CLASS_TOSTRING(x) __CLASS_STRINGIFY(x)
 #define __CLASS_WHERE __FILE__ ":" __CLASS_TOSTRING(__LINE__)
 
-#define __CLASS_VIRTUAL_VALID_STR(the_number) "the ["the_number"]th virtual function should be defined or overrided, <OR> should be init() with CLASS_OPS_INIT_WITH_SUPER()."
+#define __CLASS_VIRTUAL_VALID_STR(the_number) "the ["the_number"]th virtual function should be defined or overrided," \
+		" <OR> should be init() with CLASS_OPS_INIT_WITH_SUPER()."
 #define __CLASS_VIRTUAL_CASE(number) case number: assert(super_class_ops[sz] && __CLASS_VIRTUAL_VALID_STR(__CLASS_STRINGIFY(number))); break;
 /* copy func-ptr array when src-ops[*] (!0) */
 #define __CLASS_COPY_OPS(dst,src,offset) \
@@ -121,14 +127,15 @@
  * @member typeof ops-ptr, pointer to parent-class's ops
  */
 #define CLASS_OPS_INIT_SUPER(ptr, ops) \
-	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super, sizeof(ops))
+	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, __super, sizeof(ops))
 #define CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC(ptr, ops, static_member) \
-	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super, offsetof(typeof(ops), static_member))
+	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, __super, offsetof(typeof(ops), static_member))
 
 #define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member, sz) \
 	typeof(ptr) l_super = ptr; \
-	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " should be the last element with order (ops,super[,static]), <OR> should be init with CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC()"); \
+	_Static_assert((sz) == sizeof((ops).member) + offsetof(typeof(ops), member), \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " should be the last element with order (ops,super[,static])," \
+			" <OR> should be init with CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC()"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
 	assert(l_super != &ops && "dead-loop: super pointer-to itself"); \
 	ptr = &ops;
@@ -137,10 +144,10 @@
  * Assume ops have standard member name: ops, super
  */
 #define CLASS_SUPER(ptr, function, ...) \
-	CLASS_SUPER_OPS(ptr, function, ops, super, ##__VA_ARGS__)
+	CLASS_SUPER_OPS(ptr, function, ops, __super, ##__VA_ARGS__)
 
 #define CLASS_SUPER_RTN(ptr, function, rtn_type, ...) \
-	CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ##__VA_ARGS__) \
+	CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, __super, ##__VA_ARGS__) \
 
 /**Call super method
  * @ptr the basic class ptr

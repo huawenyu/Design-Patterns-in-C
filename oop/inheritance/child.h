@@ -1,5 +1,5 @@
 /**
- * child.h  2014-05-02 23:11:33
+ * child.h  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -14,6 +14,8 @@
 #ifndef __CHILD_H__
 #define __CHILD_H__
 
+#include <mycommon.h>
+
 #include "parent.h"
 
 struct child_ops;
@@ -25,7 +27,7 @@ struct child {
 	int pri_data2;
 };
 struct child_ops {
-	struct child_ops *super;
+	struct child_ops *__super;
 	int static_pub_data3;
 	int static_pri_data4;
 };

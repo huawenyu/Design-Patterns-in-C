@@ -1,5 +1,5 @@
 /**
- * parent.h  2014-05-02 23:11:33
+ * parent.h  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -13,6 +13,8 @@
  */
 #ifndef __PARENT_H__
 #define __PARENT_H__
+
+#include <mycommon.h>
 
 struct parent_ops;
 
@@ -28,7 +30,7 @@ struct parent_ops {
 	void (*pub_v_func2)(struct parent *);
 	void (*pri_v_func3)(struct parent *);
 	void (*pri_v_func4)(struct parent *);
-	struct parent_ops *super;
+	struct parent_ops *__super;
 	int static_pub_data3;
 	int static_pri_data4;
 };

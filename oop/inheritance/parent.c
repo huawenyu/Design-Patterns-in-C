@@ -1,5 +1,5 @@
 /**
- * parent.c  2014-05-02 23:11:33
+ * parent.c  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <mycommon.h>
 
 #include "parent.h"
 
@@ -34,6 +36,7 @@ static void parent_ops__destructor(struct parent *parent)
 	... do_something() to put resources ...
 	CLASS_SUPER(parent, _destructor);
 	*/
+	TODO(Please add our **destructor** code here ...)
 }
 /** free memory after call destructor(). */
 static void parent_ops_free(struct parent *parent)
@@ -44,6 +47,7 @@ static void parent_ops_free(struct parent *parent)
 	parent__destructor(parent);
 	free(l_parent);
 	*/
+	TODO(Please add our **free** code here ...)
 }
 
 static void parent_ops_pub_v_func1(struct parent *parent)

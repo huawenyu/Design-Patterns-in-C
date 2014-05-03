@@ -1,5 +1,5 @@
 /**
- * grandson.h  2014-05-02 23:11:33
+ * grandson.h  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -13,6 +13,8 @@
  */
 #ifndef __GRANDSON_H__
 #define __GRANDSON_H__
+
+#include <mycommon.h>
 
 #include "child.h"
 

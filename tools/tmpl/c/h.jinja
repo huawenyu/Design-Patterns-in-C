@@ -54,7 +54,7 @@ struct {{ name }}_ops {
 	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='declare') -}}
 
 	{%- if _have_super_ref %}
-	struct {{ name }}_ops *super;
+	struct {{ name }}_ops *__super;
 	{%- endif -%}
 	{{- func.macro_loop_functions(name,vars,'vars',mode='var',static='True') }}
 };

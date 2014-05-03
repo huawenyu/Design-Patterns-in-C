@@ -43,7 +43,8 @@
 			}
 		}
 	},
-	"main_entry":{
+	"test":{
+		"templates": ["_test"],
 		"includes": ["grandgirl", "grandson"],
 		"members": [
 			["static_method", "main_entry", "void"],

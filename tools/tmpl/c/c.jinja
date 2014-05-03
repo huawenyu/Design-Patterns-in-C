@@ -47,8 +47,12 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 {%- for parent_name,parent_vtables in supers.iteritems() %}
 	{{ parent_name }}_init(&{{ name }}->{{ parent_name }});
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() %}
-	{% if vtable_class_detail['_have_super_ref'] -%}CLASS_OPS_INIT_SUPER{%- else -%}CLASS_OPS_INIT{%- endif -%}
-({{ name }}->{{ vtable_class_detail['detail'] }}.ops, {{ vtable_class_name }}_ops);
+	{% if vtable_class_detail['_have_static_var'] -%}CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC
+	{%- elif vtable_class_detail['_have_super_ref'] -%}CLASS_OPS_INIT_SUPER
+	{%- else -%}CLASS_OPS_INIT
+	{%- endif -%}
+({{ name }}->{{ vtable_class_detail['detail'] }}.ops, {{ vtable_class_name }}_ops
+	{%- if vtable_class_detail['_have_static_var'] -%}, {{ vtable_class_detail['_have_static_var'] }}{%- endif -%});
 	{%- endfor -%}
 {%- endfor -%}
 {% endif -%}

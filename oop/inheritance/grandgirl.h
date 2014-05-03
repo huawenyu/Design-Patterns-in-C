@@ -1,5 +1,5 @@
 /**
- * grandgirl.h  2014-05-02 23:11:33
+ * grandgirl.h  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -13,6 +13,8 @@
  */
 #ifndef __GRANDGIRL_H__
 #define __GRANDGIRL_H__
+
+#include <mycommon.h>
 
 #include "child.h"
 

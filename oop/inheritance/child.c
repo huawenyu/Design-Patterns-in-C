@@ -1,5 +1,5 @@
 /**
- * child.c  2014-05-02 23:11:33
+ * child.c  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <mycommon.h>
 #include <myobj.h>
 #include "child.h"
 
@@ -27,6 +29,7 @@ static void child_ops__destructor(struct parent *parent)
 	... do_something() to put resources ...
 	CLASS_SUPER(parent, _destructor);
 	*/
+	TODO(Please add our **destructor** code here ...)
 }
 /** free memory after call destructor(). */
 static void child_ops_free(struct parent *parent)
@@ -37,6 +40,7 @@ static void child_ops_free(struct parent *parent)
 	parent__destructor(parent);
 	free(l_child);
 	*/
+	TODO(Please add our **free** code here ...)
 }
 
 static void child_ops_pub_v_func1(struct parent *parent)
@@ -72,6 +76,6 @@ void child_init(struct child *child)
 {
 	memset(child, sizeof(*child), 0);
 	parent_init(&child->parent);
-	CLASS_OPS_INIT_SUPER(child->parent.ops, parent_ops);
+	CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC(child->parent.ops, parent_ops, static_pub_data3);
 	child->ops = &child_ops;
 }

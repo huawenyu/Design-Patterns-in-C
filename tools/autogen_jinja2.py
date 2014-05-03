@@ -75,6 +75,7 @@ const.config_destructor   = 'enable_destructor'
 const.config_super        = 'enable_super'
 const.control_super       = '_have_super_ref'
 const.control_vtable      = '_have_vtable_new'
+const.control_static_var  = '_have_static_var'
 ## cat-category
 const.func                = enum('static', 'scope', 'type', 'name', 'params', 'args', 'comment')
 const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
@@ -83,26 +84,51 @@ const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', '
 def render_one_to_file(x, dir_name, files):
 	templateEnv,templateVars,code_style,output_dir = x
 
-	for one_file in files :
-		if not one_file.startswith('_') and one_file.endswith('jinja'):
-			# open file
-			ext = os.path.splitext(one_file)[0] # use filename as output file extension
-			output_abs_file = os.path.abspath(\
-			  '{0}/{1}/{2}/{3}.{4}'.format(\
-			  output_dir, code_style, templateVars['path'], \
-			  templateVars['file'], ext))
-			file_header_name = '{0}.{1}'.format(templateVars['file'], ext)
-			output_abs_dir = os.path.dirname(output_abs_file)
-			if not os.path.exists(output_abs_dir):
-				os.makedirs(output_abs_dir)
+	# if class have assign special templates, just apply them
+	if templateVars.has_key('templates') and len(templateVars['templates']) > 0:
+		for one_file in files :
+			filename = os.path.splitext(one_file)[0] # use filename as output file extension
+			ext = os.path.splitext(one_file)[1] # use filename as output file extension
+			for tmpl in templateVars['templates']:
+				if filename == tmpl:
+					# open file
+					output_abs_file = os.path.abspath(\
+					  '{0}/{1}/{2}/{3}{4}'.format(\
+					  output_dir, code_style, templateVars['path'], \
+					  templateVars['file'], ext))
+					file_header_name = '{0}{1}'.format(templateVars['file'], ext)
+					output_abs_dir = os.path.dirname(output_abs_file)
+					if not os.path.exists(output_abs_dir):
+						os.makedirs(output_abs_dir)
 
-			templateVars['file_header_name'] = file_header_name
-			templ_file = templateEnv.get_template(one_file)
-			output_text = templ_file.render( templateVars )
-			output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
-			f = open(output_abs_file, 'w')
-			f.write(output_text)
-			f.close()
+					templateVars['file_header_name'] = file_header_name
+					templ_file = templateEnv.get_template(one_file)
+					output_text = templ_file.render( templateVars )
+					output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
+					f = open(output_abs_file, 'w')
+					f.write(output_text)
+					f.close()
+	else:
+		for one_file in files :
+			if not one_file.startswith('_') and one_file.endswith('jinja'):
+				# open file
+				ext = os.path.splitext(one_file)[0] # use filename as output file extension
+				output_abs_file = os.path.abspath(\
+				  '{0}/{1}/{2}/{3}.{4}'.format(\
+				  output_dir, code_style, templateVars['path'], \
+				  templateVars['file'], ext))
+				file_header_name = '{0}.{1}'.format(templateVars['file'], ext)
+				output_abs_dir = os.path.dirname(output_abs_file)
+				if not os.path.exists(output_abs_dir):
+					os.makedirs(output_abs_dir)
+
+				templateVars['file_header_name'] = file_header_name
+				templ_file = templateEnv.get_template(one_file)
+				output_text = templ_file.render( templateVars )
+				output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
+				f = open(output_abs_file, 'w')
+				f.write(output_text)
+				f.close()
 
 
 def render_class_to_file(templateVars, code_style, output_dir):
@@ -253,6 +279,7 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 		# control flags
 		one_myclass[const.control_super] = False  # config: enable_super
 		one_myclass[const.control_vtable] = False # config: virtual
+		one_myclass[const.control_static_var] = '' # config: static var
 
 		'''
 		"_have_vtable_new" is auto-gen field used to control code-gen
@@ -263,11 +290,12 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			one_myclass[const.control_vtable] = True
 
 		# if static var, enable have_vtable_new
-		if not one_myclass[const.control_vtable]:
-			for variable in one_myclass[const.m_dict['var']]:
-				if variable[const.func.static] == 'True':
-					one_myclass[const.control_vtable] = True
-					break
+		for variable in one_myclass[const.m_dict['var']]:
+			if variable[const.func.static] == 'True':
+				one_myclass[const.control_vtable] = True
+				one_myclass[const.control_static_var] = 'True'
+				one_myclass[const.control_super] = True
+				break
 
 		''' **Just needed by C code.**
 		1. "enable_super" come from config
@@ -300,9 +328,13 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			for super_name,super_class in one_myclass['supers'].iteritems():
 				for vtable_name, vtable in super_class.iteritems():
 					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
-					if vtable_class.has_key(const.control_super) \
-					   and vtable_class[const.control_super]:
-					   vtable[const.control_super] = True
+					if vtable_class[const.control_super]:
+						vtable[const.control_super] = True
+					if vtable_class[const.control_static_var]:
+						for variable in vtable_class[const.m_dict['var']]:
+							if variable[const.func.static] == 'True':
+								vtable[const.control_static_var] = variable[const.func.name]
+								break # exit find first static var
 
 
 def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
@@ -317,6 +349,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass = odict()
 		myclass_dict[myclass_name] = one_myclass
 
+		one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
 		one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
 		one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
 		one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email

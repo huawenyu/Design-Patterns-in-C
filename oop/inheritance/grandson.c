@@ -1,5 +1,5 @@
 /**
- * grandson.c  2014-05-02 23:11:33
+ * grandson.c  2014-05-03 06:45:54
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+
+#include <mycommon.h>
 #include <myobj.h>
 #include "grandson.h"
 
@@ -25,6 +27,7 @@ static void grandson_ops__destructor(struct parent *parent)
 	... do_something() to put resources ...
 	CLASS_SUPER(parent, _destructor);
 	*/
+	TODO(Please add our **destructor** code here ...)
 }
 /** free memory after call destructor(). */
 static void grandson_ops_free(struct parent *parent)
@@ -35,6 +38,7 @@ static void grandson_ops_free(struct parent *parent)
 	parent__destructor(parent);
 	free(l_grandson);
 	*/
+	TODO(Please add our **free** code here ...)
 }
 
 static void grandson_ops_pub_v_func1(struct parent *parent)
@@ -70,5 +74,5 @@ void grandson_init(struct grandson *grandson)
 {
 	memset(grandson, sizeof(*grandson), 0);
 	child_init(&grandson->child);
-	CLASS_OPS_INIT_SUPER(grandson->child.parent.ops, parent_ops);
+	CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC(grandson->child.parent.ops, parent_ops, static_pub_data3);
 }

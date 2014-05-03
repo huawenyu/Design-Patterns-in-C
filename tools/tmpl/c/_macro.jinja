@@ -49,6 +49,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 	... do_something() to put resources ...
 	CLASS_SUPER({{- args.first_arg_type -}}, _destructor);
 	*/
+	TODO(Please add our **destructor** code here ...)
 	{%- elif args.func == 'free' %}
 	/** PSEUDOCODE
 	struct {{ args.name }} *l_{{ args.name }} = container_of({{- args.first_arg_type -}}
@@ -56,6 +57,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
 	free(l_{{ args.name }});
 	*/
+	TODO(Please add our **free** code here ...)
 	{%- endif -%}
 	
 	{{- macro_function_return_value(args) -}}
