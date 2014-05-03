@@ -66,36 +66,62 @@ The oop come from myobj.h:
 * the derive class should also have it's v-table instance, but same type with it's parent
 * the derive class's v-table instance should initial with merge with it's parent
 
-### Code Sample Tree
+### Object
+```
+struct shape_rectangle *rect;
+
+rect = malloc(sizeof(*rect));
+if (!rect) return -1;
+shape_rectangle_init(rect);
+shape_draw(&rect->shape);
+shape_free(&rect->shape);
+```
+
+### Class
 
 ```
-$ cd patterns
-$ ls
-$ tree oop
-oop
-|-- diagram               <<< the uml class diagram
-|   |-- inheritance.py
-|   `-- mult_inherit.py
-|-- inheritance           <<< sample of inheritance
-|   |-- child.c
-|   |-- child.h
-|   |-- grandgirl.c       <<< grandgirl_init() give the myobj.h MACRO expand code for our review reading
-|   |-- grandgirl.h
-|   |-- grandson.c
-|   |-- grandson.h
-|   |-- parent.c
-|   |-- parent.h
-|   `-- test.c
-|-- mult_inherit
-|   |-- employee.c
-|   |-- employee.h
-|   |-- person.c
-|   |-- person.h
-|   |-- teacher.c
-|   |-- teacher.h
-|   `-- test.c
-`-- README.md
+struct shape_ops;
+struct shape {
+	struct shape_ops *ops;
+	struct color * _color;
+};
+struct shape_ops {
+	void (*_destructor)(struct shape *);
+	void (*free)(struct shape *);
+	void (*draw)(struct shape *);
+	struct shape_ops *__super;
+};
+void shape_init(struct shape *);
+```
 
+### Data Abstraction & Encapsulation
+
+```
+struct shape_rectangle *rect;
+
+shape_rectangle_init(rect);
+shape_draw(&rect->shape);
+shape_free(&rect->shape);
+```
+
+### Inheritance
+
+```
+struct shape_rectangle {
+	struct shape shape;
+};
+
+void shape_rectangle_init(struct shape_rectangle *);
+```
+
+### Polymorphism
+
+```
+struct shape_rectangle *rect;
+struct shape_circle *circle;
+
+shape_draw(&rect->shape);
+shape_draw(&circle->shape);
 ```
 
 ## Design Patterns:
