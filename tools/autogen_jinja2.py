@@ -242,7 +242,7 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
 					my_supers[my_direct_parents[0]][one_super['name']] = odict()
 
-				my_supers[my_direct_parents[0]][one_super['name']]['detail'] = '.'.join(my_direct_parents)
+				my_supers[my_direct_parents[0]][one_super['name']]['path'] = '.'.join(my_direct_parents)
 				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(const.m_dict['virtual']):
 					my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']] = []
 				my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']].append(one_virtual)

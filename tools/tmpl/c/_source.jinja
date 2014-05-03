@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include <mycommon.h>
-{% if supers %}#include <myobj.h>{% endif %}
+{% if supers or _have_vtable_new %}#include <myobj.h>{% endif %}
 #include "{{ name }}.h"
 
 {% block private_method %}{% endblock %}

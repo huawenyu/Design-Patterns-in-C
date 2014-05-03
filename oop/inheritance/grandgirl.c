@@ -1,5 +1,5 @@
 /**
- * grandgirl.c  2014-05-03 06:45:54
+ * grandgirl.c  2014-05-03 15:06:28
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -23,41 +23,42 @@
 static void grandgirl_ops__destructor(struct parent *parent)
 {
 	printf("grandgirl::_destructor()\n");
-	/** PSEUDOCODE
-	... do_something() to put resources ...
 	CLASS_SUPER(parent, _destructor);
-	*/
-	TODO(Please add our **destructor** code here ...)
 }
 /** free memory after call destructor(). */
 static void grandgirl_ops_free(struct parent *parent)
 {
-	printf("grandgirl::free()\n");
-	/** PSEUDOCODE
-	struct grandgirl *l_grandgirl = container_of(parent, typeof(*l_grandgirl), parent);
+	struct grandgirl *a_grandgirl = container_of(parent, typeof(*a_grandgirl), child.parent);
 	parent__destructor(parent);
-	free(l_grandgirl);
-	*/
-	TODO(Please add our **free** code here ...)
+	printf("grandgirl::free()\n");
+	free(a_grandgirl);
 }
 
 static void grandgirl_ops_pub_v_func1(struct parent *parent)
 {
+	/*struct grandgirl *a_grandgirl = container_of(parent, typeof(*a_grandgirl), child.parent);
+	*/
 	printf("grandgirl::pub_v_func1()\n");
 }
 
 static void grandgirl_ops_pub_v_func2(struct parent *parent)
 {
+	/*struct grandgirl *a_grandgirl = container_of(parent, typeof(*a_grandgirl), child.parent);
+	*/
 	printf("grandgirl::pub_v_func2()\n");
 }
 
 static void grandgirl_ops_pri_v_func3(struct parent *parent)
 {
+	/*struct grandgirl *a_grandgirl = container_of(parent, typeof(*a_grandgirl), child.parent);
+	*/
 	printf("grandgirl::pri_v_func3()\n");
 }
 
 static void grandgirl_ops_pri_v_func4(struct parent *parent)
 {
+	/*struct grandgirl *a_grandgirl = container_of(parent, typeof(*a_grandgirl), child.parent);
+	*/
 	printf("grandgirl::pri_v_func4()\n");
 }
 

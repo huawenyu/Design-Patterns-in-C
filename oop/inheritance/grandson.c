@@ -1,5 +1,5 @@
 /**
- * grandson.c  2014-05-03 06:45:54
+ * grandson.c  2014-05-03 15:06:28
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -23,41 +23,42 @@
 static void grandson_ops__destructor(struct parent *parent)
 {
 	printf("grandson::_destructor()\n");
-	/** PSEUDOCODE
-	... do_something() to put resources ...
 	CLASS_SUPER(parent, _destructor);
-	*/
-	TODO(Please add our **destructor** code here ...)
 }
 /** free memory after call destructor(). */
 static void grandson_ops_free(struct parent *parent)
 {
-	printf("grandson::free()\n");
-	/** PSEUDOCODE
-	struct grandson *l_grandson = container_of(parent, typeof(*l_grandson), parent);
+	struct grandson *a_grandson = container_of(parent, typeof(*a_grandson), child.parent);
 	parent__destructor(parent);
-	free(l_grandson);
-	*/
-	TODO(Please add our **free** code here ...)
+	printf("grandson::free()\n");
+	free(a_grandson);
 }
 
 static void grandson_ops_pub_v_func1(struct parent *parent)
 {
+	/*struct grandson *a_grandson = container_of(parent, typeof(*a_grandson), child.parent);
+	*/
 	printf("grandson::pub_v_func1()\n");
 }
 
 static void grandson_ops_pub_v_func2(struct parent *parent)
 {
+	/*struct grandson *a_grandson = container_of(parent, typeof(*a_grandson), child.parent);
+	*/
 	printf("grandson::pub_v_func2()\n");
 }
 
 static void grandson_ops_pri_v_func3(struct parent *parent)
 {
+	/*struct grandson *a_grandson = container_of(parent, typeof(*a_grandson), child.parent);
+	*/
 	printf("grandson::pri_v_func3()\n");
 }
 
 static void grandson_ops_pri_v_func4(struct parent *parent)
 {
+	/*struct grandson *a_grandson = container_of(parent, typeof(*a_grandson), child.parent);
+	*/
 	printf("grandson::pri_v_func4()\n");
 }
 

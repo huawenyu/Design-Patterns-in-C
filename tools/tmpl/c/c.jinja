@@ -27,7 +27,7 @@ static struct {{ name }}_ops {{ name }}_ops = {
 
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() -%}
 		{%- if outer_loop.index > 1 -%}{%- set func_postfix = outer_loop.index -%}{%- endif -%}
-	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,qualifier='static',postfix=func_postfix) }}
+	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,abstract_path=vtable_class_detail['path'],qualifier='static',postfix=func_postfix) }}
 {# parent ops #}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='assign',abstract_name=vtable_class_name,postfix=func_postfix) }}
@@ -51,7 +51,7 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 	{%- elif vtable_class_detail['_have_super_ref'] -%}CLASS_OPS_INIT_SUPER
 	{%- else -%}CLASS_OPS_INIT
 	{%- endif -%}
-({{ name }}->{{ vtable_class_detail['detail'] }}.ops, {{ vtable_class_name }}_ops
+({{ name }}->{{ vtable_class_detail['path'] }}.ops, {{ vtable_class_name }}_ops
 	{%- if vtable_class_detail['_have_static_var'] -%}, {{ vtable_class_detail['_have_static_var'] }}{%- endif -%});
 	{%- endfor -%}
 {%- endfor -%}

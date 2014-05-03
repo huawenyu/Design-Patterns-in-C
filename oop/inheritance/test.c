@@ -1,5 +1,5 @@
 /**
- * test.c  2014-05-03 06:45:54
+ * test.c  2014-05-03 15:06:28
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -22,7 +22,10 @@
 
 static int test_main_entry(char *output, size_t sz)
 {
-	TODO(Please add our **test** code here ...)
+	struct grandson *a_grandson;
+	a_grandson = malloc(sizeof(*a_grandson));
+	grandson_init(a_grandson);
+	parent_free(&a_grandson->child.parent);
 	return 0;
 }
 
