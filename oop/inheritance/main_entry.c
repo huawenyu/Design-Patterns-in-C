@@ -1,5 +1,5 @@
 /**
- * grandgirl.h  2014-05-02 23:11:33
+ * main_entry.c  2014-05-02 23:11:33
  * anonymouse(anonymouse@email)
  *
  * Copyright (C) 2000-2014 All Right Reserved
@@ -11,15 +11,23 @@
  *
  * Auto generate for Design Patterns in C
  */
-#ifndef __GRANDGIRL_H__
-#define __GRANDGIRL_H__
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-#include "child.h"
+#include "main_entry.h"
 
-struct grandgirl {
-	struct child child;
-};
+void main_entry_init(struct main_entry *main_entry)
+{
+	memset(main_entry, sizeof(*main_entry), 0);
+}
 
-void grandgirl_init(struct grandgirl *);
+void main_entry_main_entry(void)
+{
+	printf("main_entry::main_entry()\n");
+}
 
-#endif /* __GRANDGIRL_H__ */
+char * main_entry_get_name(void)
+{
+	return "OOP::Inheritance";
+}

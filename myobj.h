@@ -35,7 +35,7 @@
 #define __CLASS_TOSTRING(x) __CLASS_STRINGIFY(x)
 #define __CLASS_WHERE __FILE__ ":" __CLASS_TOSTRING(__LINE__)
 
-#define __CLASS_VIRTUAL_VALID_STR(the_number) "vtable's virtual function index["the_number"] must be defined in whether super or derive class, <or> maybe vtable ops have super but not-init with super"
+#define __CLASS_VIRTUAL_VALID_STR(the_number) "the ["the_number"]th virtual function should be defined or overrided, <OR> should be init() with CLASS_OPS_INIT_WITH_SUPER()."
 #define __CLASS_VIRTUAL_CASE(number) case number: assert(super_class_ops[sz] && __CLASS_VIRTUAL_VALID_STR(__CLASS_STRINGIFY(number))); break;
 /* copy func-ptr array when src-ops[*] (!0) */
 #define __CLASS_COPY_OPS(dst,src,offset) \
@@ -89,7 +89,7 @@
 			ops = l_super_ops; \
 		} \
 	} \
-	assert(ptr && "init should call super class's init first: which will sure it's valid ops pointer-to vtable");
+	assert(ptr && "init() should be after super's init()");
 
 #define __CLASS_OPS_INIT(ptr, ops, offset) \
 	__CLASS_OPS_INIT_COMN(ptr, ops, offset) \
@@ -121,14 +121,16 @@
  * @member typeof ops-ptr, pointer to parent-class's ops
  */
 #define CLASS_OPS_INIT_SUPER(ptr, ops) \
-	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super)
+	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super, sizeof(ops))
+#define CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC(ptr, ops, static_member) \
+	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, super, offsetof(typeof(ops), static_member))
 
-#define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member) \
+#define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member, sz) \
 	typeof(ptr) l_super = ptr; \
 	_Static_assert(sizeof(ops) == sizeof((ops).member) + offsetof(typeof(ops), member), \
-			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " as super member, should be the last element"); \
+			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " should be the last element with order (ops,super[,static]), <OR> should be init with CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC()"); \
 	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
-	assert(l_super != &ops && "dead-loop: super pointer to itself"); \
+	assert(l_super != &ops && "dead-loop: super pointer-to itself"); \
 	ptr = &ops;
 
 /**Call super method
@@ -148,7 +150,7 @@
  */
 #define CLASS_SUPER_OPS(ptr, function, ops, super, ...) do{ \
 	typeof((ptr)->ops) l_ops = (ptr)->ops; \
-	assert((ptr)->ops->super && "invalid super pointer: check whether init with super macro"); \
+	assert((ptr)->ops->super && "invalid super pointer: check whether init with CLASS_OPS_INIT_SUPER()"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
 		(ptr)->ops->function(ptr, ##__VA_ARGS__); \
@@ -159,7 +161,7 @@
 #define CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ...) ({ \
 	rtn_type __158__super__ops__call__rtn__; \
 	typeof((ptr)->ops) l_ops = (ptr)->ops; \
-	assert((ptr)->ops->super && "invalid super pointer: check whether init with super macro"); \
+	assert((ptr)->ops->super && "invalid super pointer: check whether init with CLASS_OPS_INIT_SUPER()"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
 		__158__super__ops__call__rtn__ = (ptr)->ops->function(ptr, ##__VA_ARGS__); \

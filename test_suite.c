@@ -136,6 +136,7 @@ void my_test_suite_open()
 {
 	my_test_suite_init(&my_test_suite);
 
+	extern void main_entry_test(void); main_entry_test();
 	/*
 	extern void inheritance_test(void); inheritance_test();
 	extern void mult_inherit_test(void); mult_inherit_test();
@@ -157,7 +158,6 @@ void my_test_suite_open()
 	extern void two_stage_test(void); two_stage_test();
 	extern void bridge_stack_test(void); bridge_stack_test();
 	*/
-	extern void bridge_stack_test(void); bridge_stack_test();
 }
 
 void my_test_suite_close()

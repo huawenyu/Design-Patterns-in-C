@@ -3,29 +3,30 @@
 "classes": {
 	"parent":{
 		"members": [
-			["virtual",      "pub_v_func1", "void", "", "public"],
-			["virtual",      "pub_v_func2", "void", "", "public"],
-			["virtual",      "pri_v_func3", "void", "", "private"],
-			["virtual",      "pri_v_func4", "void", "", "private"],
-			["method",       "pub_m_func1", "void", "", "public"],
+			["virtual",      "pub_v_func1",        "void", "", "public"],
+			["virtual",      "pub_v_func2",        "void", "", "public"],
+			["virtual",      "pri_v_func3",        "void", "", "private"],
+			["virtual",      "pri_v_func4",        "void", "", "private"],
+			["method",       "pub_m_func1",        "void", "", "public"],
 			["static_method","static_pub_m_func2", "void", "", "public"],
-			["method",       "pri_m_func3", "void", "", "private"],
+			["method",       "pri_m_func3",        "void", "", "private"],
 			["static_method","static_pri_m_func4", "void", "", "private"],
-			["var",          "pub_data1",   "int",  "", "public"],
-			["var",          "pri_data2",   "int",  "", "private"],
+			["var",          "pub_data1",          "int",  "", "public"],
+			["var",          "pri_data2",          "int",  "", "private"],
 			["static_var",   "static_pub_data3",   "int",  "", "public"],
 			["static_var",   "static_pri_data4",   "int",  "", "private"]
 		],
+		"enable_destructor":"True",
 
 		"inheritance": {
 			"child":{
 				"members": [
 					["override",  "<ALL>"],
 
-					["var",          "pub_data1",   "int",  "", "public"],
-					["var",          "pri_data2",   "int",  "", "private"],
-					["static_var",   "static_pub_data3",   "int",  "", "public"],
-					["static_var",   "static_pri_data4",   "int",  "", "private"]
+					["var",        "pub_data1",        "int",  "", "public"],
+					["var",        "pri_data2",        "int",  "", "private"],
+					["static_var", "static_pub_data3", "int",  "", "public"],
+					["static_var", "static_pri_data4", "int",  "", "private"]
 				],
 				"inheritance": {
 					"grandgirl":{
@@ -41,6 +42,13 @@
 				}
 			}
 		}
+	},
+	"main_entry":{
+		"includes": ["grandgirl", "grandson"],
+		"members": [
+			["static_method", "main_entry", "void"],
+			["static_method", "get_name", "char *"]
+		]
 	}
 }
 }
