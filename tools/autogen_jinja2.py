@@ -351,7 +351,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 		one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
 		one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
-		one_myclass['trace']     = get_value_else_default(one_inputclass, 'trace', False)
+		one_myclass['trace']     = get_value_else_default(mysuper, 'trace', False)
 		one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
 		one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
 		one_myclass['date']      = get_value_else_default(mysuper, 'date', '')

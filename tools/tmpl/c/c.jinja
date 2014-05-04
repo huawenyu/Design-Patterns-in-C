@@ -6,16 +6,16 @@
 {% endif %}{% endblock %}
 
 {%- block private_method -%}
-{{ func.macro_loop_functions(name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
+{{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
 
 {%- block vtable_impl -%}
-{{ func.macro_loop_functions(name,virtuals,'virtuals',mode='impl-print',qualifier='static') }}
+{{ func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-print',qualifier='static') }}
 {%- endblock -%}
 
 {%- block vtable_set %}
 static struct {{ name }}_ops {{ name }}_ops = {
-	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='assign') }}
+	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='assign') }}
 };
 {%- endblock -%}
 
@@ -27,10 +27,10 @@ static struct {{ name }}_ops {{ name }}_ops = {
 
 	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() -%}
 		{%- if outer_loop.index > 1 -%}{%- set func_postfix = outer_loop.index -%}{%- endif -%}
-	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,abstract_path=vtable_class_detail['path'],qualifier='static',postfix=func_postfix) }}
+	{{- func.macro_loop_functions(trace,name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,abstract_path=vtable_class_detail['path'],qualifier='static',postfix=func_postfix) }}
 {# parent ops #}
 static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
-	{{- func.macro_loop_functions(name,vtable_class_detail['virtuals'],'virtuals',mode='assign',abstract_name=vtable_class_name,postfix=func_postfix) }}
+	{{- func.macro_loop_functions(trace,name,vtable_class_detail['virtuals'],'virtuals',mode='assign',abstract_name=vtable_class_name,postfix=func_postfix) }}
 };
 {# end parent ops #}
 	{%- endfor -%}
@@ -65,5 +65,5 @@ void {{ name }}_init(struct {{ name }} *{{ name }})
 {%- endblock -%}
 
 {%- block public_method -%}
-	{{- func.macro_loop_functions(name,methods,'methods',mode='impl-print',scope='public') }}
+	{{- func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='public') }}
 {%- endblock -%}

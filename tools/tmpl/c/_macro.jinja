@@ -47,12 +47,12 @@ ref:	{%- import '_macro.jinja' as func -%}
 		{%- if args.abstract_path %}
 	/** PSEUDOCODE
 	... do_something() to put resources ...
-	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	CLASS_SUPER({{- args.first_arg_type -}}, _destructor);
 	*/
 		{%- else %}
-	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 		{%- endif %}
 	{%- elif args.func == 'free' %}
@@ -62,14 +62,14 @@ ref:	{%- import '_macro.jinja' as func -%}
 	struct {{ args.name }} *a_{{ args.name }} = container_of({{- args.first_arg_type -}}
 		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
 	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
-	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	free(a_{{ args.name }});
 	*/
 		{%- else %}
 	/** PSEUDOCODE
 	{{ args.first_arg_type }}__destructor({{- args.first_arg_type -}});
-	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	free({{ args.first_arg_type }});
 	*/
@@ -80,7 +80,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
 	*/
 		{%- endif %}
-	{% if args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	{%- endif -%}
 	
@@ -170,7 +170,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='',trace='') -%}
+{%- macro macro_loop_functions(trace,name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='') -%}
 	{% set l_have_items = [] %}
 
 	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
@@ -186,6 +186,12 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 	{%- set first_arg_type = name -%}
 	{%- if abstract_name -%}
 		{%- set first_arg_type = abstract_name -%}
+	{%- endif -%}
+
+	{%- if trace and (trace == 'True' or trace == 'true') -%}
+		{%- set trace = 'True' -%}
+	{%- else -%}
+		{%- set trace = '' -%}
 	{%- endif -%}
 
 	{%- set args={'name':name,  'abstract_path':abstract_path,

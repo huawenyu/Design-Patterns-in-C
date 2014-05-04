@@ -42,7 +42,7 @@ struct {{ name }} {
 	struct {{ name }}_ops *ops;
 	{%- endif -%}
 
-	{{- func.macro_loop_functions(name,vars,'vars',mode='var',static='False') }}
+	{{- func.macro_loop_functions(trace,name,vars,'vars',mode='var',static='False') }}
 };
 {%- endblock -%}
 
@@ -51,12 +51,12 @@ struct {{ name }} {
 {%- if _have_vtable_new -%}
 struct {{ name }}_ops {
 	{%- block parents %}{% endblock -%}
-	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='declare') -}}
+	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='declare') -}}
 
 	{%- if _have_super_ref %}
 	struct {{ name }}_ops *__super;
 	{%- endif -%}
-	{{- func.macro_loop_functions(name,vars,'vars',mode='var',static='True') }}
+	{{- func.macro_loop_functions(trace,name,vars,'vars',mode='var',static='True') }}
 };
 {%- endif -%}
 {%- endblock -%}
@@ -68,13 +68,13 @@ void {{ name }}_init(struct {{ name }} *);
 
 
 {%- block public_methods -%}
-	{{- func.macro_loop_functions(name,methods,'methods',scope='public',mode='declare') -}}
+	{{- func.macro_loop_functions(trace,name,methods,'methods',scope='public',mode='declare') -}}
 {%- endblock -%}
 
 
 {%- block vtable_helper -%}
 {%- if _have_vtable_new -%}
-	{{- func.macro_loop_functions(name,virtuals,'virtuals',mode='impl-ops',qualifier='static inline',format_str='%s_%s') -}}
+	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-ops',qualifier='static inline',format_str='%s_%s') -}}
 {%- endif -%}
 {%- endblock -%}
 
