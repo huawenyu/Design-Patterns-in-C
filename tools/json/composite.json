@@ -1,0 +1,45 @@
+{
+"add_file_header":"True",
+"namespace":      "composite",
+"path":           "composite",
+"trace":          "True",
+
+"classes": {
+	"component":{
+		"enable_super":"True",
+		"members": [
+			["virtual", "traverse", "void"]
+		],
+
+		"inheritance": {
+			"primitive":{
+				"members": [ ["override",  "<ALL>"],
+					["var", "value", "int"]
+				]
+			},
+			"composite":{
+				"members": [ ["override",  "<ALL>"],
+					["method","add",       "void", "struct component *c"],
+					["var",   "value",     "int"],
+					["var",   "children",  "struct component *", "[32]", "private"],
+					["var",   "children_sz", "int"]
+				],
+
+				"inheritance": {
+					"row":{
+						"members": [ ["override",  "<ALL>"] ]
+					},
+					"column":{
+						"members": [ ["override",  "<ALL>"] ]
+					}
+				}
+			}
+		}
+	},
+
+	"test":{
+		"includes":["primitive", "row", "column"],
+		"templates":["_test"]
+	}
+}
+}
