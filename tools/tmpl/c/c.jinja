@@ -9,13 +9,15 @@
 {{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
 
+{# static = false: skip pure-virtual #}
 {%- block vtable_impl -%}
-{{ func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-print',qualifier='static') }}
+{{ func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-print',static='False',qualifier='static') }}
 {%- endblock -%}
 
+{# static = false: skip pure-virtual #}
 {%- block vtable_set %}
 static struct {{ name }}_ops {{ name }}_ops = {
-	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='assign') }}
+	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='assign',static='False') }}
 };
 {%- endblock -%}
 

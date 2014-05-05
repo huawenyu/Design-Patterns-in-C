@@ -59,6 +59,7 @@ const.members             = 'members'        #
 const.override_all        = '<ALL>'          #
 const.m_dict              ={ \
                             'virtual'      :'virtuals', \
+                            'pure_virtual' :'virtuals', \
                             'method'       :'methods',  \
                             'static_method':'methods',  \
                             'override'     :'overrides',\
@@ -369,6 +370,9 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 		_path = get_value_else_default(one_myclass, 'path', '.')
 		one_node = copy.deepcopy(node)
 		one_node['id'] = class_name
+		if one_myclass['type'] and one_myclass['type'] != 'class':
+			one_node['id'] = '<<' + one_myclass['type'] + '>>' + class_name
+
 		node_attrs = []
 		node_meths = []
 
@@ -414,14 +418,14 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 					meths_str = ' '
 
 				meths_str += ' '
-				meths_str += method[const.func.name] #+ ' : ' + method[const.func.type]
+				meths_str += method[const.func.name]  + '()'
 				node_meths.append(meths_str)
 
 		if one_myclass.has_key(const.m_dict['virtual']):
 			for method in one_myclass[const.m_dict['virtual']]:
 				meths_str = '~'
 				meths_str += ' '
-				meths_str += method[const.func.name] #+ ' : ' + method[const.func.type]
+				meths_str += method[const.func.name] + '()'
 				node_meths.append(meths_str)
 
 		if one_myclass.has_key('supers'):
@@ -484,6 +488,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['name']      = myclass_name
 		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
 		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
+		one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
 
 		# used as C generate helper
 		# config flags
@@ -570,7 +575,9 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 				#@TODO warning member_name conflict
 				if one_myclass.has_key(const.m_dict[member_category]):
 					one_myclass[const.m_dict[member_category]].append(member_detail)
-					if member_category == 'static_method' or member_category == 'static_var':
+					if member_category == 'pure_virtual' \
+						or member_category == 'static_method' \
+						or member_category == 'static_var':
 						member_detail[const.func.static] = 'True'
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
