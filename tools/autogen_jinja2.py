@@ -75,7 +75,7 @@ const.config_destructor   = 'enable_destructor'
 const.config_super        = 'enable_super'
 const.control_super       = '_have_super_ref'
 const.control_vtable      = '_have_vtable_new'
-const.control_static_var  = '_have_static_var'
+const.control_static_var  = '_have_static_var'  # '' <OR> store first static var's name for init
 ## cat-category
 const.func                = enum('static', 'scope', 'type', 'name', 'params', 'args', 'comment')
 const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
@@ -294,22 +294,30 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			if variable[const.func.static] == 'True':
 				one_myclass[const.control_vtable] = True
 				one_myclass[const.control_static_var] = 'True'
-				one_myclass[const.control_super] = True
+				one_myclass[const.control_super] = True  # now if enable static_var, should be after member.super, so enable_super
 				break
 
 		''' **Just needed by C code.**
 		1. "enable_super" come from config
 		2. "_have_super_ref" is auto-gen field used to control code-gen
-		   If "_have_super_ref" is "True", means the implement support super call:
 		    * As base class, provide *super* support member,
-			  - control by **config**: must config as 'enable_super'
-			  - must have virtual-function,
-			  - The generated code should append super pointer in vtable
+		      - The generated code should append super pointer in vtable
 		    * As derive class, initial suitable super,
-			  - just control by super-class, **config have no use at all**.
-			  - must have super-class which must have enable_super already
-			  - The generated code should init with super
+		      - The generated code should init with super
+
+		# parse 1-times:
+		    * As base class, provide *super* support member,
+		      - control by **config**: must config as 'enable_super'
+		      - must have virtual-function,
+		    * As derive class, initial suitable super,
+		      - just control by super-class, **config have no use at all**.
+		      - must have super-class which must have enable_super already
+
+		# parse 2-times for supers's flags control_super:
+		    * if one class config_super, change it's super all have super
 		'''
+
+		# parse 1-times:
 		if one_myclass['supers']: # As derive class
 			for super_name in one_myclass['supers'].keys():
 				one_super = convert_to_class(myclasses_array_dict, super_name)
@@ -328,14 +336,127 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 			for super_name,super_class in one_myclass['supers'].iteritems():
 				for vtable_name, vtable in super_class.iteritems():
 					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+
+					# if one class config_super, change it's super all have super
+					if one_myclass[const.control_super] \
+						or one_myclass[const.config_super].lower() == 'true':
+						vtable_class[const.control_super] = True
+
+					# copy super-class's flag-super to vtable's flag
 					if vtable_class[const.control_super]:
 						vtable[const.control_super] = True
+
+					# if static_var, remember the first static variable for initial code
 					if vtable_class[const.control_static_var]:
 						for variable in vtable_class[const.m_dict['var']]:
 							if variable[const.func.static] == 'True':
 								vtable[const.control_static_var] = variable[const.func.name]
 								break # exit find first static var
 
+
+def gen_pynsource_graphic_nodes(myclasses_array_dict):
+	graphic = []
+	nodes = []
+	edges = []
+	node = {'type':'node', 'id':'name', 'attrs':'', 'meths':'', 'x':1, 'y':1, 'width':1, 'height':1}
+	edge = {'type':'edge', 'id':'name', 'source':'src', 'target':'dst', 'uml_edge_type':'generalisation'}
+
+	_path = ''
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if class_name == 'test':
+			continue
+
+		_path = get_value_else_default(one_myclass, 'path', '.')
+		one_node = copy.deepcopy(node)
+		one_node['id'] = class_name
+		node_attrs = []
+		node_meths = []
+
+		# 'static', 'scope', 'type', 'name', 'params', 'args', 'comment')
+		if one_myclass.has_key(const.m_dict['var']):
+			for variable in one_myclass[const.m_dict['var']]:
+				attrs_str = ''
+				if variable[const.func.scope] == 'public':
+					attrs_str = '+'
+				elif variable[const.func.scope] == 'protected':
+					attrs_str = '#'
+				elif variable[const.func.scope] == 'private':
+					attrs_str = '-'
+				elif variable[const.func.static] == 'True':
+					attrs_str = '@'
+				else:
+					attrs_str = ' '
+
+				attrs_str += ' '
+				attrs_str += variable[const.func.name] #+ ' : ' + variable[const.func.type]
+				node_attrs.append(attrs_str)
+
+				if variable[const.func.type].startswith('struct '):
+					var_type = variable[const.func.type].split(' ')
+					if len(var_type) > 1:
+						one_edge = copy.deepcopy(edge)
+						one_edge['id'] = class_name + '_to_' + var_type[1]
+						one_edge['source'] = class_name
+						one_edge['target'] = var_type[1]
+						one_edge['uml_edge_type'] = 'composition'
+						edges.append(one_edge)
+
+		if one_myclass.has_key(const.m_dict['method']):
+			for method in one_myclass[const.m_dict['method']]:
+				meths_str = ''
+				if method[const.func.scope] == 'public':
+					meths_str = '+'
+				elif method[const.func.scope] == 'protected':
+					meths_str = '#'
+				elif method[const.func.scope] == 'private':
+					meths_str = '-'
+				else:
+					meths_str = ' '
+
+				meths_str += ' '
+				meths_str += method[const.func.name] #+ ' : ' + method[const.func.type]
+				node_meths.append(meths_str)
+
+		if one_myclass.has_key(const.m_dict['virtual']):
+			for method in one_myclass[const.m_dict['virtual']]:
+				meths_str = '~'
+				meths_str += ' '
+				meths_str += method[const.func.name] #+ ' : ' + method[const.func.type]
+				node_meths.append(meths_str)
+
+		if one_myclass.has_key('supers'):
+			for super_name,super_class in one_myclass['supers'].iteritems():
+				one_edge = copy.deepcopy(edge)
+				one_edge['id'] = class_name + '_to_' + super_name
+				one_edge['source'] = class_name
+				one_edge['target'] = super_name
+				edges.append(one_edge)
+
+				for vtable_name, vtable in super_class.iteritems():
+					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+					for method in vtable[const.m_dict['virtual']]:
+						meths_str = '~'
+						meths_str += ' '
+						meths_str += method[const.func.name] + '(' + vtable_name + ')'
+						node_meths.append(meths_str)
+
+		one_node['attrs'] = '|'.join(node_attrs)
+		one_node['meths'] = '|'.join(node_meths)
+		nodes.append(one_node)
+
+	for node in nodes:
+		graphic.append(node)
+	for edge in edges:
+		graphic.append(edge)
+
+	# append graphic to classes
+	myclasses_array_dict['graphic'] = odict()
+	myclasses_array_dict['graphic']['templates']       = ['_graphic']
+	myclasses_array_dict['graphic']['add_file_header'] = False
+	myclasses_array_dict['graphic']['file']            = 'graphic'
+	myclasses_array_dict['graphic']['path']            = _path
+	myclasses_array_dict['graphic']['nodes']           = nodes
+	myclasses_array_dict['graphic']['edges']           = edges
 
 def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
 	for class_name, one_myclass in context_dict_tree.iteritems():
@@ -509,6 +630,8 @@ def render_namespace(input_file, code_style, output_dir):
 		parse_override_function(myclasses_array_dict)
 		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		parse_support_flag_and_auto_function(myclasses_array_dict)
+		#print 'JSON PARSE SUPPORT FLAGS:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		gen_pynsource_graphic_nodes(myclasses_array_dict)
 		#print 'JSON PARSE SUPPORT FLAGS:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		flush_unused_and_makeup(myclasses_array_dict)
 
