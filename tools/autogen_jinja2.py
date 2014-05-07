@@ -58,6 +58,8 @@ const.sub_classes         = 'inheritance'    #
 const.members             = 'members'        #
 const.override_all        = '<ALL>'          #
 const.m_dict              ={ \
+                            'init'         :'inits', \
+                            'init_setter'  :'inits_setter', \
                             'virtual'      :'virtuals', \
                             'pure_virtual' :'virtuals', \
                             'method'       :'methods',  \
@@ -67,6 +69,8 @@ const.m_dict              ={ \
                             'static_var'   :'vars'}
 
 ## auto add function:       'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
+const.member_init         =['False', 'public', 'void', 'init', '', '', \
+                            'constructor().']
 const.member_destructor   =['False', 'private', 'void', '_destructor', '', '', \
                             'called by free(): put resources, forward to super.']
 const.member_free         =['False', 'public', 'void', 'free', '', '', \
@@ -275,11 +279,12 @@ def parse_override_function(myclasses_array_dict):
 						format(one_myclass['name'], override[const.func.name], override[const.func.type]))
 
 
-def parse_support_flag_and_auto_function(myclasses_array_dict):
+def parse_helper_flag(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
 		# control flags
 		one_myclass[const.control_super] = False  # config: enable_super
 		one_myclass[const.control_vtable] = False # config: virtual
+		# if static_var, remember the first static variable for initial code
 		one_myclass[const.control_static_var] = '' # config: static var
 
 		'''
@@ -318,7 +323,7 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 		    * if one class config_super, change it's super all have super
 		'''
 
-		# parse 1-times:
+		# parse 1-times for control_super
 		if one_myclass['supers']: # As derive class
 			for super_name in one_myclass['supers'].keys():
 				one_super = convert_to_class(myclasses_array_dict, super_name)
@@ -331,7 +336,7 @@ def parse_support_flag_and_auto_function(myclasses_array_dict):
 				if one_myclass[const.config_super].lower() == 'true':
 					one_myclass[const.control_super] = True
 
-	# parse 2-times for supers's flags control_super
+	# parse 2-times for control_super: some flags should re-scan after 1-times
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
 		if one_myclass['supers']: # As derive class
 			for super_name,super_class in one_myclass['supers'].iteritems():
@@ -421,6 +426,22 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 				meths_str += method[const.func.name]  + '()'
 				node_meths.append(meths_str)
 
+		if one_myclass.has_key(const.m_dict['init']):
+			for method in one_myclass[const.m_dict['init']]:
+				meths_str = ''
+				if method[const.func.scope] == 'public':
+					meths_str = '+'
+				elif method[const.func.scope] == 'protected':
+					meths_str = '#'
+				elif method[const.func.scope] == 'private':
+					meths_str = '-'
+				else:
+					meths_str = ' '
+
+				meths_str += ' '
+				meths_str += method[const.func.name]  + '()'
+				node_meths.append(meths_str)
+
 		if one_myclass.has_key(const.m_dict['virtual']):
 			for method in one_myclass[const.m_dict['virtual']]:
 				meths_str = '~'
@@ -461,6 +482,83 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 	myclasses_array_dict['graphic']['path']            = _path
 	myclasses_array_dict['graphic']['nodes']           = nodes
 	myclasses_array_dict['graphic']['edges']           = edges
+
+
+def parse_parameters(params_str):
+	params = params_str.split(',')
+	args = []
+	for one_param in params:
+		find = False
+		for idx in range(len(one_param)-1, 0, -1):
+			one_char = one_param[idx]
+			if one_char >= 'a' and one_char <= 'z' or \
+			   one_char >= 'A' and one_char <= 'Z' or \
+			   one_char >= '0' and one_char <= '9' or \
+			   one_char == '_':
+				pass
+			else:
+				find = True
+				args.append(one_param[(idx+1):])
+				break
+
+	args.pop() # remove the last comma
+
+
+def parse_init_constructor(myclasses_array_dict)
+	# parse 2-times, process self; parse 2-times, process supers
+	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if len(one_myclass[const.m_dict['init']] == 0:
+			one_myclass[const.m_dict['init']].append(const.member_init)
+
+		for method in one_myclass[const.m_dict['init']]:
+			method_setter = { "scope" : method[const.func.scope], "params" : method[const.func.params], "args" : odict()}
+			one_myclass[const.m_dict['init_setter']].append(method_setter)
+			
+		'''
+		TODOS:
+		  - if no init, append one
+		  - if mult-init, rename as: init, init2, init3, ...
+		  - re-construct init as dict: "init":{ "scope":"public", "paremeter":"", "argument":{"para1":"arg1","para2":"arg2"}
+		  - Also append this info into vtable of supers for init
+
+		if one_myclass.has_key(const.m_dict['init']):
+			for method in one_myclass[const.m_dict['init']]:
+				meths_str = ''
+				if method[const.func.scope] == 'public':
+					meths_str = '+'
+				elif method[const.func.scope] == 'protected':
+					meths_str = '#'
+				elif method[const.func.scope] == 'private':
+					meths_str = '-'
+				else:
+					meths_str = ' '
+
+				meths_str += ' '
+				meths_str += method[const.func.name]  + '()'
+				node_meths.append(meths_str)
+
+		if one_myclass['supers']: # As derive class
+			for super_name,super_class in one_myclass['supers'].iteritems():
+				for vtable_name, vtable in super_class.iteritems():
+					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+
+					# if one class config_super, change it's super all have super
+					if one_myclass[const.control_super] \
+						or one_myclass[const.config_super].lower() == 'true':
+						vtable_class[const.control_super] = True
+
+					# copy super-class's flag-super to vtable's flag
+					if vtable_class[const.control_super]:
+						vtable[const.control_super] = True
+
+					# if static_var, remember the first static variable for initial code
+					if vtable_class[const.control_static_var]:
+						for variable in vtable_class[const.m_dict['var']]:
+							if variable[const.func.static] == 'True':
+								vtable[const.control_static_var] = variable[const.func.name]
+								break # exit find first static var
+		'''
+
 
 def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
 	for class_name, one_myclass in context_dict_tree.iteritems():
@@ -575,10 +673,37 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 				#@TODO warning member_name conflict
 				if one_myclass.has_key(const.m_dict[member_category]):
 					one_myclass[const.m_dict[member_category]].append(member_detail)
-					if member_category == 'pure_virtual' \
+					# static=True: have serveral means in different time
+					if member_category == 'pure_virtual' \  # is pure virtual
 						or member_category == 'static_method' \
 						or member_category == 'static_var':
 						member_detail[const.func.static] = 'True'
+
+					# init: classname
+					if member_category == 'init':
+						# init have arguments
+						if member_detail[const.func.args]:
+							member_detail[const.func.static] = 'True'
+						else
+							member_detail[const.func.static] = 'False'
+
+						# Rename:
+						# '' -> classname
+						# init -> classname
+						# classname -> classname
+						# classname_init -> classname
+						# others: keep same
+						if not member_detail[const.func.name]:
+							member_detail[const.func.name] = myclass_name
+						elif member_detail[const.func.name].lower() == 'init':
+							member_detail[const.func.name] = myclass_name
+						else:
+							if member_detail[const.func.name].lower() == myclass_name + 'init' \
+								or member_detail[const.func.name].lower() == myclass_name + '_init' \
+								or member_detail[const.func.name].lower() == 'init' + myclass_name \
+								or member_detail[const.func.name].lower() == 'init_' + myclass_name \
+								:
+								member_detail[const.func.name] = myclass_name
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, const.m_dict[member_category]))
@@ -636,10 +761,15 @@ def render_namespace(input_file, code_style, output_dir):
 		#print 'JSON CONVERT TO ARRAY:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		parse_override_function(myclasses_array_dict)
 		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
-		parse_support_flag_and_auto_function(myclasses_array_dict)
+
+		parse_helper_flag(myclasses_array_dict)
 		#print 'JSON PARSE SUPPORT FLAGS:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		gen_pynsource_graphic_nodes(myclasses_array_dict)
-		#print 'JSON PARSE SUPPORT FLAGS:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print 'JSON GRAPHIC:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+
+		#parse_init_constructor(myclasses_array_dict)
+		#print 'JSON INIT-CONSTRUCTOR:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+
 		flush_unused_and_makeup(myclasses_array_dict)
 
 		if code_style == 'c':  # language not support oop
