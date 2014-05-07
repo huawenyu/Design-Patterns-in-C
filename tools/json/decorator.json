@@ -1,13 +1,12 @@
 {
 "add_file_header":"True",
-"namespace":      "composite",
-"path":           "composite",
+"namespace":      "decorator",
+"path":           "decorator",
 "trace":          "True",
 
 "classes": {
 	"interface":{
 		"type":"interface",
-		"enable_destructor":"True",
 		"members": [
 			["pure_virtual", "write", "void", "char *buf"],
 			["pure_virtual", "read", "void", "char *buf"]
@@ -15,24 +14,20 @@
 
 		"inheritance": {
 			"core":{
-				"members": [ ["override",  "<ALL>"],
-					["var", "value", "int"]
-				]
+				"members": [ ["override",  "<ALL>"] ]
 			},
 			"decorator":{
+				"enable_destructor":"True",
 				"members": [ ["override",  "<ALL>"],
-					["method","add",       "void", "struct component *c"],
-					["var",   "value",     "int"],
-					["var",   "children",  "struct component *", "[32]", "private"],
-					["var",   "children_sz", "int"]
+					["method","decorator", "void", "struct interface *inner"],
+					["var",   "_inner",  "struct interface *", "", "private"]
 				],
 
 				"inheritance": {
-					"row":{
-						"members": [ ["override",  "<ALL>"] ]
-					},
-					"column":{
-						"members": [ ["override",  "<ALL>"] ]
+					"wrapper":{
+						"members": [ ["override",  "<ALL>"],
+							["method","wrapper", "void", "struct interface *inner, char *str"]
+						]
 					}
 				}
 			}
@@ -40,7 +35,7 @@
 	},
 
 	"test":{
-		"includes":["primitive", "row", "column"],
+		"includes":["wrapper", "core"],
 		"templates":["_test"]
 	}
 }
