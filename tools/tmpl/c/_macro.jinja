@@ -91,13 +91,13 @@ ref:	{%- import '_macro.jinja' as func -%}
 {##################################}
 {%- macro macro_function_impl(args) %}
 {% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
-{% if args.req_qualifier %}{{ args.req_qualifier }}{{- SPACE -}}{%- endif -%}
+{% if args.insert_qualifier %}{{ args.insert_qualifier }}{{- SPACE -}}{%- endif -%}
 {{- args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
 (
 {%- set l_have_params = [] -%}
 
-{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%}
+{%- if args.func_is_static == 'False' -%}
 	{%- do l_have_params.append(1) -%}
 
 struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_type -}}
@@ -106,7 +106,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 {%- if args.func_params -%}
 	{%- do l_have_params.append(1) -%}
 
-	{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
 {%- endif -%}
 
@@ -133,14 +133,14 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 (
 {%- set l_have_params = [] -%}
 
-{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%}
+{%- if args.func_is_static == 'False' -%}
 	{%- do l_have_params.append(1) -%}
 	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*{{- args.name }}
 {%- endif -%}
 
 {%- if args.func_params -%}
 	{%- do l_have_params.append(1) -%}
-	{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
 {%- endif -%}
 
@@ -150,10 +150,10 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 
 
 {##################################}
-{%- macro macro_function_declare_as_init_private(args) %}
+{%- macro macro_function_declare_as_init_private(args, define, is_empty) %}
 {% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
-#define {{ args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
-(...) _Static_assert(0, "private constructor, cannot be called directly.")
+{{ define }} {{ args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
+{% if not is_empty %}(...) _Static_assert(0, "private constructor, cannot be called directly."){% endif %}
 {%- endmacro -%}
 
 
@@ -178,10 +178,10 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 @qualifier static inline
 @mode implement as [ops|printf]
 #}
-{%- macro macro_loop_functions(trace,name,functions,category,mode,scope='None',static='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='') -%}
+{%- macro macro_loop_functions(trace,name,functions,category,mode,pure='None',static='None',scope='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='') -%}
 	{% set l_have_items = [] %}
 
-	{%- for func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
+	{%- for func_is_pure,func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
 
 	{%- if format_str == "None" -%}
 		{%- set format_str='%s_%s' -%}
@@ -215,7 +215,8 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 	{%- set args={'name':name,  'abstract_path':abstract_path,
 		'first_arg_type':first_arg_type,
 		'category':category,
-		'req_scope':scope,      'req_static':static,             'req_qualifier':qualifier,
+		'req_pure':pure,    'req_static':static,                 'req_scope':scope,
+		'insert_qualifier':qualifier,
 		'func_scope':func_scope,'func_is_static':func_is_static, 'func_rtn_type':func_rtn_type,
 		'func':new_func,        'func_postfix':postfix,          'func_format_str':format_str,
 		'func_params':func_params,'func_args':func_args,
@@ -223,8 +224,9 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		'trace':trace,
 		} -%}
 
-	{%- if (args.req_scope == 'None' or args.func_scope == args.req_scope)
-			and (args.req_static == 'None' or args.func_is_static == args.req_static) -%}
+	{%- if      (args.req_pure   == 'None' or args.func_is_pure   == args.req_pure  )
+			and (args.req_static == 'None' or args.func_is_static == args.req_static)
+			and (args.req_scope  == 'None' or args.func_scope     == args.req_scope ) -%}
 
 		{%- if mode == "var" -%}
 			{{- macro_variable(args) -}}
@@ -235,7 +237,10 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		{%- elif mode == "declare-init" -%}
 			{{- macro_function_declare_as_func(args, ';') -}}
 		{%- elif mode == "declare-init-private" -%}
-			{{- macro_function_declare_as_init_private(args) -}}
+			{{- macro_function_declare_as_init_private(args, '#define', false) -}}
+		{%- elif mode == "undeclare-init-private" -%}
+			{{- macro_function_declare_as_init_private(args, '#undef', true) -}}
+			{{- macro_function_declare_as_func(args, ';') -}}
 		{%- elif mode == "assign" -%}
 			{%- do l_have_items.append(1) -%}
 			{{- macro_function_assign(args) -}}

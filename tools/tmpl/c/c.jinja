@@ -5,22 +5,19 @@
 	{{- func.file_header(file_header_name,copyright,author,date,summary) -}}
 {% endif %}{% endblock %}
 
-{%- block private_class_init -%}
-{%- endblock -%}
-
 {%- block private_method -%}
 {{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
 
 {# static = false: skip pure-virtual #}
 {%- block vtable_impl -%}
-{{ func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-print',static='False',qualifier='static') }}
+{{ func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='impl-print',pure='False',qualifier='static') }}
 {%- endblock -%}
 
 {# static = false: skip pure-virtual #}
 {%- block vtable_set %}
 static struct {{ name }}_ops {{ name }}_ops = {
-	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='assign',static='False') }}
+	{{- func.macro_loop_functions(trace,name,virtuals,'virtuals',mode='assign',pure='False') }}
 };
 {%- endblock -%}
 
@@ -42,10 +39,13 @@ static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 {%- endfor -%}
 {%- endif -%}{%- endblock -%}
 
+{%- block private_class_init -%}
+	{{- func.macro_loop_functions(trace,name,inits,'inits',scope='private',mode='undeclare-init-private') -}}
+{%- endblock -%}
 
 {# init implement #}
 {%- block class_init -%}
-{%- call(init_index) func.macro_loop_functions(trace,name,inits,'inits',mode='impl-init',scope='public') %}
+{%- call(init_index) func.macro_loop_functions(trace,name,inits,'inits',mode='impl-init') %}
 {
 	memset({{ name }}, sizeof(*{{ name }}), 0);
 	{%- if supers -%}

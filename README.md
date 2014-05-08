@@ -10,15 +10,18 @@ This will be a repository of
 
 ```
 
-====================================================
-                   private protected public  static
----------------------------+---------+------+-------
-method
-  virtual                              +
-  routine             +                +       +
-variable
-  member              -                +       +
-====================================================
+======================================================
+                private protected public  static  pure
+-------------------+--------+-------+--------+-----+--
+constructor        +                +       +
+destructor
+  virtual                           +
+methods
+  virtual                           +              +
+  routine          +                +       +
+variables
+  member           -                +       +
+=================================================
 + have implemented
 - can implemented with the "handle/body" idiom, but ...
 
@@ -55,7 +58,7 @@ Auto Generate class
 -------------------
 
 $ cd tools
-$ ./autogen_jinja2.py --file json/prototype.json    <<< the generated code in dir ./tools/code/c/prototype
+$ ./gencode.py --file json/prototype.json    <<< the generated code in dir ./tools/code/c/prototype
 
 ```
 

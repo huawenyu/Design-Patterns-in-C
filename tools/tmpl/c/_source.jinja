@@ -6,8 +6,8 @@
 #include <mycommon.h>
 {% if supers or _have_vtable_new %}#include <myobj.h>{% endif %}
 #include "{{ name }}.h"
-
 {% block private_class_init %}{% endblock %}
+
 {% block private_method %}{% endblock %}
 {%- if _have_vtable_new -%}
 	{%- block vtable_impl %}{% endblock -%}

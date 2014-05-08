@@ -76,13 +76,13 @@ const.m_dict              = odict([\
                             \
                             ])
 
-## auto add function:       'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
+## auto add function:       'pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
 const.constructor_comment = 'constructor().'
-const.member_init         =['False', 'public', 'void', 'init', '', '', \
+const.member_init         =['False', 'False', 'public', 'void', 'init', '', '', \
                             const.constructor_comment]
-const.member_destructor   =['False', 'private', 'void', '_destructor', '', '', \
+const.member_destructor   =['False', 'False', 'private', 'void', '_destructor', '', '', \
                             'called by free(): put resources, forward to super.']
-const.member_free         =['False', 'public', 'void', 'free', '', '', \
+const.member_free         =['False', 'False', 'public', 'void', 'free', '', '', \
                             'free memory after call destructor().']
 ## Flags
 const.config_destructor   = 'enable_destructor' # add free() to self and all derived-class, auto enable-super
@@ -91,7 +91,7 @@ const.control_super       = '_have_super_ref'
 const.control_vtable      = '_have_vtable_new'
 const.control_static_var  = '_have_static_var'  # '' <OR> store first static var's name for init
 ## cat-category
-const.func                = enum('static', 'scope', 'type', 'name', 'params', 'args', 'comment')
+const.func                = enum('pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment')
 const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
 
 
@@ -456,12 +456,16 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 
 			meths_str += ' '
 			meths_str += method[const.func.name]  + '()'
+			if method[const.func.pure] == 'True':
+				meths_str = '=0'
 			node_meths.append(meths_str)
 
 		for method in one_myclass[const.m_dict['virtual']]:
 			meths_str = '~'
 			meths_str += ' '
 			meths_str += method[const.func.name] + '()'
+			if method[const.func.pure] == 'True':
+				meths_str = '=0'
 			node_meths.append(meths_str)
 
 		for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
@@ -625,7 +629,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		if one_inputclass.has_key(const.members):
 			for member_input in one_inputclass[const.members]:
 				member_category = ''
-				member_detail = ['False', 'public', '', '', '', '','']
+				member_detail = ['False', 'False', 'public', '', '', '', '','']
 
 				member_mode = len(member_input)
 				if  member_mode == const.func_mode.cat_name:
@@ -681,10 +685,11 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					#   - when virtuals, means it's pure-virtual
 					#   - when methods|vars, means it's static
 					#   - when inits, means this constructor donnot need implements when it's just priviate
-					if member_category == 'pure_virtual' \
-						or member_category == 'static_method' \
+					if member_category == 'static_method' \
 						or member_category == 'static_var':
 						member_detail[const.func.static] = 'True'
+					if member_category == 'pure_virtual':
+						member_detail[const.func.pure] = 'True'
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, const.m_dict[member_category]))
