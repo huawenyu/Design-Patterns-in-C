@@ -33,6 +33,8 @@
 import os
 import os.path
 import json
+from jsoncomment import JsonComment
+#import yaml as json
 import collections
 import sys, traceback
 import copy
@@ -742,7 +744,8 @@ def render_namespace(input_file, code_style, output_dir):
 		if not os.path.isfile(input_file):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
-		input_dict = json.load(open(input_file), strict=False, object_pairs_hook=collections.OrderedDict)
+		#input_dict = json.loads(open(input_file), object_pairs_hook=collections.OrderedDict)
+		input_dict = JsonComment(json).load(open(input_file))
 		#print '"LOADING":\n',json.dumps(input_dict, sort_keys=False, indent=3)
 
 		context_dict_tree = convert_namespace_to_tree(\
@@ -768,6 +771,7 @@ def render_namespace(input_file, code_style, output_dir):
 		flush_unused_and_makeup(myclasses_array_dict)
 		if code_style == 'c':  # language not support oop
 			print '"JSON FINAL":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+			#print '"YAML FINAL":\n',json.dump(myclasses_array_dict, default_flow_style=False, indent=3)
 		elif code_style == 'cplus' or \
 		     code_style == 'java' or \
 		     code_style == 'csharp' or \

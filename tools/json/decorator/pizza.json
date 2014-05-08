@@ -7,19 +7,26 @@
 
 "classes": {
 	"pizza":{
+		# this is abstract class
 		"type":"abstract",
 		"members": [
 			["pure_virtual", "price", "int"],
-			["var",   "_pizza_price",  "int", "", "private"]
+			["var",   "_pizza_price", "int", "", "private"],
 		],
 
 		"inheritance": {
+			"margherita_pizza, gourmet_pizza":{
+				"members": [ ["override",  "<ALL>"],
+					["init","init", "void", "int pizza_price"],
+				]
+			},
 			"toppings_decorator":{
+				"type":"abstract",
 				"enable_super":"True",
 				"members": [ ["override",  "<ALL>"],
 					["init","init", "void", "struct pizza *inner, int topping_price"],
-					["var",   "_inner",  "struct pizza *", "", "private"],
-					["var",   "_topping_price",  "int", "", "private"]
+					["var", "_inner",  "struct pizza *", "", "private"],
+					["var", "_topping_price",  "int", "", "private"]
 				 ],
 				"inheritance": {
 					"extra_cheese_topping, jalapeno_topping, mushroom_topping":{
@@ -28,11 +35,6 @@
 						 ]
 					}
 				}
-			},
-			"margherita_pizza, gourmet_pizza":{
-				"members": [ ["override",  "<ALL>"],
-					["init","init", "void", "int pizza_price"]
-				]
 			}
 		}
 	},

@@ -1,10 +1,9 @@
-Problem
-=======
+# Problem
 
 When we implement oop using c, there have so many repeated code temple,  
 Maybe the frame code can be autogen. Ok, This is the one.  
 
-Solution
+# Solution
 ========
 
 1. Using json to describe our class
@@ -29,8 +28,30 @@ tools
         `-- h.jinja     <<<      for code {class-name}.h
 ```
 
-1. Using Json describe pattern
+## Using Json describe pattern
 ------------------------------
+
+### JSON Comment
+A wrapper to JSON parsers allowing comments, multiline strings and trailing commas  
+https://pypi.python.org/pypi/jsoncomment/0.2.3  
+- Single and Multi line comments
+- Multi line data strings
+- Trailing comma in objects and arrays
+
+#### Comments
+
+- # and ; are for single line comments
+- /* and */ enclose multiline comments
+- Inline comments are not supported
+
+#### Multiline strings
+
+Any string can be multiline, even object keys.
+
+- Multiline strings start and end with """, like in python
+- The preprocessor merges all lines to a single standard string
+- A single trailing space is kept, if present
+- New line is not kept. To hard code new lines in the string, use \\n
 
 ```
 $ cd tools  
@@ -143,8 +164,10 @@ Requirement
 
 ```
 $ sudo pip install jinja2  
+$ sudo pip install jsoncomment
 <or>
 $ sudo easy_install jinja2
+$ sudo easy_install jsoncomment
 ```
 
 Vim Plugin
