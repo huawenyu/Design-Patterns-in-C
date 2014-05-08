@@ -1,0 +1,45 @@
+{
+"add_file_header":"True",
+"namespace":      "decorator_encode",
+"path":           "decorator_encode",
+"trace":          "True",
+"comment":        "When parse package, use wrapper to add header or remove header.",
+
+"classes": {
+	"interface":{
+		"type":"interface",
+		"members": [
+			["pure_virtual", "write", "void", "char *buf"],
+			["pure_virtual", "read", "void", "char *buf"]
+		],
+
+		"inheritance": {
+			"core":{
+				"members": [ ["override",  "<ALL>"],
+					["init","init", "void", "", "private"]
+				 ]
+			},
+			"decorator":{
+				"enable_destructor":"True",
+				"members": [ ["override",  "<ALL>"],
+					["init",  "init",    "void",               "struct interface *inner"],
+					["var",   "_inner",  "struct interface *", "", "private"]
+				],
+
+				"inheritance": {
+					"wrapper":{
+						"members": [ ["override",  "<ALL>"],
+							["init","init", "void", "struct interface *inner, char *str"]
+						]
+					}
+				}
+			}
+		}
+	},
+
+	"test":{
+		"includes":["wrapper", "core"],
+		"templates":["_test"]
+	}
+}
+}

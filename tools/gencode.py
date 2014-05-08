@@ -575,127 +575,129 @@ def convert_to_array_dict(myclasses_array_dict, context_dict_tree):
 
 def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 	for myclass_name, one_inputclass in input_dict.iteritems():
-		one_myclass = odict()
-		myclass_dict[myclass_name] = one_myclass
+		names = myclass_name.replace(';',' ').replace(',',' ').split()
+		for myclass_name in names:
+			one_myclass = odict()
+			myclass_dict[myclass_name] = one_myclass
 
-		one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
-		one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
-		one_myclass['trace']     = get_value_else_default(mysuper, 'trace', False)
-		one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
-		one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
-		one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
-		one_myclass['summary']   = get_value_else_default(mysuper, 'summary', [])
+			one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
+			one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
+			one_myclass['trace']     = get_value_else_default(mysuper, 'trace', False)
+			one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
+			one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
+			one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
+			one_myclass['summary']   = get_value_else_default(mysuper, 'summary', [])
 
-		one_myclass['path']      = get_value_else_default(mysuper, 'path', '.')
-		one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
-		one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
-		one_myclass['name']      = myclass_name
-		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
-		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', get_value_else_default(mysuper, 'comment', []))
-		one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
+			one_myclass['path']      = get_value_else_default(mysuper, 'path', '.')
+			one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
+			one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
+			one_myclass['name']      = myclass_name
+			one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
+			one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', get_value_else_default(mysuper, 'comment', []))
+			one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
 
-		# control flags
-		one_myclass[const.control_super] = False  # config: enable_super
-		one_myclass[const.control_vtable] = False # config: virtual
-		# if static_var, remember the first static variable for initial code
-		one_myclass[const.control_static_var] = '' # config: static var
+			# control flags
+			one_myclass[const.control_super] = False  # config: enable_super
+			one_myclass[const.control_vtable] = False # config: virtual
+			# if static_var, remember the first static variable for initial code
+			one_myclass[const.control_static_var] = '' # config: static var
 
-		# used as C generate helper
-		# config flags
-		one_myclass[const.config_destructor] = get_value_else_default(one_inputclass, const.config_destructor, 'False')
-		one_myclass[const.config_super] = get_value_else_default(one_inputclass, const.config_super, 'False')
-		if one_myclass[const.config_destructor].lower() == 'true':
-			one_myclass[const.config_super] = 'True'
+			# used as C generate helper
+			# config flags
+			one_myclass[const.config_destructor] = get_value_else_default(one_inputclass, const.config_destructor, 'False')
+			one_myclass[const.config_super] = get_value_else_default(one_inputclass, const.config_super, 'False')
+			if one_myclass[const.config_destructor].lower() == 'true':
+				one_myclass[const.config_super] = 'True'
 
-		# create members
-		for members in const.m_dict.values(): # avoid None Error
-			if not members.startswith('supers'):
-				one_myclass[members] = []
+			# create members
+			for members in const.m_dict.values(): # avoid None Error
+				if not members.startswith('supers'):
+					one_myclass[members] = []
 
-		# create supers
-		supers = odict()
-		one_myclass[const.m_dict['super']] = supers
-		supers_setter = odict()
-		one_myclass[const.m_dict['super_setter']] = supers_setter
-		# append super to supers
-		if mysuper.has_key('name'):
-			supers[mysuper['name']] = odict()
-		if one_inputclass.has_key(const.m_dict['super']):
-			for super_name in one_inputclass[const.m_dict['super']]:
-				supers[super_name] = odict()
+			# create supers
+			supers = odict()
+			one_myclass[const.m_dict['super']] = supers
+			supers_setter = odict()
+			one_myclass[const.m_dict['super_setter']] = supers_setter
+			# append super to supers
+			if mysuper.has_key('name'):
+				supers[mysuper['name']] = odict()
+			if one_inputclass.has_key(const.m_dict['super']):
+				for super_name in one_inputclass[const.m_dict['super']]:
+					supers[super_name] = odict()
 
-		if one_myclass[const.config_destructor].lower() == 'true':
-			one_myclass[const.m_dict['virtual']].append(const.member_destructor);
-			one_myclass[const.m_dict['virtual']].append(const.member_free);
+			if one_myclass[const.config_destructor].lower() == 'true':
+				one_myclass[const.m_dict['virtual']].append(const.member_destructor);
+				one_myclass[const.m_dict['virtual']].append(const.member_free);
 
-		# split members into functions and vars ...
-		if one_inputclass.has_key(const.members):
-			for member_input in one_inputclass[const.members]:
-				member_category = ''
-				member_detail = copy.deepcopy(const.member_default)
+			# split members into functions and vars ...
+			if one_inputclass.has_key(const.members):
+				for member_input in one_inputclass[const.members]:
+					member_category = ''
+					member_detail = copy.deepcopy(const.member_default)
 
-				member_mode = len(member_input)
-				if  member_mode == const.func_mode.cat_name:
-					member_category = member_input[0]
-					member_detail[const.func.name] = member_input[1]
-				elif member_mode == const.func_mode.cat_name_type:
-					member_category = member_input[0]
-					member_detail[const.func.name] = member_input[1]
-					member_detail[const.func.type] = member_input[2]
-				elif member_mode == const.func_mode.cat_name_type_args or \
-					 member_mode == const.func_mode.cat_name_type_args_scope or \
-					 member_mode == cat_name_type_args_scope_comment:
-					member_category = member_input[0]
-					member_detail[const.func.name]  = member_input[1]
-					member_detail[const.func.type]  = member_input[2]
-					member_detail[const.func.params]= member_input[3]
+					member_mode = len(member_input)
+					if  member_mode == const.func_mode.cat_name:
+						member_category = member_input[0]
+						member_detail[const.func.name] = member_input[1]
+					elif member_mode == const.func_mode.cat_name_type:
+						member_category = member_input[0]
+						member_detail[const.func.name] = member_input[1]
+						member_detail[const.func.type] = member_input[2]
+					elif member_mode == const.func_mode.cat_name_type_args or \
+						 member_mode == const.func_mode.cat_name_type_args_scope or \
+						 member_mode == cat_name_type_args_scope_comment:
+						member_category = member_input[0]
+						member_detail[const.func.name]  = member_input[1]
+						member_detail[const.func.type]  = member_input[2]
+						member_detail[const.func.params]= member_input[3]
 
-					# scope and comment
-					if member_mode == const.func_mode.cat_name_type_args_scope or \
-					   member_mode == const.func_mode.cat_name_type_args_scope_comment:
-						if member_input[4]:
-							member_detail[const.func.scope] = member_input[4]
-						if member_mode == const.func_mode.cat_name_type_args_scope_comment:
-							if member_input[5]:
-								member_detail[const.func.comment] = member_input[5]
+						# scope and comment
+						if member_mode == const.func_mode.cat_name_type_args_scope or \
+						   member_mode == const.func_mode.cat_name_type_args_scope_comment:
+							if member_input[4]:
+								member_detail[const.func.scope] = member_input[4]
+							if member_mode == const.func_mode.cat_name_type_args_scope_comment:
+								if member_input[5]:
+									member_detail[const.func.comment] = member_input[5]
 
-					if member_input[3] and member_category != 'var':
-						params,args = parse_parameters(member_input[3])
-						member_detail[const.func.args] = ', '.join(args)
-				else:
-					raise Exception('class {0} member_input size is {1} greater than 4: {2}'.\
-					  format(myclass_name, member_input, member_mode))
+						if member_input[3] and member_category != 'var':
+							params,args = parse_parameters(member_input[3])
+							member_detail[const.func.args] = ', '.join(args)
+					else:
+						raise Exception('class {0} member_input size is {1} greater than 4: {2}'.\
+						  format(myclass_name, member_input, member_mode))
 
-				# Check if constructor: change category
-				if member_detail[const.func.name] == myclass_name \
-					or member_detail[const.func.name] == 'constructor' \
-					or member_detail[const.func.name] == 'new' \
-					or member_detail[const.func.name] == 'init':
-					member_category = 'init'
+					# Check if constructor: change category
+					if member_detail[const.func.name] == myclass_name \
+						or member_detail[const.func.name] == 'constructor' \
+						or member_detail[const.func.name] == 'new' \
+						or member_detail[const.func.name] == 'init':
+						member_category = 'init'
 
-				#@TODO warning member_name conflict
-				if one_myclass.has_key(const.m_dict[member_category]):
-					# static=True:
-					#   - when methods|vars, means it's static
-					if member_category == 'static_method' \
-						or member_category == 'static_var':
-						member_detail[const.func.static] = 'True'
-					elif member_category == 'pure_virtual':
-						member_detail[const.func.pure] = 'True'
-					elif member_category == 'init':
-						member_detail[const.func.static] = 'False'
-						member_detail[const.func.comment] = const.constructor_comment
-						# Rename:
-						# '' -> classname
-						for one_member in one_myclass[const.m_dict['init']]:
-							if member_detail[const.func.name] == one_member[const.func.name]:
-								member_detail[const.func.name] = myclass_name
-								break
+					#@TODO warning member_name conflict
+					if one_myclass.has_key(const.m_dict[member_category]):
+						# static=True:
+						#   - when methods|vars, means it's static
+						if member_category == 'static_method' \
+							or member_category == 'static_var':
+							member_detail[const.func.static] = 'True'
+						elif member_category == 'pure_virtual':
+							member_detail[const.func.pure] = 'True'
+						elif member_category == 'init':
+							member_detail[const.func.static] = 'False'
+							member_detail[const.func.comment] = const.constructor_comment
+							# Rename:
+							# '' -> classname
+							for one_member in one_myclass[const.m_dict['init']]:
+								if member_detail[const.func.name] == one_member[const.func.name]:
+									member_detail[const.func.name] = myclass_name
+									break
 
-					one_myclass[const.m_dict[member_category]].append(member_detail)
-				else:
-					raise Exception('class {0} members of category *{1}* not exist'.\
-					  format(myclass_name, const.m_dict[member_category]))
+						one_myclass[const.m_dict[member_category]].append(member_detail)
+					else:
+						raise Exception('class {0} members of category *{1}* not exist'.\
+						  format(myclass_name, const.m_dict[member_category]))
 
 		# recursive sub-classes
 		one_myclass[const.sub_classes] = odict()

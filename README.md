@@ -58,7 +58,7 @@ Auto Generate class
 -------------------
 
 $ cd tools
-$ ./gencode.py --file json/prototype.json    <<< the generated code in dir ./tools/code/c/prototype
+$ ./gencode.py --file json/prototype.json > log   <<< the generated code in dir ./tools/code/c/prototype
 
 ```
 

@@ -1,0 +1,14 @@
+{'type':'node', 'id':'<abstract>pizza', 'attrs':'- _pizza_price', 'meths':'+ pizza()|=0', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'toppings_decorator', 'attrs':'- _inner|- _topping_price', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'extra_cheese_topping', 'attrs':'', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'jalapeno_topping', 'attrs':'', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'mushroom_topping', 'attrs':'', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'margherita_pizza', 'attrs':'', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'gourmet_pizza', 'attrs':'', 'meths':'+ init()|~ price(pizza)', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'edge', 'id':'toppings_decorator_to_pizza', 'source':'toppings_decorator', 'target':'pizza', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'toppings_decorator_to_pizza', 'source':'toppings_decorator', 'target':'pizza', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'extra_cheese_topping_to_toppings_decorator', 'source':'extra_cheese_topping', 'target':'toppings_decorator', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'jalapeno_topping_to_toppings_decorator', 'source':'jalapeno_topping', 'target':'toppings_decorator', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'mushroom_topping_to_toppings_decorator', 'source':'mushroom_topping', 'target':'toppings_decorator', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'margherita_pizza_to_pizza', 'source':'margherita_pizza', 'target':'pizza', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'gourmet_pizza_to_pizza', 'source':'gourmet_pizza', 'target':'pizza', 'uml_edge_type':'generalisation'}
