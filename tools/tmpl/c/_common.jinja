@@ -65,11 +65,11 @@
 
 
 {##################################}
-{%- macro get_comment(comment) -%}
-	{%- if comment is string %}
- * {{ comment }}
+{%- macro get_note(note) -%}
+	{%- if note is string %}
+ * {{ note }}{# {{ note|wordwrap(width=79) }} #}
 	{%- else -%}
-		{%- for one_line in comment %}
+		{%- for one_line in note %}
  * {{ one_line }}
 		{%- endfor -%}
 	{%- endif -%}

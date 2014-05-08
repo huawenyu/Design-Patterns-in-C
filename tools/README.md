@@ -4,7 +4,6 @@ When we implement oop using c, there have so many repeated code temple,
 Maybe the frame code can be autogen. Ok, This is the one.  
 
 # Solution
-========
 
 1. Using json to describe our class
 2. Create template code using jinja2 Template Engine
@@ -29,7 +28,6 @@ tools
 ```
 
 ## Using Json describe pattern
-------------------------------
 
 ### JSON Comment
 A wrapper to JSON parsers allowing comments, multiline strings and trailing commas  
@@ -55,49 +53,59 @@ Any string can be multiline, even object keys.
 
 ```
 $ cd tools  
-$ cat json/factory-method.json  
+$ cat json/decorator/pizza.json  
 
-1.	{
-2.	"classes": {
-3.		"product":{
-4.			"members": [
-5.				["virtual", "do_it","void", "int a, int b"],
-6.				["var",     "name", "char", "[32]"]
-7.			],
-8.			"enable_super":"False",
-9.	
-10.			"inheritance": {
-11.				"concrete_product_1":{
-12.					"members": [ ["override", "<ALL>"] ]
-13.				},
-14.				"concrete_product_2":{
-15.					"members": [ ["override", "<ALL>"] ]
-16.				}
-17.			}
-18.		},
-19.	
-20.		"product_factory":{
-21.			"members": [
-22.				["virtual", "create", "struct product*"],
-23.				["routine", "do_it", "void" ]
-24.			],
-25.	
-26.			"inheritance": {
-27.				"product_factory_1":{
-28.					"members": [ ["override", "<ALL>"] ]
-29.				},
-30.				"product_factory_2":{
-31.					"members": [ ["override", "<ALL>"] ]
-32.				}
-33.			}
-34.		}
-35.	}
-36.	}
+{
+"add_file_header":"True",
+"namespace":      "decorator_pizza",
+"path":           "decorator_pizza",
+"trace":          "True",
+"comment":        "Consider a case of a pizza shop.",
+
+"classes": {
+	"pizza":{
+		# this is abstract class
+		"type":"abstract",
+		"members": [
+			["pure_virtual", "price", "int"],
+			["var",   "_pizza_price", "int", "", "private"],
+		],
+
+		"inheritance": {
+			"margherita_pizza, gourmet_pizza":{
+				"members": [ ["override",  "<ALL>"],
+					["init","init", "void", "int pizza_price"],
+				]
+			},
+			"toppings_decorator":{
+				"type":"abstract",
+				"enable_super":"True",
+				"members": [ ["override",  "<ALL>"],
+					["init","init", "void", "struct pizza *inner, int topping_price"],
+					["var", "_inner",  "struct pizza *", "", "private"],
+					["var", "_topping_price",  "int", "", "private"]
+				 ],
+				"inheritance": {
+					"extra_cheese_topping, jalapeno_topping, mushroom_topping":{
+						"members": [ ["override",  "<ALL>"],
+							["init","init", "void", "struct pizza *inner, int topping_price"]
+						 ]
+					}
+				}
+			}
+		}
+	},
+
+	"test":{
+		"includes":["margherita_pizza", "gourmet_pizza", "extra_cheese_topping", "jalapeno_topping", "mushroom_topping"],
+		"templates":["_test"]
+	}
+}
+}
 
 ```
 
-2. Create template code using jinja2 Template Engine
-----------------------------------------------------
+## Create template code using jinja2 Template Engine
 
 ```
 $ tree tmpl       
@@ -109,15 +117,13 @@ tmpl
     `-- h.jinja
 ```
 
-3. Using jinja2 replace&combine the json-define-class-info and the Template
----------------------------------------------------------------------------
+## Using jinja2 replace&combine the json-define-class-info and the Template
 
 ```
 $ ./autogen_jinja2.py --file json/factory-method.json 
 ```
 
-4. Check Result
----------------
+## Check Result
 
 ```
 $ tree autogen_code 
@@ -137,18 +143,17 @@ autogen_code
     `-- product.h
 ```
 
-QuickStart
-==========
-Run
----
+# QuickStart
+
+## Run
 
 ```
 $ cd tools  
 $ ./autogen_jinja2.py --file json/factory-method.json  
 ```
 
-Debug
------
+## Debug
+
 ```
 python /usr/lib64/python2.7/pdb.py autogen_jinja2.py  
 (Pdb) break            # set breakpoint  
@@ -159,8 +164,7 @@ python /usr/lib64/python2.7/pdb.py autogen_jinja2.py
 (Pdb) util 112         # continue util the line number  
 ```
 
-Requirement
-===========
+# Requirement
 
 ```
 $ sudo pip install jinja2  
@@ -170,14 +174,12 @@ $ sudo easy_install jinja2
 $ sudo easy_install jsoncomment
 ```
 
-Vim Plugin
-==========
+# Vim Plugin
 
 https://github.com/Glench/Vim-Jinja2-Syntax.git  
 https://github.com/elzr/vim-json.git  
 
-Refs
-====
+# Refs
 
 http://kagerato.net/articles/software/libraries/jinja-quickstart.html  
 http://jinja.pocoo.org/docs/templates/  

@@ -27,8 +27,7 @@ Debug
 Release
 
 # Speical files
-tools/const.pyc
-tools/odict.pyc
+tools/*.pyc
 tools/tmpl/autogen_.jinja
 tools/code
 *.log

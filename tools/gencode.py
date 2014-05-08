@@ -32,6 +32,7 @@
 
 import os
 import os.path
+import textwrap
 import json
 from jsoncomment import JsonComment
 #import yaml as json
@@ -79,6 +80,7 @@ const.m_dict              = odict([\
                             ])
 
 ## auto add function:       'pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
+const.textwrap            =['note', 'comment', 'copyright']
 const.constructor_comment = 'constructor().'
 const.member_default      =['False', 'False', 'public', '', '', '', '','']
 const.member_init         =['False', 'False', 'public', 'void', 'init', '', '', \
@@ -166,7 +168,8 @@ def render_class_to_file(templateVars, code_style, output_dir):
 	# Setup jinja2 render template
 	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
 	templateEnv = jinja2.Environment( loader=templateLoader, extensions=["jinja2.ext.do",] )
-	templateEnv.line_statement_prefix = '##'
+	#templateEnv.line_statement_prefix = '##'
+	#templateEnv.keep_trailing_newline = True
 	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,code_style,output_dir))
 
 
@@ -217,6 +220,12 @@ def flush_unused_and_makeup(myclasses_array_dict):
 				one_myclass.pop(members, None)
 		if one_myclass.has_key(const.m_dict['override']):
 			one_myclass.pop(const.m_dict['override'], None)
+
+		# wrap text
+		for need_wrap in const.textwrap:
+			if one_myclass.has_key(need_wrap) and isinstance(one_myclass[need_wrap], basestring):
+				#one_myclass[need_wrap] = textwrap.fill(one_myclass[need_wrap], width=80, initial_indent=' * ', subsequent_indent='    ')
+				one_myclass[need_wrap] = textwrap.fill(one_myclass[need_wrap], width=79, subsequent_indent='    ')
 
 
 def convert_to_class(myclasses_array_dict, class_name):
@@ -589,13 +598,14 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 			one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
 			one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
 			one_myclass['summary']   = get_value_else_default(mysuper, 'summary', [])
+			one_myclass['note']      = get_value_else_default(one_inputclass, 'note', get_value_else_default(mysuper, 'note', []))
 
 			one_myclass['path']      = get_value_else_default(mysuper, 'path', '.')
 			one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
 			one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
 			one_myclass['name']      = myclass_name
 			one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
-			one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', get_value_else_default(mysuper, 'comment', []))
+			one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
 			one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
 
 			# control flags
@@ -724,7 +734,7 @@ def convert_namespace_to_tree(def_path, input_dict):
 	mysuper['author']           = get_value_else_default(input_dict, 'author', []) # author with email
 	mysuper['date']             = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d", gmtime()))
 	mysuper['summary']          = get_value_else_default(input_dict, 'summary', [])
-	mysuper['comment']          = get_value_else_default(input_dict, 'comment', [])
+	mysuper['note']             = get_value_else_default(input_dict, 'note', get_value_else_default(input_dict, 'comment', []))
 
 	# generate path
 	mysuper['path']             = get_value_else_default(input_dict, 'path', def_path)
@@ -745,7 +755,7 @@ def render_namespace(input_file, code_style, output_dir):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
 		#input_dict = json.loads(open(input_file), object_pairs_hook=collections.OrderedDict)
-		input_dict = JsonComment(json).load(open(input_file))
+		input_dict = JsonComment(json).load(open(input_file), object_pairs_hook=collections.OrderedDict)
 		#print '"LOADING":\n',json.dumps(input_dict, sort_keys=False, indent=3)
 
 		context_dict_tree = convert_namespace_to_tree(\

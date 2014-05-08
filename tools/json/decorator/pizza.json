@@ -3,7 +3,19 @@
 "namespace":      "decorator_pizza",
 "path":           "decorator_pizza",
 "trace":          "True",
-"comment":        "Consider a case of a pizza shop.\n In the pizza shop they will sale few pizza varieties and they will also provide toppings in the menu.\n Now imagine a situation wherein if the pizza shop has to provide prices for each combination of pizza and topping.\n Even if there are four basic pizzas and 8 different toppings,\n the application would go crazy maintaining all these concrete combination of pizzas and toppings.\n Here comes the decorator pattern.\n As per the decorator pattern,\n you will implement toppings as decorators and pizzas will be decorated by those toppings' decorators.\n Practically each customer would want toppings of his desire and final bill-amount will be composed of the base pizzas and additionally ordered toppings.\n Each topping decorator would know about the pizzas that it is decorating and it's price.\n GetPrice() method of Topping object would return cumulative price of both pizza and the topping.",
+"comment":        """Consider a case of a pizza shop.
+
+In the pizza shop they will sale few pizza varieties and they will also provide toppings in the menu.
+Now imagine a situation wherein if the pizza shop has to provide prices for each combination of pizza and topping.
+Even if there are four basic pizzas and 8 different toppings,
+the application would go crazy maintaining all these concrete combination of pizzas and toppings.
+
+Here comes the decorator pattern. As per the decorator pattern,
+you will implement toppings as decorators and pizzas will be decorated by those toppings' decorators.
+Practically each customer would want toppings of his desire and final bill-amount will be composed of the base pizzas and additionally ordered toppings.
+Each topping decorator would know about the pizzas that it is decorating and it's price.
+GetPrice() method of Topping object would return cumulative price of both pizza and the topping.
+""",
 
 "classes": {
 	"pizza":{

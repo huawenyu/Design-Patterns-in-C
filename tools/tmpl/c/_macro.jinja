@@ -7,7 +7,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 {%- set SPACE = ' ' -%}
 
 {# file header #}
-{%- macro file_header(file,copyright,author,date,summary,comment) %}
+{%- macro file_header(file,copyright,author,date,summary,note) %}
 /**
  * {{ file }}  {{ header.get_date(date) -}}
    {{- header.get_author(author) }}
@@ -15,8 +15,8 @@ ref:	{%- import '_macro.jinja' as func -%}
    {{- header.get_copyright(copyright) }}
  *
    {{- header.get_summary(summary) }}
-{%- if comment %} *
- * {{ header.get_comment(comment) }}{%- endif %}
+{%- if note %} *
+ * {{ header.get_note(note) }}{%- endif %}
  */
 {%- endmacro -%}
 

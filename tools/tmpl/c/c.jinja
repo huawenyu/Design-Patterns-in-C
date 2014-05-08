@@ -2,7 +2,7 @@
 {%- import '_macro.jinja' as func -%}
 
 {% block file_header %}{% if add_file_header -%}
-	{{- func.file_header(file_name,copyright,author,date,summary,comment) -}}
+	{{- func.file_header(file_name,copyright,author,date,summary,note) -}}
 {% endif %}{% endblock %}
 
 {%- block private_method -%}
