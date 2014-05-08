@@ -21,18 +21,26 @@
 {##################################}
 {%- macro get_copyright(copyright) -%}
 	{%- if not copyright %}{% set copyright=copyright_t %}{% endif -%}
-	{%- for one_line in copyright %}
+	{%- if copyright is string %}
+ * {{ copyright }}
+	{%- else -%}
+		{%- for one_line in copyright %}
  * {{ one_line }}
-	{%- endfor -%}
+		{%- endfor -%}
+	{%- endif -%}
 {%- endmacro -%}
 
 
 {##################################}
 {%- macro get_author(author) -%}
 	{%- if not author %}{% set author=author_t %}{% endif -%}
-	{%- for one_line in author %}
+	{%- if author is string %}
+ * {{ author }}
+	{%- else -%}
+		{%- for one_line in author %}
  * {{ one_line }}
-	{%- endfor -%}
+		{%- endfor -%}
+	{%- endif -%}
 {%- endmacro -%}
 
 
@@ -46,7 +54,23 @@
 {##################################}
 {%- macro get_summary(summary) -%}
 	{%- if not summary %}{% set summary=summary_t %}{% endif -%}
-	{%- for one_line in summary %}
+	{%- if summary is string %}
+ * {{ summary }}
+	{%- else -%}
+		{%- for one_line in summary %}
  * {{ one_line }}
-	{%- endfor -%}
+		{%- endfor -%}
+	{%- endif -%}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro get_comment(comment) -%}
+	{%- if comment is string %}
+ * {{ comment }}
+	{%- else -%}
+		{%- for one_line in comment %}
+ * {{ one_line }}
+		{%- endfor -%}
+	{%- endif -%}
 {%- endmacro -%}

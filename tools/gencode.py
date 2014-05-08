@@ -78,6 +78,7 @@ const.m_dict              = odict([\
 
 ## auto add function:       'pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
 const.constructor_comment = 'constructor().'
+const.member_default      =['False', 'False', 'public', '', '', '', '','']
 const.member_init         =['False', 'False', 'public', 'void', 'init', '', '', \
                             const.constructor_comment]
 const.member_destructor   =['False', 'False', 'private', 'void', '_destructor', '', '', \
@@ -106,16 +107,17 @@ def render_one_to_file(x, dir_name, files):
 			for tmpl in templateVars['templates']:
 				if filename == tmpl or one_file == tmpl:
 					# open file
+					file_name = templateVars['file']
+					if "." not in file_name:
+						file_name = '{0}{1}'.format(file_name, ext)
 					output_abs_file = os.path.abspath(\
-					  '{0}/{1}/{2}/{3}{4}'.format(\
-					  output_dir, code_style, templateVars['path'], \
-					  templateVars['file'], ext))
-					file_header_name = '{0}{1}'.format(templateVars['file'], ext)
+					  '{0}/{1}/{2}/{3}'.format(\
+					  output_dir, code_style, templateVars['path'], file_name))
 					output_abs_dir = os.path.dirname(output_abs_file)
 					if not os.path.exists(output_abs_dir):
 						os.makedirs(output_abs_dir)
 
-					templateVars['file_header_name'] = file_header_name
+					templateVars['file_name'] = file_name
 					templ_file = templateEnv.get_template(one_file)
 					output_text = templ_file.render( templateVars )
 					output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
@@ -127,16 +129,17 @@ def render_one_to_file(x, dir_name, files):
 			if not one_file.startswith('_') and one_file.endswith('jinja'):
 				# open file
 				ext = os.path.splitext(one_file)[0] # use filename as output file extension
+				file_name = templateVars['file']
+				if "." not in file_name:
+					file_name = '{0}.{1}'.format(file_name, ext)
 				output_abs_file = os.path.abspath(\
-				  '{0}/{1}/{2}/{3}.{4}'.format(\
-				  output_dir, code_style, templateVars['path'], \
-				  templateVars['file'], ext))
-				file_header_name = '{0}.{1}'.format(templateVars['file'], ext)
+				  '{0}/{1}/{2}/{3}'.format(\
+				  output_dir, code_style, templateVars['path'], file_name))
 				output_abs_dir = os.path.dirname(output_abs_file)
 				if not os.path.exists(output_abs_dir):
 					os.makedirs(output_abs_dir)
 
-				templateVars['file_header_name'] = file_header_name
+				templateVars['file_name'] = file_name
 				templ_file = templateEnv.get_template(one_file)
 				output_text = templ_file.render( templateVars )
 				output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
@@ -588,7 +591,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
 		one_myclass['name']      = myclass_name
 		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
-		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
+		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', get_value_else_default(mysuper, 'comment', []))
 		one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
 
 		# control flags
@@ -629,7 +632,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		if one_inputclass.has_key(const.members):
 			for member_input in one_inputclass[const.members]:
 				member_category = ''
-				member_detail = ['False', 'False', 'public', '', '', '', '','']
+				member_detail = copy.deepcopy(const.member_default)
 
 				member_mode = len(member_input)
 				if  member_mode == const.func_mode.cat_name:
@@ -665,31 +668,31 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 
 				# Check if constructor: change category
 				if member_detail[const.func.name] == myclass_name \
-					or member_detail[const.func.name] == 'init' \
-					or member_detail[const.func.name] == 'new' \
-					or member_detail[const.func.name] == 'this' \
-					or member_detail[const.func.name] == 'self' \
 					or member_detail[const.func.name] == 'constructor' \
-					:
-					# Rename:
-					# '' -> classname
+					or member_detail[const.func.name] == 'new' \
+					or member_detail[const.func.name] == 'init':
 					member_category = 'init'
-					member_detail[const.func.name] = myclass_name
-					member_detail[const.func.comment] = const.constructor_comment
-					member_detail[const.func.static] = 'False'
 
 				#@TODO warning member_name conflict
 				if one_myclass.has_key(const.m_dict[member_category]):
-					one_myclass[const.m_dict[member_category]].append(member_detail)
 					# static=True:
-					#   - when virtuals, means it's pure-virtual
 					#   - when methods|vars, means it's static
-					#   - when inits, means this constructor donnot need implements when it's just priviate
 					if member_category == 'static_method' \
 						or member_category == 'static_var':
 						member_detail[const.func.static] = 'True'
-					if member_category == 'pure_virtual':
+					elif member_category == 'pure_virtual':
 						member_detail[const.func.pure] = 'True'
+					elif member_category == 'init':
+						member_detail[const.func.static] = 'False'
+						member_detail[const.func.comment] = const.constructor_comment
+						# Rename:
+						# '' -> classname
+						for one_member in one_myclass[const.m_dict['init']]:
+							if member_detail[const.func.name] == one_member[const.func.name]:
+								member_detail[const.func.name] = myclass_name
+								break
+
+					one_myclass[const.m_dict[member_category]].append(member_detail)
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, const.m_dict[member_category]))
@@ -717,6 +720,7 @@ def convert_namespace_to_tree(def_path, input_dict):
 	mysuper['author']           = get_value_else_default(input_dict, 'author', []) # author with email
 	mysuper['date']             = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d", gmtime()))
 	mysuper['summary']          = get_value_else_default(input_dict, 'summary', [])
+	mysuper['comment']          = get_value_else_default(input_dict, 'comment', [])
 
 	# generate path
 	mysuper['path']             = get_value_else_default(input_dict, 'path', def_path)

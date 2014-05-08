@@ -7,7 +7,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 {%- set SPACE = ' ' -%}
 
 {# file header #}
-{%- macro file_header(file,copyright,author,date,summary) %}
+{%- macro file_header(file,copyright,author,date,summary,comment) %}
 /**
  * {{ file }}  {{ header.get_date(date) -}}
    {{- header.get_author(author) }}
@@ -15,6 +15,8 @@ ref:	{%- import '_macro.jinja' as func -%}
    {{- header.get_copyright(copyright) }}
  *
    {{- header.get_summary(summary) }}
+{%- if comment %} *
+ * {{ header.get_comment(comment) }}{%- endif %}
  */
 {%- endmacro -%}
 
@@ -204,7 +206,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 
 	{# hack init function's name #}
 	{%- set new_func = func -%}
-	{% if category == 'inits' %}
+	{% if category == 'inits' and new_func == name %}
 		{%- if loop.index == 1 -%}
 			{%- set new_func = "init" -%}
 		{%- else -%}

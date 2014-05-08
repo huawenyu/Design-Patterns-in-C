@@ -3,6 +3,7 @@
 "namespace":      "decorator",
 "path":           "decorator",
 "trace":          "True",
+"comment":        "Consider a case of a pizza shop.\n In the pizza shop they will sale few pizza varieties and they will also provide toppings in the menu.\n Now imagine a situation wherein if the pizza shop has to provide prices for each combination of pizza and topping.\n Even if there are four basic pizzas and 8 different toppings,\n the application would go crazy maintaining all these concrete combination of pizzas and toppings.\n Here comes the decorator pattern.\n As per the decorator pattern,\n you will implement toppings as decorators and pizzas will be decorated by those toppings' decorators.\n Practically each customer would want toppings of his desire and final bill-amount will be composed of the base pizzas and additionally ordered toppings.\n Each topping decorator would know about the pizzas that it is decorating and it's price.\n GetPrice() method of Topping object would return cumulative price of both pizza and the topping.",
 
 "classes": {
 	"interface":{
@@ -15,13 +16,16 @@
 		"inheritance": {
 			"core":{
 				"members": [ ["override",  "<ALL>"],
-					["method","this", "void", "", "private"]
+					["method","new", "void", "", "private"]
 				 ]
 			},
 			"decorator":{
 				"enable_destructor":"True",
 				"members": [ ["override",  "<ALL>"],
-					["method","this", "void", "struct interface *inner"],
+					["init","this", "void", "struct interface *inner"],
+					["method","init", "void", "struct interface *inner"],
+					["init","init2", "void", "struct interface *inner"],
+					["init","init2", "void", "struct interface *inner"],
 					["var",   "_inner",  "struct interface *", "", "private"]
 				],
 
