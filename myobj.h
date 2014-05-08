@@ -25,6 +25,12 @@
 #define container_of(ptr, type, member) \
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
+#define CLASS_TYPE_CHECK(a, b) do { \
+	typeof(a) *_a; \
+	typeof(b) *_b; \
+	(void) (_a == _b); \
+	} while (0)
+
 /*
 #define DO_PRAGMA(x) _Pragma (#x)
 #define TODO(x) DO_PRAGMA(message ("TODO - " #x))
@@ -47,13 +53,9 @@
 #define __CLASS_COPY_OPS(dst,src,offset) \
 { \
 	typedef void (*fptr) (void); \
-	typeof(dst) *type_dst; \
-	typeof(src) *type_src = 0; \
 	int sz = offset/sizeof(fptr); \
 	_Static_assert(offset <= sizeof(dst), _STR_MYOBJ_PRE_TAG_ __CLASS_WHERE ":" #src " copy ops size overflow"); \
-	_Static_assert(sizeof(dst) == sizeof(src), _STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #src " copy ops should be same type"); \
-	type_dst = type_src; \
-	type_src = type_dst; \
+	CLASS_TYPE_CHECK(dst,src); \
 	fptr *derive_class_ops = (fptr*)(&(src)); \
 	fptr *super_class_ops = (fptr*)(&(dst)); \
 	while ((--sz) >= 0) { \

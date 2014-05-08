@@ -14,12 +14,14 @@
 
 		"inheritance": {
 			"core":{
-				"members": [ ["override",  "<ALL>"] ]
+				"members": [ ["override",  "<ALL>"],
+					["method","this", "void", "", "private"]
+				 ]
 			},
 			"decorator":{
 				"enable_destructor":"True",
 				"members": [ ["override",  "<ALL>"],
-					["method","decorator", "void", "struct interface *inner"],
+					["method","this", "void", "struct interface *inner"],
 					["var",   "_inner",  "struct interface *", "", "private"]
 				],
 

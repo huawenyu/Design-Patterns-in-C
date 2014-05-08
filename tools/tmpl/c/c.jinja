@@ -5,6 +5,9 @@
 	{{- func.file_header(file_header_name,copyright,author,date,summary) -}}
 {% endif %}{% endblock %}
 
+{%- block private_class_init -%}
+{%- endblock -%}
+
 {%- block private_method -%}
 {{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
@@ -40,30 +43,50 @@ static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 {%- endif -%}{%- endblock -%}
 
 
-{%- block init -%}
 {# init implement #}
-void {{ name }}_init(struct {{ name }} *{{ name }})
+{%- block class_init -%}
+{%- call(init_index) func.macro_loop_functions(trace,name,inits,'inits',mode='impl-init',scope='public') %}
 {
 	memset({{ name }}, sizeof(*{{ name }}), 0);
-{%- if supers -%}
-{%- for parent_name,parent_vtables in supers.iteritems() %}
-	{{ parent_name }}_init(&{{ name }}->{{ parent_name }});
-	{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() %}
+	{%- if supers -%}
+		{%- for parent_name,parent_vtables in supers.iteritems() -%}
+			{%- set outer_loop = loop %}
+	{{ parent_name }}_init(&{{- name -}}->{{- parent_name -}}
+			{%- for setters_name,setters in supers_setter.iteritems() -%}
+				{%- if setters_name == parent_name -%}
+					{%- for setter in setters -%}
+						{%- if loop.index == outer_loop.index and setter.args -%}
+							, {{ setter.args -}}
+						{%- endif -%}
+					{%- endfor -%}
+				{%- endif -%}
+			{%- endfor -%}
+		);
+
+			{%- for vtable_class_name,vtable_class_detail in parent_vtables.iteritems() %}
 	{% if vtable_class_detail['_have_static_var'] -%}CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC
 	{%- elif vtable_class_detail['_have_super_ref'] -%}CLASS_OPS_INIT_SUPER
 	{%- else -%}CLASS_OPS_INIT
 	{%- endif -%}
-({{ name }}->{{ vtable_class_detail['path'] }}.ops, {{ vtable_class_name }}_ops
-	{%- if vtable_class_detail['_have_static_var'] -%}, {{ vtable_class_detail['_have_static_var'] }}{%- endif -%});
-	{%- endfor -%}
-{%- endfor -%}
-{% endif -%}
 
-{%- if _have_vtable_new %}
+({{ name }}->{{ vtable_class_detail['path'] }}.ops, {{ vtable_class_name }}_ops
+
+				{%- if vtable_class_detail['_have_static_var'] -%}, {{ vtable_class_detail['_have_static_var'] }}{%- endif -%});
+			{%- endfor -%}
+		{%- endfor -%}
+	{%- endif -%}
+
+	{%- if _have_vtable_new %}
 	{{ name }}->ops = &{{ name }}_ops;
-{%- endif %}
+	{%- endif %}
+
+	{%- for setters in inits_setter %}{% if loop.index == init_index -%}
+		{%- for k,v in setters.setters.iteritems() %}
+	{{ name }}->{{ k }} = {{ v }};
+		{%- endfor -%}
+	{%- endif -%}{%- endfor %}
 }
-{# end init implement #}
+{%- endcall -%}
 {%- endblock -%}
 
 {%- block public_method -%}

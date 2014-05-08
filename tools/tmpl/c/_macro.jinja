@@ -97,7 +97,7 @@ ref:	{%- import '_macro.jinja' as func -%}
 (
 {%- set l_have_params = [] -%}
 
-{%- if args.func_is_static == 'False' -%}
+{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%}
 	{%- do l_have_params.append(1) -%}
 
 struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_type -}}
@@ -106,7 +106,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 {%- if args.func_params -%}
 	{%- do l_have_params.append(1) -%}
 
-	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
 {%- endif -%}
 
@@ -126,26 +126,34 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 
 
 {##################################}
-{%- macro macro_function_declare_as_func(args) %}
+{%- macro macro_function_declare_as_func(args, comma) %}
 {% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
 {{ args.func_rtn_type }}{{- SPACE -}}
 {{- args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
 (
 {%- set l_have_params = [] -%}
 
-{%- if args.func_is_static == 'False' -%}
+{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%}
 	{%- do l_have_params.append(1) -%}
-	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*
+	struct{{- SPACE -}}{{- args.name }}{{- SPACE -}}*{{- args.name }}
 {%- endif -%}
 
 {%- if args.func_params -%}
 	{%- do l_have_params.append(1) -%}
-	{%- if args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
+	{%- if args.category == 'virtuals' or args.func_is_static == 'False' -%},{{- SPACE -}}{%- endif -%}
 	{{- args.func_params -}}
 {%- endif -%}
 
 {%- if not l_have_params -%}void{%- endif -%}
-);
+){{ comma }}
+{%- endmacro -%}
+
+
+{##################################}
+{%- macro macro_function_declare_as_init_private(args) %}
+{% if args.func_comment %}/** {{ args.func_comment }} */{% endif %}
+#define {{ args.func_format_str|format(args.name,args.func ~ args.func_postfix) -}}
+(...) _Static_assert(0, "private constructor, cannot be called directly.")
 {%- endmacro -%}
 
 
@@ -194,12 +202,22 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		{%- set trace = '' -%}
 	{%- endif -%}
 
+	{# hack init function's name #}
+	{%- set new_func = func -%}
+	{% if category == 'inits' %}
+		{%- if loop.index == 1 -%}
+			{%- set new_func = "init" -%}
+		{%- else -%}
+			{%- set new_func = "init" ~ loop.index -%}
+		{%- endif -%}
+	{% endif %}
+
 	{%- set args={'name':name,  'abstract_path':abstract_path,
 		'first_arg_type':first_arg_type,
 		'category':category,
 		'req_scope':scope,      'req_static':static,             'req_qualifier':qualifier,
 		'func_scope':func_scope,'func_is_static':func_is_static, 'func_rtn_type':func_rtn_type,
-		'func':func,            'func_postfix':postfix,          'func_format_str':format_str,
+		'func':new_func,        'func_postfix':postfix,          'func_format_str':format_str,
 		'func_params':func_params,'func_args':func_args,
 		'func_comment':func_comment,
 		'trace':trace,
@@ -211,11 +229,18 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		{%- if mode == "var" -%}
 			{{- macro_variable(args) -}}
 		{%- elif mode == "declare" -%}
-			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}{%- endif -%}
-			{%- if category == "methods" -%}{{- macro_function_declare_as_func(args) -}}{%- endif -%}
+			{%- if category == "virtuals" -%}{{- macro_function_declare_as_ops(args) -}}
+			{%- elif category == "methods" -%}{{- macro_function_declare_as_func(args, ';') -}}
+			{%- endif -%}
+		{%- elif mode == "declare-init" -%}
+			{{- macro_function_declare_as_func(args, ';') -}}
+		{%- elif mode == "declare-init-private" -%}
+			{{- macro_function_declare_as_init_private(args) -}}
 		{%- elif mode == "assign" -%}
 			{%- do l_have_items.append(1) -%}
 			{{- macro_function_assign(args) -}}
+		{%- elif mode == "impl-init" -%}
+			{{- macro_function_declare_as_func(args, caller(loop.index)) -}}
 		{%- elif mode == "impl-ops" -%}
 			{%- call macro_function_impl(args) -%}
 				{{- macro_function_impl_as_ops(args) -}}

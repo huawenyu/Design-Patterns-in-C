@@ -60,10 +60,13 @@ const.override_all        = '<ALL>'          #
 const.m_dict              = odict([\
                             ('init'         ,'inits'), \
                             ('init_setter'  ,'inits_setter'), \
+                            \
                             ('var'          ,'vars'), \
                             ('static_var'   ,'vars'),\
+                            \
                             ('method'       ,'methods'),  \
                             ('static_method','methods'),  \
+                            \
                             ('virtual'      ,'virtuals'), \
                             ('pure_virtual' ,'virtuals'), \
                             ('override'     ,'overrides'),\
@@ -74,15 +77,16 @@ const.m_dict              = odict([\
                             ])
 
 ## auto add function:       'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
+const.constructor_comment = 'constructor().'
 const.member_init         =['False', 'public', 'void', 'init', '', '', \
-                            'constructor().']
+                            const.constructor_comment]
 const.member_destructor   =['False', 'private', 'void', '_destructor', '', '', \
                             'called by free(): put resources, forward to super.']
 const.member_free         =['False', 'public', 'void', 'free', '', '', \
                             'free memory after call destructor().']
 ## Flags
-const.config_destructor   = 'enable_destructor'
-const.config_super        = 'enable_super'
+const.config_destructor   = 'enable_destructor' # add free() to self and all derived-class, auto enable-super
+const.config_super        = 'enable_super'      # add member 'super' to vtable
 const.control_super       = '_have_super_ref'
 const.control_vtable      = '_have_vtable_new'
 const.control_static_var  = '_have_static_var'  # '' <OR> store first static var's name for init
@@ -249,6 +253,7 @@ def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, fi
 					my_supers[my_direct_parents[0]][one_super['name']] = odict()
 
 				my_supers[my_direct_parents[0]][one_super['name']]['path'] = '.'.join(my_direct_parents)
+				my_supers[my_direct_parents[0]][one_super['name']][const.control_super] = False
 				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(const.m_dict['virtual']):
 					my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']] = []
 				my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']].append(one_virtual)
@@ -282,12 +287,6 @@ def parse_override_function(myclasses_array_dict):
 
 def parse_helper_flag(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
-		# control flags
-		one_myclass[const.control_super] = False  # config: enable_super
-		one_myclass[const.control_vtable] = False # config: virtual
-		# if static_var, remember the first static variable for initial code
-		one_myclass[const.control_static_var] = '' # config: static var
-
 		'''
 		"_have_vtable_new" is auto-gen field used to control code-gen
 		    - means the class add new virtual function or static-member-variable itself
@@ -304,61 +303,80 @@ def parse_helper_flag(myclasses_array_dict):
 				one_myclass[const.control_super] = True  # now if enable static_var, should be after member.super, so enable_super
 				break
 
-		''' **Just needed by C code.**
-		1. "enable_super" come from config
-		2. "_have_super_ref" is auto-gen field used to control code-gen
-		    * As base class, provide *super* support member,
-		      - The generated code should append super pointer in vtable
-		    * As derive class, initial suitable super,
-		      - The generated code should init with super
+		# if static_var, remember the first static variable for initial code
+		for class_name, one_myclass in myclasses_array_dict.iteritems():
+			if one_myclass[const.m_dict['super']]: # As derive class
+				for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
+					for vtable_name, vtable in super_class.iteritems():
+						vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+						if vtable_class[const.control_static_var]:
+							for variable in vtable_class[const.m_dict['var']]:
+								if variable[const.func.static] == 'True':
+									vtable[const.control_static_var] = variable[const.func.name]
+									break # exit find first static var
 
-		# parse 1-times:
-		    * As base class, provide *super* support member,
-		      - control by **config**: must config as 'enable_super'
-		      - must have virtual-function,
-		    * As derive class, initial suitable super,
-		      - just control by super-class, **config have no use at all**.
-		      - must have super-class which must have enable_super already
+	# const.control_super
+	while True:
+		should_be_continue = False
+		for class_name, one_myclass in myclasses_array_dict.iteritems():
+			''' **Just needed by C code.**
+			1. "enable_super" come from config
+			2. "_have_super_ref" is auto-gen field used to control code-gen
+				* As base class, provide *super* support member,
+				  - The generated code should append super pointer in vtable
+				* As derive class, initial suitable super,
+				  - The generated code should init with super
 
-		# parse 2-times for supers's flags control_super:
-		    * if one class config_super, change it's super all have super
-		'''
+			# parse 1-times:
+				* As base class, provide *super* support member,
+				  - control by **config**: must config as 'enable_super'
+				  - must have virtual-function,
+				* As derive class, initial suitable super,
+				  - just control by super-class, **config have no use at all**.
+				  - must have super-class which must have enable_super already
 
-		# parse 1-times for control_super
-		if one_myclass[const.m_dict['super']]: # As derive class
-			for super_name in one_myclass[const.m_dict['super']].keys():
-				one_super = convert_to_class(myclasses_array_dict, super_name)
-				if one_super.has_key(const.config_super) \
-				   and one_super[const.config_super].lower() == 'true':
-					one_myclass[const.control_super] = True
-					break # exit innner supers
-		else: # As base class
-			if len(one_myclass[const.m_dict['virtual']]) > 0:
-				if one_myclass[const.config_super].lower() == 'true':
-					one_myclass[const.control_super] = True
+			# parse 2-times for supers's flags control_super:
+				* if one class config_super, change it's super all have super
+			'''
 
-	# parse 2-times for control_super: some flags should re-scan after 1-times
-	for class_name, one_myclass in myclasses_array_dict.iteritems():
-		if one_myclass[const.m_dict['super']]: # As derive class
-			for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
-				for vtable_name, vtable in super_class.iteritems():
-					vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
+			# parse 1-times for control_super
+			if not one_myclass[const.control_super]:
+				if one_myclass[const.m_dict['super']]: # As derive class
+					for super_name in one_myclass[const.m_dict['super']].keys():
+						one_super = convert_to_class(myclasses_array_dict, super_name)
+						if one_super[const.control_super] \
+							or (one_super.has_key(const.config_super) \
+								and one_super[const.config_super].lower() == 'true'):
+							one_myclass[const.control_super] = True
+							should_be_continue = True
+							break # exit innner supers
+				else: # As base class
+					if len(one_myclass[const.m_dict['virtual']]) > 0:
+						if one_myclass[const.config_super].lower() == 'true':
+							one_myclass[const.control_super] = True
+							should_be_continue = True
 
-					# if one class config_super, change it's super all have super
-					if one_myclass[const.control_super] \
-						or one_myclass[const.config_super].lower() == 'true':
-						vtable_class[const.control_super] = True
+		# parse 2-times for control_super: some flags should re-scan after 1-times
+		for class_name, one_myclass in myclasses_array_dict.iteritems():
+			if one_myclass[const.m_dict['super']]: # As derive class
+				for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
+					for vtable_name, vtable in super_class.iteritems():
+						vtable_class = convert_to_class(myclasses_array_dict, vtable_name)
 
-					# copy super-class's flag-super to vtable's flag
-					if vtable_class[const.control_super]:
-						vtable[const.control_super] = True
+						# if one class config_super, change it's super all have super
+						if not vtable_class[const.control_super]:
+							if one_myclass[const.control_super] \
+								or one_myclass[const.config_super].lower() == 'true':
+								vtable_class[const.control_super] = True
+								should_be_continue = True
 
-					# if static_var, remember the first static variable for initial code
-					if vtable_class[const.control_static_var]:
-						for variable in vtable_class[const.m_dict['var']]:
-							if variable[const.func.static] == 'True':
-								vtable[const.control_static_var] = variable[const.func.name]
-								break # exit find first static var
+							# sync vtable's flag
+							if vtable_class[const.control_super]:
+								vtable[const.control_super] = True
+
+		if not should_be_continue:
+			break
+
 
 
 def gen_pynsource_graphic_nodes(myclasses_array_dict):
@@ -509,10 +527,16 @@ def parse_init_constructor(myclasses_array_dict):
 		  - Also append this info into vtable of supers for init
 		'''
 		if len(one_myclass[const.m_dict['init']]) == 0:
-			one_myclass[const.m_dict['init']].append(const.member_init)
+			member_init = copy.deepcopy(const.member_init)
+			member_init[const.func.name] = class_name
+			one_myclass[const.m_dict['init']].append(member_init)
 
 		for method in one_myclass[const.m_dict['init']]:
-			method_setter = odict([('scope', method[const.func.scope]), ('params', method[const.func.params]), ('args', odict())])
+			method_setter = odict([('scope', method[const.func.scope]), \
+				('name', method[const.func.name]), \
+				('params', method[const.func.params]), \
+				('args', method[const.func.args]), \
+				('setters', odict())])
 			one_myclass[const.m_dict['init_setter']].append(method_setter)
 
 			# if have params, try match with vars (no-static)
@@ -524,7 +548,7 @@ def parse_init_constructor(myclasses_array_dict):
 							and (variable[const.func.name].lower() == arg \
 								or variable[const.func.name].lower() == '_' + arg \
 								or variable[const.func.name].lower() == arg + '_'):
-							method_setter['args'][variable[const.func.name]] = arg
+							method_setter['setters'][variable[const.func.name]] = arg
 							break # exit find first var
 			
 	# parse 2-times, process supers
@@ -562,6 +586,12 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 		one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
 		one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
 		one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
+
+		# control flags
+		one_myclass[const.control_super] = False  # config: enable_super
+		one_myclass[const.control_vtable] = False # config: virtual
+		# if static_var, remember the first static variable for initial code
+		one_myclass[const.control_static_var] = '' # config: static var
 
 		# used as C generate helper
 		# config flags
@@ -630,43 +660,31 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 					  format(myclass_name, member_input, member_mode))
 
 				# Check if constructor: change category
-				if member_detail[const.func.name] == myclass_name:
+				if member_detail[const.func.name] == myclass_name \
+					or member_detail[const.func.name] == 'init' \
+					or member_detail[const.func.name] == 'new' \
+					or member_detail[const.func.name] == 'this' \
+					or member_detail[const.func.name] == 'self' \
+					or member_detail[const.func.name] == 'constructor' \
+					:
+					# Rename:
+					# '' -> classname
 					member_category = 'init'
+					member_detail[const.func.name] = myclass_name
+					member_detail[const.func.comment] = const.constructor_comment
+					member_detail[const.func.static] = 'False'
 
 				#@TODO warning member_name conflict
 				if one_myclass.has_key(const.m_dict[member_category]):
 					one_myclass[const.m_dict[member_category]].append(member_detail)
-					# static=True: have serveral means in different time
+					# static=True:
+					#   - when virtuals, means it's pure-virtual
+					#   - when methods|vars, means it's static
+					#   - when inits, means this constructor donnot need implements when it's just priviate
 					if member_category == 'pure_virtual' \
 						or member_category == 'static_method' \
 						or member_category == 'static_var':
 						member_detail[const.func.static] = 'True'
-
-					# init: classname
-					if member_category == 'init':
-						# init have arguments
-						if member_detail[const.func.args]:
-							member_detail[const.func.static] = 'True'
-						else:
-							member_detail[const.func.static] = 'False'
-
-						# Rename:
-						# '' -> classname
-						# init -> classname
-						# classname -> classname
-						# classname_init -> classname
-						# others: keep same
-						if not member_detail[const.func.name]:
-							member_detail[const.func.name] = myclass_name
-						elif member_detail[const.func.name].lower() == 'init':
-							member_detail[const.func.name] = myclass_name
-						else:
-							if member_detail[const.func.name].lower() == myclass_name + 'init' \
-								or member_detail[const.func.name].lower() == myclass_name + '_init' \
-								or member_detail[const.func.name].lower() == 'init' + myclass_name \
-								or member_detail[const.func.name].lower() == 'init_' + myclass_name \
-								:
-								member_detail[const.func.name] = myclass_name
 				else:
 					raise Exception('class {0} members of category *{1}* not exist'.\
 					  format(myclass_name, const.m_dict[member_category]))
@@ -698,6 +716,7 @@ def convert_namespace_to_tree(def_path, input_dict):
 	# generate path
 	mysuper['path']             = get_value_else_default(input_dict, 'path', def_path)
 	mysuper['namespace']        = get_value_else_default(input_dict, 'namespace', def_path)
+
 	mysuper[const.config_super] = 'False'
 	mysuper[const.config_destructor] = 'False'
 	mysuper[const.m_dict['super']]   = []
@@ -713,31 +732,31 @@ def render_namespace(input_file, code_style, output_dir):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
 		input_dict = json.load(open(input_file), strict=False, object_pairs_hook=collections.OrderedDict)
-		#print 'LOADING:',json.dumps(input_dict, sort_keys=False, indent=3)
+		#print '"LOADING":\n',json.dumps(input_dict, sort_keys=False, indent=3)
 
 		context_dict_tree = convert_namespace_to_tree(\
 		  os.path.splitext(os.path.basename(input_file))[0], input_dict)
-		#print 'JSON CONVERT TO TREE:',json.dumps(context_dict_tree, sort_keys=False, indent=3)
+		#print '"JSON CONVERT TO TREE":\n',json.dumps(context_dict_tree, sort_keys=False, indent=3)
 
 		myclasses_array_dict = odict()
 		convert_to_array_dict(myclasses_array_dict, context_dict_tree)
-		#print 'JSON CONVERT TO ARRAY:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print '"JSON CONVERT TO ARRAY":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		parse_override_function(myclasses_array_dict)
-		#print 'JSON PARSE OVERRIDE:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print '"JSON PARSE OVERRIDE":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		parse_helper_flag(myclasses_array_dict)
-		#print 'JSON PARSE SUPPORT FLAGS:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print '"JSON PARSE SUPPORT FLAGS":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		parse_init_constructor(myclasses_array_dict)
-		#print 'JSON INIT-CONSTRUCTOR:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print '"JSON INIT-CONSTRUCTOR":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		gen_pynsource_graphic_nodes(myclasses_array_dict)
-		#print 'JSON GRAPHIC:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+		#print '"JSON GRAPHIC":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 
 		flush_unused_and_makeup(myclasses_array_dict)
 		if code_style == 'c':  # language not support oop
-			print 'JSON FINAL:',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
+			print '"JSON FINAL":\n',json.dumps(myclasses_array_dict, sort_keys=False, indent=3)
 		elif code_style == 'cplus' or \
 		     code_style == 'java' or \
 		     code_style == 'csharp' or \

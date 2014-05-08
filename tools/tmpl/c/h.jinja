@@ -63,9 +63,12 @@ struct {{ name }}_ops {
 
 
 {%- block class_init -%}
-void {{ name }}_init(struct {{ name }} *);
+	{{- func.macro_loop_functions(trace,name,inits,'inits',scope='public',mode='declare-init') -}}
 {%- endblock -%}
 
+{%- block private_class_init -%}
+	{{- func.macro_loop_functions(trace,name,inits,'inits',scope='private',mode='declare-init-private') -}}
+{%- endblock -%}
 
 {%- block public_methods -%}
 	{{- func.macro_loop_functions(trace,name,methods,'methods',scope='public',mode='declare') -}}
