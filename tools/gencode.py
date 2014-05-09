@@ -85,13 +85,13 @@ const.m_dict              = odict([\
 
 ## auto add function:       'pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
 const.constructor_comment = 'constructor().'
-const.member_default      =['False', 'False', 'public', '', '', '', '','']
+const.member_default      =['False', 'False', 'public', '', '', '', '','','']
 const.member_init         =['False', 'False', 'public', 'void', 'init', '', '', \
-                            const.constructor_comment]
+                            const.constructor_comment, '']
 const.member_destructor   =['False', 'False', 'private', 'void', '_destructor', '', '', \
-                            'called by free(): put resources, forward to super.']
+                            'called by free(): put resources, forward to super.', '']
 const.member_free         =['False', 'False', 'public', 'void', 'free', '', '', \
-                            'free memory after call destructor().']
+                            'free memory after call destructor().', '']
 ## Flags
 const.config_destructor   = 'enable_destructor' # add free() to self and all derived-class, auto enable-super
 const.config_super        = 'enable_super'      # add member 'super' to vtable
@@ -99,8 +99,11 @@ const.control_super       = '_have_super_ref'
 const.control_vtable      = '_have_vtable_new'
 const.control_static_var  = '_have_static_var'  # '' <OR> store first static var's name for init
 ## cat-category
-const.func                = enum('pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment')
-const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment')
+const.func                = enum('pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment', 'pseudocode')
+const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', 'cat_name_type_args', \
+                                 'cat_name_type_args_scope', 'cat_name_type_args_scope_comment', \
+                                 'cat_name_type_args_scope_comment_pseudocode', \
+                                )
 
 
 def render_one_to_file(x, dir_name, files):
@@ -213,21 +216,15 @@ def textwrap_me(text):
 	return textwrap.fill(text, width=79, initial_indent='    ', subsequent_indent='    ')
 
 def textwrap_with_code(text):
-	spec = '>   '
-	lines = text.split(spec)
+	spec = '<br>'
+	new_text = text.replace('<br>','<br>@')
+	lines = new_text.split(spec)
 	new_lines = []
-	for idx, line in enumerate(lines):
-		new_lines.append('\n' + textwrap_me(line))
-		'''
-		if line.startswith(' '):
-			new_lines.append('\n  ' + line)
+	for line in lines:
+		if line.startswith('@'):
+			new_lines.append('\n' + line.strip('@'))
 		else:
-			if idx -1 >= 0 and lines[idx-1].startswith(' '):
-				new_lines.pop()
-				new_lines.append('\n\n' + textwrap_me(lines[idx-1][1:].strip().strip(spec[0]).strip()))
-			else:
-				new_lines.append('\n' + textwrap_me(line))
-		'''
+			new_lines.append('\n' + textwrap_me(line))
 
 	return ''.join(new_lines).strip()
 
@@ -679,22 +676,22 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 						member_category = member_input[0]
 						member_detail[const.func.name] = member_input[1]
 						member_detail[const.func.type] = member_input[2]
-					elif member_mode == const.func_mode.cat_name_type_args or \
-						 member_mode == const.func_mode.cat_name_type_args_scope or \
-						 member_mode == cat_name_type_args_scope_comment:
+					elif member_mode >= const.func_mode.cat_name_type_args:
 						member_category = member_input[0]
 						member_detail[const.func.name]  = member_input[1]
 						member_detail[const.func.type]  = member_input[2]
 						member_detail[const.func.params]= member_input[3]
 
 						# scope and comment
-						if member_mode == const.func_mode.cat_name_type_args_scope or \
-						   member_mode == const.func_mode.cat_name_type_args_scope_comment:
+						if member_mode >= const.func_mode.cat_name_type_args_scope:
 							if member_input[4]:
 								member_detail[const.func.scope] = member_input[4]
-							if member_mode == const.func_mode.cat_name_type_args_scope_comment:
+							if member_mode >= const.func_mode.cat_name_type_args_scope_comment:
 								if member_input[5]:
-									member_detail[const.func.comment] = member_input[5]
+									member_detail[const.func.comment] = textwrap_with_code(member_input[5])
+								if member_mode >= const.func_mode.cat_name_type_args_scope_comment_pseudocode:
+									if member_input[6]:
+										member_detail[const.func.pseudocode] = textwrap_with_code(member_input[6])
 
 						if member_input[3] and member_category != 'var':
 							params,args = parse_parameters(member_input[3])

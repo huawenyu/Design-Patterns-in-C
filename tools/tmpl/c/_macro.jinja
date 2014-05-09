@@ -85,7 +85,13 @@ ref:	{%- import '_macro.jinja' as func -%}
 	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	{%- endif -%}
-	
+
+	{%- if args.func_pseudocode %}
+	/** PSEUDOCODE
+{{ args.func_pseudocode|indent(4, true) }}
+	*/
+	{%- endif -%}
+
 	{{- macro_function_return_value(args) -}}
 {%- endmacro -%}
 
@@ -183,7 +189,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 {%- macro macro_loop_functions(trace,name,functions,category,mode,pure='None',static='None',scope='None',qualifier='',postfix='',format_str='None',abstract_name='',abstract_path='') -%}
 	{% set l_have_items = [] %}
 
-	{%- for func_is_pure,func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment in functions -%}
+	{%- for func_is_pure,func_is_static,func_scope,func_rtn_type,func,func_params,func_args,func_comment,func_pseudocode in functions -%}
 
 	{%- if format_str == "None" -%}
 		{%- set format_str='%s_%s' -%}
@@ -222,7 +228,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 		'func_scope':func_scope,'func_is_static':func_is_static, 'func_rtn_type':func_rtn_type,
 		'func':new_func,        'func_postfix':postfix,          'func_format_str':format_str,
 		'func_params':func_params,'func_args':func_args,
-		'func_comment':func_comment,
+		'func_comment':func_comment,'func_pseudocode':func_pseudocode,
 		'trace':trace,
 		} -%}
 
@@ -247,7 +253,7 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 			{%- do l_have_items.append(1) -%}
 			{{- macro_function_assign(args) -}}
 		{%- elif mode == "impl-init" -%}
-			{{- macro_function_declare_as_func(args, caller(loop.index)) -}}
+			{{- macro_function_declare_as_func(args, caller(loop.index,args.func_pseudocode)) -}}
 		{%- elif mode == "impl-ops" -%}
 			{%- call macro_function_impl(args) -%}
 				{{- macro_function_impl_as_ops(args) -}}

@@ -45,7 +45,7 @@ static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 
 {# init implement #}
 {%- block class_init -%}
-{%- call(init_index) func.macro_loop_functions(trace,name,inits,'inits',mode='impl-init') %}
+{%- call(init_index,pseudocode) func.macro_loop_functions(trace,name,inits,'inits',mode='impl-init') %}
 {
 	memset({{ name }}, sizeof(*{{ name }}), 0);
 	{%- if supers -%}
@@ -85,6 +85,12 @@ static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 	{{ name }}->{{ k }} = {{ v }};
 		{%- endfor -%}
 	{%- endif -%}{%- endfor %}
+
+	{%- if pseudocode %}
+	/** PSEUDOCODE
+{{ pseudocode|indent(4, true) }}
+	*/
+	{%- endif %}
 }
 {%- endcall -%}
 {%- endblock -%}

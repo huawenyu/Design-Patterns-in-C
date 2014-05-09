@@ -9,29 +9,6 @@ In the pizza shop they will sale few pizza varieties and they will also provide 
 Now imagine a situation wherein if the pizza shop has to provide prices for each combination of pizza and topping.
 Even if there are four basic pizzas and 8 different toppings,
 the application would go crazy maintaining all these concrete combination of pizzas and toppings.
->    static void wad_dump_http_line(struct wad_http_line *hl)
->    {
->        struct list_head *p;
->        struct wad_buff_region *br;
->        struct wad_http_line *sl, *pl;
->    
->        wad_dump_buff_region(hl->br);
->        list_for_each(p, &hl->extra_bufs) {
->            br = list_entry(p, struct wad_buff_region, list);
->            wad_dump_buff_region(br);
->        }
->    
->        pl = hl->piggy_line;
->        if (pl) {
->            wad_dump_http_line(pl);
->        }
->    
->        list_for_each(p, &hl->siblings) {
->            sl = list_entry(p, struct wad_http_line, link);
->            wad_dump_http_line(sl);
->        }
->    }
->    
 Here comes the decorator pattern. As per the decorator pattern,
 you will implement toppings as decorators and pizzas will be decorated by those toppings' decorators.
 Practically each customer would want toppings of his desire and final bill-amount will be composed of the base pizzas and additionally ordered toppings.
@@ -41,7 +18,6 @@ GetPrice() method of Topping object would return cumulative price of both pizza 
 
 "classes": {
 	"pizza":{
-		# this is abstract class
 		"type":"abstract",
 		"members": [
 			["pure_virtual", "price", "int"],
@@ -75,7 +51,26 @@ GetPrice() method of Topping object would return cumulative price of both pizza 
 
 	"test":{
 		"includes":["margherita_pizza", "gourmet_pizza", "extra_cheese_topping", "jalapeno_topping", "mushroom_topping"],
-		"templates":["_test"]
+		"templates":["_test"],
+		"members": [
+			["static_method", "test_me", "int", "", "private", "", """
+				<br>Margherita pizza = new Margherita();
+				<br>Console.WriteLine('Plain Margherita: ' + pizza.GetPrice().ToString());
+
+				<br>ExtraCheeseTopping moreCheese = new ExtraCheeseTopping(pizza);
+				<br>ExtraCheeseTopping someMoreCheese = new ExtraCheeseTopping(moreCheese);
+				<br>Console.WriteLine('Plain Margherita with double extra cheese: ' + someMoreCheese.GetPrice().ToString());
+
+				<br>MushroomTopping moreMushroom = new MushroomTopping(someMoreCheese);
+				<br>Console.WriteLine('Plain Margherita with double extra cheese with mushroom: ' + moreMushroom.GetPrice().ToString());
+
+				<br>JalapenoTopping moreJalapeno = new JalapenoTopping(moreMushroom);
+				<br>Console.WriteLine('Plain Margherita with double extra cheese with mushroom with Jalapeno: ' + moreJalapeno.GetPrice().ToString());
+
+				<br>Console.ReadLine();
+			"""
+			],
+		],
 	}
 }
 }

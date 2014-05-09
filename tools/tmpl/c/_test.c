@@ -14,6 +14,8 @@
 	{%- endfor -%}
 {%- endif %}
 
+{{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',qualifier='static') }}
+
 static int test_main_entry(char *output, size_t sz)
 {
 	TODO(Please add our **test** code here ...)
