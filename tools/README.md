@@ -32,7 +32,7 @@ tools
 ### Trips
 
 - Support comment which start with #, but Inline comments are not supported
-- Support multiline-strings with """ enclose, with prefix "<br>" to show newline, but the content cannot contain any double-quote symbol like ["], or [\], if needed, please prefix with escape [\], for example:
+- Support multiline-strings with """ enclose, with prefix ```<br>``` to show newline, but the content cannot contain any double-quote symbol like ["], or [\], if needed, please prefix with escape [\], for example:
 ```
 Sample 1:
 ---------
