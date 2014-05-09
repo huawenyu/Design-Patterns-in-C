@@ -60,6 +60,10 @@ const.sub_classes         = 'inheritance'    #
 ## member var and method
 const.members             = 'members'        #
 const.override_all        = '<ALL>'          #
+const.textwrap            =['note', 'comment', 'copyright']
+const.graphic             = 'graphic'
+const.templ_graphic       = '_graphic'
+
 const.m_dict              = odict([\
                             ('init'         ,'inits'), \
                             ('init_setter'  ,'inits_setter'), \
@@ -80,7 +84,6 @@ const.m_dict              = odict([\
                             ])
 
 ## auto add function:       'pure', 'static', 'scope', 'type', 'name', 'params', 'args', 'comment'
-const.textwrap            =['note', 'comment', 'copyright']
 const.constructor_comment = 'constructor().'
 const.member_default      =['False', 'False', 'public', '', '', '', '','']
 const.member_init         =['False', 'False', 'public', 'void', 'init', '', '', \
@@ -205,8 +208,35 @@ def makeeasy_for_oop_language(myclasses_array_dict):
 		one_myclass[const.m_dict['override']] = overrides
 
 
+def textwrap_me(text):
+	#textwrap.fill(text, width=80, initial_indent=' * ', subsequent_indent='    ')
+	return textwrap.fill(text, width=79, initial_indent='    ', subsequent_indent='    ')
+
+def textwrap_with_code(text):
+	spec = '>   '
+	lines = text.split(spec)
+	new_lines = []
+	for idx, line in enumerate(lines):
+		new_lines.append('\n' + textwrap_me(line))
+		'''
+		if line.startswith(' '):
+			new_lines.append('\n  ' + line)
+		else:
+			if idx -1 >= 0 and lines[idx-1].startswith(' '):
+				new_lines.pop()
+				new_lines.append('\n\n' + textwrap_me(lines[idx-1][1:].strip().strip(spec[0]).strip()))
+			else:
+				new_lines.append('\n' + textwrap_me(line))
+		'''
+
+	return ''.join(new_lines).strip()
+
+
 def flush_unused_and_makeup(myclasses_array_dict):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
+		if class_name == const.graphic:
+			continue;
+
 		if one_myclass.has_key(const.config_destructor):
 			one_myclass.pop(const.config_destructor, None)
 		if one_myclass.has_key(const.config_super):
@@ -224,8 +254,7 @@ def flush_unused_and_makeup(myclasses_array_dict):
 		# wrap text
 		for need_wrap in const.textwrap:
 			if one_myclass.has_key(need_wrap) and isinstance(one_myclass[need_wrap], basestring):
-				#one_myclass[need_wrap] = textwrap.fill(one_myclass[need_wrap], width=80, initial_indent=' * ', subsequent_indent='    ')
-				one_myclass[need_wrap] = textwrap.fill(one_myclass[need_wrap], width=79, subsequent_indent='    ')
+				one_myclass[need_wrap] = textwrap_with_code(one_myclass[need_wrap])
 
 
 def convert_to_class(myclasses_array_dict, class_name):
@@ -394,7 +423,6 @@ def parse_helper_flag(myclasses_array_dict):
 
 
 def gen_pynsource_graphic_nodes(myclasses_array_dict):
-	graphic = []
 	nodes = []
 	edges = []
 	node = odict([('type','node'), ('id','name'), ('attrs',''), ('meths',''), ('x',1), ('y',1), ('width',1), ('height',1)])
@@ -501,19 +529,14 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 		one_node['meths'] = '|'.join(node_meths)
 		nodes.append(one_node)
 
-	for node in nodes:
-		graphic.append(node)
-	for edge in edges:
-		graphic.append(edge)
-
 	# append graphic to classes
-	myclasses_array_dict['graphic'] = odict()
-	myclasses_array_dict['graphic']['templates']       = ['_graphic']
-	myclasses_array_dict['graphic']['add_file_header'] = False
-	myclasses_array_dict['graphic']['file']            = 'graphic'
-	myclasses_array_dict['graphic']['path']            = _path
-	myclasses_array_dict['graphic']['nodes']           = nodes
-	myclasses_array_dict['graphic']['edges']           = edges
+	myclasses_array_dict[const.graphic] = odict()
+	myclasses_array_dict[const.graphic]['templates']       = [const.templ_graphic]
+	myclasses_array_dict[const.graphic]['add_file_header'] = False
+	myclasses_array_dict[const.graphic]['file']            = const.graphic
+	myclasses_array_dict[const.graphic]['path']            = _path
+	myclasses_array_dict[const.graphic]['nodes']           = nodes
+	myclasses_array_dict[const.graphic]['edges']           = edges
 
 
 def parse_parameters(params_str):
