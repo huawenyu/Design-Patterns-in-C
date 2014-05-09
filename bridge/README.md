@@ -46,7 +46,16 @@ Rectangle(Color)   Circle(Color)           Blue   Red
 
 # Proxy, Decorator, Adapter, and Bridge
 
+http://k2java.blogspot.ca/2011/09/difference-between-proxy-decorator.html
 Proxy, Decorator, Adapter, and Bridge are all variations on "wrapping" a class.
+```
+                              Adapter/Wrapper   Decorator
+-------------------------------------+--------------+----
+Composes "origin" class            True           True
+Modifies original interface        True           False
+Modifies behavior of interface     False          True
+Proxies method calls               True           True
+```
 
 ## But their uses are different.
 
