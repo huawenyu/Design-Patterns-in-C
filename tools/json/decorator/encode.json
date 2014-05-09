@@ -40,6 +40,18 @@
 	"test":{
 		"includes":["wrapper", "core"],
 		"templates":["_test"]
+		"members": [
+			["static_method", "test_me", "int", "", "private", "", """
+				<br> Interface *object = new Wrapper(new Wrapper(new Wrapper(new Core(), '123'), 
+				<br> 'abc'), '987');
+				<br> string buf;
+				<br> object->write(buf);
+				<br> cout << 'main: ' << buf << endl;
+				<br> object->read(buf);
+				<br> delete object;
+			"""
+			],
+		],
 	}
 }
 }
