@@ -2,22 +2,22 @@
 "add_file_header":"True",
 "namespace"      :"bridge_shape",
 "path"           :"bridge_shape",
-"path"           :"""Composite better than inheritance,
-When:
-=====
-
-                   ----Shape---
-                  /            |
-         Rectangle              Circle
-        /         |            /      |
-BlueRectangle  RedRectangle BlueCircle RedCircle
-
-Refactor to:
-============
-
-          ----Shape---                        Color
-         /            |                       /   |
-Rectangle(Color)   Circle(Color)           Blue   Red
+"comment"        :"""Composite better than inheritance,
+<br> When:
+<br> =====
+<br> 
+<br>                    ----Shape---
+<br>                   /            \\
+<br>          Rectangle              Circle
+<br>         /        \\            /      \\
+<br> BlueRectangle  RedRectangle BlueCircle RedCircle
+<br> 
+<br> Refactor to:
+<br> ============
+<br> 
+<br>           ----Shape---                        Color
+<br>          /           \\                      /    \\
+<br> Rectangle(Color)   Circle(Color)           Blue   Red
 """,
 
 "classes": {
@@ -53,7 +53,14 @@ Rectangle(Color)   Circle(Color)           Blue   Red
 		"templates":["_test"],
 		"includes" :["color_blue", "color_red", "shape_rectangle", "shape_circle"],
 		"members"  :[
-			["static_method", "test_me", "int", "", "private"],
+			["static_method", "test_me", "int", "", "private","","""
+				<br>void color_init(struct color *color)
+				<br>{
+				<br>	printf(\"color_init\\n\");
+				<br>	memset(color, sizeof(*color), 0);
+				<br>	color->ops = &color_ops;
+				<br>}
+			"""],
 		],
 	},
 },

@@ -775,8 +775,9 @@ def render_namespace(input_file, code_style, output_dir):
 		if not os.path.isfile(input_file):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
-		#input_dict = json.load(open(input_file), object_pairs_hook=collections.OrderedDict)
-		input_dict = JsonComment(json).load(open(input_file), object_pairs_hook=collections.OrderedDict)
+		json_file = open(input_file).read()
+		#input_dict = json.loads(json_file.replace('\t', '    '), object_pairs_hook=collections.OrderedDict)
+		input_dict = JsonComment(json).loads(json_file.replace('\t', '    '), object_pairs_hook=collections.OrderedDict)
 		#print '"LOADING":\n',json.dumps(input_dict, sort_keys=False, indent=3)
 
 		context_dict_tree = convert_namespace_to_tree(\

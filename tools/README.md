@@ -29,8 +29,44 @@ tools
 
 ## Using Json describe pattern
 
+### Trips
+
 - Support comment which start with #, but Inline comments are not supported
-- Support pseudocode using multiline-strings which enclose with """, but the code cannot contain any more double-quote symbol like ["], we should replace it with single quote [']
+- Support pseudocode using multiline-strings which enclose with """, but the code cannot contain any more double-quote symbol like ["], or [\], if needed, please add escape [\], for example:
+```
+Sample 1:
+---------
+
+"comment"        :"""Composite better than inheritance,
+<br> When:
+<br> =====
+<br> 
+<br>                    ----Shape---
+<br>                   /            \\
+<br>          Rectangle              Circle
+<br>         /        \\            /      \\
+<br> BlueRectangle  RedRectangle BlueCircle RedCircle
+<br> 
+<br> Refactor to:
+<br> ============
+<br> 
+<br>           ----Shape---                        Color
+<br>          /           \\                      /    \\
+<br> Rectangle(Color)   Circle(Color)           Blue   Red
+""",
+
+Sample 2:
+---------
+
+			["static_method", "test_me", "int", "", "private","","""
+				<br>void color_init(struct color *color)
+				<br>{
+				<br>	printf(\"color_init\\n\");
+				<br>	memset(color, sizeof(*color), 0);
+				<br>	color->ops = &color_ops;
+				<br>}
+			"""],
+```
 - Support trailing commas, but donnot append any space after commas, Error sample:
 ```
 > "members": [ ["override",  "<ALL>"], ],
