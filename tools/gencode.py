@@ -34,8 +34,9 @@ import os
 import os.path
 import textwrap
 import json
-from jsoncomment import JsonComment
+#import simplejson as json
 #import yaml as json
+from jsoncomment import JsonComment
 import collections
 import sys, traceback
 import copy
@@ -774,7 +775,7 @@ def render_namespace(input_file, code_style, output_dir):
 		if not os.path.isfile(input_file):
 			raise Exception('file *{0}* not exists'.format(input_file))
 
-		#input_dict = json.loads(open(input_file), object_pairs_hook=collections.OrderedDict)
+		#input_dict = json.load(open(input_file), object_pairs_hook=collections.OrderedDict)
 		input_dict = JsonComment(json).load(open(input_file), object_pairs_hook=collections.OrderedDict)
 		#print '"LOADING":\n',json.dumps(input_dict, sort_keys=False, indent=3)
 

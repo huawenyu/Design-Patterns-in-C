@@ -1,45 +1,60 @@
 {
 "add_file_header":"True",
-"namespace":"bridge_shape",
-"path":"bridge_shape",
+"namespace"      :"bridge_shape",
+"path"           :"bridge_shape",
+"path"           :"""Composite better than inheritance,
+When:
+=====
+
+                   ----Shape---
+                  /            |
+         Rectangle              Circle
+        /         |            /      |
+BlueRectangle  RedRectangle BlueCircle RedCircle
+
+Refactor to:
+============
+
+          ----Shape---                        Color
+         /            |                       /   |
+Rectangle(Color)   Circle(Color)           Blue   Red
+""",
+
 "classes": {
 	"shape":{
 		"enable_destructor":"True",
 		"includes":["color"],
 		"members": [
 			["var", "_color", "struct color *", "", "private"],
-
-			["virtual", "draw", "void", ""]
+			["virtual", "draw", "void", ""],
 		],
 
 		"inheritance": {
-			"shape_rectangle":{
-				"members": [ ["override",  "<ALL>"] ]
+			"shape_rectangle, shape_circle":{
+				"members": [ ["override",  "<ALL>"],
+				],
 			},
-			"shape_circle":{
-				"members": [ ["override",  "<ALL>"] ]
-			}
 		}
 	},
 
 	"color":{
-		"members": [
-			["virtual", "render", "void"]
+		"members": [ ["virtual", "render", "void"],
 		],
 
 		"inheritance": {
-			"color_blue":{
-				"members": [ ["override",  "<ALL>"] ]
+			"color_blue, color_red":{
+				"members": [ ["override",  "<ALL>"],
+				],
 			},
-			"color_red":{
-				"members": [ ["override",  "<ALL>"] ]
-			}
-		}
+		},
 	},
 
 	"test":{
-		"includes":["color_blue", "color_red", "shape_rectangle", "shape_circle"],
-		"templates":["_test"]
-	}
-}
+		"templates":["_test"],
+		"includes" :["color_blue", "color_red", "shape_rectangle", "shape_circle"],
+		"members"  :[
+			["static_method", "test_me", "int", "", "private"],
+		],
+	},
+},
 }

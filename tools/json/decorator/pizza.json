@@ -50,24 +50,26 @@ GetPrice() method of Topping object would return cumulative price of both pizza 
 	},
 
 	"test":{
-		"includes":["margherita_pizza", "gourmet_pizza", "extra_cheese_topping", "jalapeno_topping", "mushroom_topping"],
 		"templates":["_test"],
+		"includes":["margherita_pizza", "gourmet_pizza", "extra_cheese_topping", "jalapeno_topping", "mushroom_topping"],
 		"members": [
 			["static_method", "test_me", "int", "", "private", "", """
-				<br>Margherita pizza = new Margherita();
-				<br>Console.WriteLine('Plain Margherita: ' + pizza.GetPrice().ToString());
-
-				<br>ExtraCheeseTopping moreCheese = new ExtraCheeseTopping(pizza);
-				<br>ExtraCheeseTopping someMoreCheese = new ExtraCheeseTopping(moreCheese);
-				<br>Console.WriteLine('Plain Margherita with double extra cheese: ' + someMoreCheese.GetPrice().ToString());
-
-				<br>MushroomTopping moreMushroom = new MushroomTopping(someMoreCheese);
-				<br>Console.WriteLine('Plain Margherita with double extra cheese with mushroom: ' + moreMushroom.GetPrice().ToString());
-
-				<br>JalapenoTopping moreJalapeno = new JalapenoTopping(moreMushroom);
-				<br>Console.WriteLine('Plain Margherita with double extra cheese with mushroom with Jalapeno: ' + moreJalapeno.GetPrice().ToString());
-
-				<br>Console.ReadLine();
+				<br>
+				<br> Margherita pizza = new Margherita();
+				<br> Console.WriteLine('Plain Margherita: ' + pizza.GetPrice().ToString());
+				<br>
+				<br> ExtraCheeseTopping moreCheese = new ExtraCheeseTopping(pizza);
+				<br> ExtraCheeseTopping someMoreCheese = new ExtraCheeseTopping(moreCheese);
+				<br> Console.WriteLine('Plain Margherita with double extra cheese: ' + someMoreCheese.GetPrice().ToString());
+				<br>
+				<br> MushroomTopping moreMushroom = new MushroomTopping(someMoreCheese);
+				<br> Console.WriteLine('Plain Margherita with double extra cheese with mushroom: ' + moreMushroom.GetPrice().ToString());
+				<br>
+				<br> JalapenoTopping moreJalapeno = new JalapenoTopping(moreMushroom);
+				<br> Console.WriteLine('Plain Margherita with double extra cheese with mushroom with Jalapeno: ' + moreJalapeno.GetPrice().ToString());
+				<br>
+				<br> Console.ReadLine();
+				<br>
 			"""
 			],
 		],

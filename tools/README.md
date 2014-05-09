@@ -29,6 +29,17 @@ tools
 
 ## Using Json describe pattern
 
+- Support comment which start with #, but Inline comments are not supported
+- Support pseudocode using multiline-strings which enclose with """, but the code cannot contain any more double-quote symbol like ["], we should replace it with single quote [']
+- Support trailing commas, but donnot append any space after commas, Error sample:
+```
+> "members": [ ["override",  "<ALL>"], ],
+Should change to:
+> "members": [ ["override",  "<ALL>"],],
+Or change to:
+> "members": [ ["override",  "<ALL>"],
+> ],
+```
 ### JSON Comment
 A wrapper to JSON parsers allowing comments, multiline strings and trailing commas  
 https://pypi.python.org/pypi/jsoncomment/0.2.3  
@@ -167,7 +178,7 @@ python /usr/lib64/python2.7/pdb.py autogen_jinja2.py
 # Requirement
 
 ```
-$ sudo pip install jinja2  
+$ sudo pip install jinja2
 $ sudo pip install jsoncomment
 <or>
 $ sudo easy_install jinja2
@@ -176,8 +187,13 @@ $ sudo easy_install jsoncomment
 
 # Vim Plugin
 
+1. Syntax.Jinja
 https://github.com/Glench/Vim-Jinja2-Syntax.git  
-https://github.com/elzr/vim-json.git  
+
+2. Syntax.json  because this is more-json, so we can use javascript-syntax to show json,
+Maybe it's better choice when we embedd 'pseudocode' in our json file.
+Add the following line to .vimrc:
+> autocmd BufNewFile,BufRead *.json set ft=javascript
 
 # Refs
 
