@@ -1,5 +1,5 @@
 {%- for node in nodes %}
-{'type':'node', 'id':'{{ node.id }}', 'attrs':'{{ node.attrs }}', 'meths':'{{ node.meths }}', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'{{ node.id }}', 'attrs':'{{ node.attrs }}', 'meths':'{{ node.meths }}', 'x':{{ node.x }}, 'y':{{ node.y }}, 'width':{{ node.width }}, 'height':{{ node.height }}}
 {%- endfor -%}
 {%- for edge in edges %}
 {'type':'edge', 'id':'{{ edge.id }}', 'source':'{{ edge.source }}', 'target':'{{ edge.target }}', 'uml_edge_type':'{{ edge.uml_edge_type }}'}

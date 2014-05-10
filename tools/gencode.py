@@ -62,8 +62,6 @@ const.sub_classes         = 'inheritance'    #
 const.members             = 'members'        #
 const.override_all        = '<ALL>'          #
 const.textwrap            =['note', 'comment', 'copyright']
-const.graphic             = 'graphic'
-const.templ_graphic       = '_graphic'
 
 const.m_dict              = odict([\
                             ('init'         ,'inits'), \
@@ -107,6 +105,11 @@ const.func_mode           = enum('_None', '_cat', 'cat_name', 'cat_name_type', '
                                  'cat_name_type_args_scope', 'cat_name_type_args_scope_comment', \
                                  'cat_name_type_args_scope_comment_pseudocode', \
                                 )
+# grahic: node&edge
+const.graphic             = 'graphic'
+const.templ_graphic       = '_graphic'
+const.graphic_node        = odict([('type','node'), ('id','name'), ('attrs',''), ('meths',''), ('x',1), ('y',1), ('width',1), ('height',1)])
+const.graphic_edge        = odict([('type','edge'), ('id','name'), ('source','src'), ('target','dst'), ('uml_edge_type','generalisation')])
 
 
 def render_one_to_file(x, dir_name, files):
@@ -421,12 +424,29 @@ def parse_helper_flag(myclasses_array_dict):
 			break
 
 
+def gen_edge_from_type_string(one_myclass, type_str, edges):
+	if type_str.startswith('struct '):
+		var_type = type_str.split(' ')
+		if len(var_type) > 1:
+			one_edge = copy.deepcopy(const.graphic_edge)
+			one_edge['id'] = one_myclass['name'] + '_to_' + var_type[1]
+			one_edge['source'] = one_myclass['name']
+			one_edge['target'] = var_type[1]
+			one_edge['uml_edge_type'] = 'composition'
+			edges.append(one_edge)
+
+
+def gen_edge_from_function(one_myclass, method, edges):
+	gen_edge_from_type_string(one_myclass, method[const.func.type], edges)
+	if method[const.func.params]:
+		params,args = parse_parameters(method[const.func.params])
+		for param in params:
+			gen_edge_from_type_string(one_myclass, param, edges)
+
 
 def gen_pynsource_graphic_nodes(myclasses_array_dict):
 	nodes = []
 	edges = []
-	node = odict([('type','node'), ('id','name'), ('attrs',''), ('meths',''), ('x',1), ('y',1), ('width',1), ('height',1)])
-	edge = odict([('type','edge'), ('id','name'), ('source','src'), ('target','dst'), ('uml_edge_type','generalisation')])
 
 	_path = ''
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
@@ -434,10 +454,11 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 			continue
 
 		_path = get_value_else_default(one_myclass, 'path', '.')
-		one_node = copy.deepcopy(node)
+		one_node = copy.deepcopy(const.graphic_node)
 		one_node['id'] = class_name
-		if one_myclass['type'] and one_myclass['type'] != 'class':
-			one_node['id'] = '<' + one_myclass['type'] + '>' + class_name
+		## if change id, the edge also should changed
+		#if one_myclass['type'] and one_myclass['type'] != 'class':
+		#	one_node['id'] = '<' + one_myclass['type'] + '>' + class_name
 
 		node_attrs = []
 		node_meths = []
@@ -459,31 +480,7 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 			attrs_str += ' '
 			attrs_str += variable[const.func.name] #+ ' : ' + variable[const.func.type]
 			node_attrs.append(attrs_str)
-
-			if variable[const.func.type].startswith('struct '):
-				var_type = variable[const.func.type].split(' ')
-				if len(var_type) > 1:
-					one_edge = copy.deepcopy(edge)
-					one_edge['id'] = class_name + '_to_' + var_type[1]
-					one_edge['source'] = class_name
-					one_edge['target'] = var_type[1]
-					one_edge['uml_edge_type'] = 'composition'
-					edges.append(one_edge)
-
-		for method in one_myclass[const.m_dict['method']]:
-			meths_str = ''
-			if method[const.func.scope] == 'public':
-				meths_str = '+'
-			elif method[const.func.scope] == 'protected':
-				meths_str = '#'
-			elif method[const.func.scope] == 'private':
-				meths_str = '-'
-			else:
-				meths_str = ' '
-
-			meths_str += ' '
-			meths_str += method[const.func.name]  + '()'
-			node_meths.append(meths_str)
+			gen_edge_from_type_string(one_myclass, variable[const.func.type], edges)
 
 		for method in one_myclass[const.m_dict['init']]:
 			meths_str = ''
@@ -502,6 +499,25 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 				meths_str = '=0'
 			node_meths.append(meths_str)
 
+			gen_edge_from_function(one_myclass, method, edges)
+
+		for method in one_myclass[const.m_dict['method']]:
+			meths_str = ''
+			if method[const.func.scope] == 'public':
+				meths_str = '+'
+			elif method[const.func.scope] == 'protected':
+				meths_str = '#'
+			elif method[const.func.scope] == 'private':
+				meths_str = '-'
+			else:
+				meths_str = ' '
+
+			meths_str += ' '
+			meths_str += method[const.func.name]  + '()'
+			node_meths.append(meths_str)
+
+			gen_edge_from_function(one_myclass, method, edges)
+
 		for method in one_myclass[const.m_dict['virtual']]:
 			meths_str = '~'
 			meths_str += ' '
@@ -510,8 +526,10 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 				meths_str = '=0'
 			node_meths.append(meths_str)
 
+			gen_edge_from_function(one_myclass, method, edges)
+
 		for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
-			one_edge = copy.deepcopy(edge)
+			one_edge = copy.deepcopy(const.graphic_edge)
 			one_edge['id'] = class_name + '_to_' + super_name
 			one_edge['source'] = class_name
 			one_edge['target'] = super_name
@@ -525,9 +543,17 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 					meths_str += method[const.func.name] + '(' + vtable_name + ')'
 					node_meths.append(meths_str)
 
+					# avoid more edge, leave this to super-self
+					#gen_edge_from_function(one_myclass, method, edges)
+
 		one_node['attrs'] = '|'.join(node_attrs)
 		one_node['meths'] = '|'.join(node_meths)
 		nodes.append(one_node)
+
+	offset = 60
+	for idx, one_node in enumerate(nodes):
+		one_node['x'] += offset*idx;
+		one_node['y'] += offset*idx;
 
 	# append graphic to classes
 	myclasses_array_dict[const.graphic] = odict()
@@ -728,6 +754,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 							one_myclass[const.m_dict['method']].append(member_get)
 
 							member_var[const.func.name] = '_' + property_name
+							member_var[const.func.scope] = 'private'
 
 							member_set[const.func.name] = 'set_' + property_name
 							member_set[const.func.type] = 'void'
@@ -755,6 +782,8 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 								if member_detail[const.func.name] == one_member[const.func.name]:
 									member_detail[const.func.name] = myclass_name
 									break
+							one_myclass[const.m_dict[member_category]].append(member_detail)
+						else:
 							one_myclass[const.m_dict[member_category]].append(member_detail)
 					else:
 						raise Exception('class {0} members of category *{1}* not exist'.\
@@ -853,7 +882,7 @@ if __name__ == '__main__':
 	# arguments parser
 	parser = argparse.ArgumentParser(description='Code Generater for GoF')
 	parser.add_argument('--file', metavar='input file', help='Input Design Pattern File', required=True)
-	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='code')
+	parser.add_argument('--dir', metavar='output dir', help='Output Directory', required=False, default='_code')
 	parser.add_argument('--code', metavar='code type', help='Language Choose', choices=['c','cplus','java','csharp','python'], required=False, default='c')
 	args = vars(parser.parse_args())
 

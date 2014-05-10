@@ -29,7 +29,7 @@ Release
 # Speical files
 *.pyc
 tools/tmpl/autogen_.jinja
-tools/code
+tools/_code
 *.log
 log*
 *TAGS

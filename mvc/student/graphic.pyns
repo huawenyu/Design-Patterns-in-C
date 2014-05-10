@@ -1,0 +1,7 @@
+{'type':'node', 'id':'student', 'attrs':'- _name|- _roll_no', 'meths':'+ student()|+ set_name()|+ get_name()|+ set_roll_no()|+ get_roll_no()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'student_view', 'attrs':'', 'meths':'+ student_view()|+ show_me()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'student_controller', 'attrs':'- _model|- _view|- _student_name|- _student_roll_no', 'meths':'+ init()|+ set_student_name()|+ get_student_name()|+ set_student_roll_no()|+ get_student_roll_no()|+ update_view()', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'edge', 'id':'student_view_to_student', 'source':'student_view', 'target':'student', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'student_controller_to_student', 'source':'student_controller', 'target':'student', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'student_controller_to_student_view', 'source':'student_controller', 'target':'student_view', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'student_controller_to_student', 'source':'student_controller', 'target':'student', 'uml_edge_type':'composition'}

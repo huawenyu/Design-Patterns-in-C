@@ -21,7 +21,7 @@
 	},
 
 	"student_controller":{
-		"includes":["student"],
+		"includes":["student", "student_view"],
 		"members": [
 			["init", "init", "void", "struct student *model, struct student_view *view"],
 			["var", "_model", "struct student *", "", "private"],
@@ -36,7 +36,28 @@
 		"templates":["_test"],
 		"includes":["student", "student_view", "student_controller"],
 		"members": [
-			["static_method", "test_me", "int", "", "private", "", """
+			["static_method", "retrive_student_from_database", "struct student *", "", "private", "", """
+				<br>Student student = new Student();
+				<br>student.setName(\"Robert\");
+				<br>student.setRollNo(\"10\");
+				<br>return student;
+			"""
+			],
+			["static_method", "main", "int", "", "private", "", """
+				<br>//fetch student record based on his roll no from the database
+				<br>Student model  = retriveStudentFromDatabase();
+				<br>
+				<br>//Create a view : to write student details on console
+				<br>StudentView view = new StudentView();
+				<br>
+				<br>StudentController controller = new StudentController(model, view);
+				<br>
+				<br>controller.updateView();
+				<br>
+				<br>//update model data
+				<br>controller.setStudentName(\"John\");
+				<br>
+				<br>controller.updateView();
 			"""
 			],
 		],
