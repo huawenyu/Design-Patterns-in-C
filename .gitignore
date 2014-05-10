@@ -27,7 +27,7 @@ Debug
 Release
 
 # Speical files
-tools/*.pyc
+*.pyc
 tools/tmpl/autogen_.jinja
 tools/code
 *.log

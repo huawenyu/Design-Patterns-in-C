@@ -1,0 +1,45 @@
+{
+"add_file_header":"True",
+"namespace":      "mvc_student",
+"path":           "mvc_student",
+"trace":          "True",
+"comment":        "Student object acting as a model.StudentView will be a view class which can print student details on console and StudentController is the controller class responsible to store data in Student object and update view StudentView accordingly.",
+
+"classes": {
+	"student":{
+		"members": [
+			["property", "name", "char", "[32]"],
+			["property", "roll_no", "int"],
+		],
+	},
+
+	"student_view":{
+		"includes":["student"],
+		"members": [
+			["method", "show_me", "void", "struct student *stu"],
+		],
+	},
+
+	"student_controller":{
+		"includes":["student"],
+		"members": [
+			["init", "init", "void", "struct student *model, struct student_view *view"],
+			["var", "_model", "struct student *", "", "private"],
+			["var", "_view", "struct student_view *", "", "private"],
+			["property", "student_name", "char *"],
+			["property", "student_roll_no", "int"],
+			["method", "update_view", "void"],
+		],
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["student", "student_view", "student_controller"],
+		"members": [
+			["static_method", "test_me", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}

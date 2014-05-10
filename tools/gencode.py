@@ -72,6 +72,8 @@ const.m_dict              = odict([\
                             ('var'          ,'vars'), \
                             ('static_var'   ,'vars'),\
                             \
+                            ('property'     ,'methods'),\
+                            \
                             ('method'       ,'methods'),  \
                             ('static_method','methods'),  \
                             \
@@ -708,15 +710,42 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 						or member_detail[const.func.name] == 'init':
 						member_category = 'init'
 
-					#@TODO warning member_name conflict
 					if one_myclass.has_key(const.m_dict[member_category]):
-						# static=True:
-						#   - when methods|vars, means it's static
 						if member_category == 'static_method' \
 							or member_category == 'static_var':
 							member_detail[const.func.static] = 'True'
+							one_myclass[const.m_dict[member_category]].append(member_detail)
 						elif member_category == 'pure_virtual':
 							member_detail[const.func.pure] = 'True'
+							one_myclass[const.m_dict[member_category]].append(member_detail)
+						elif member_category == 'property':
+							property_name = member_detail[const.func.name]
+							member_var = copy.deepcopy(member_detail)
+							member_set = copy.deepcopy(member_detail)
+							member_get = copy.deepcopy(member_detail)
+							one_myclass[const.m_dict['var']].append(member_var)
+							one_myclass[const.m_dict['method']].append(member_set)
+							one_myclass[const.m_dict['method']].append(member_get)
+
+							member_var[const.func.name] = '_' + property_name
+
+							member_set[const.func.name] = 'set_' + property_name
+							member_set[const.func.type] = 'void'
+							member_set[const.func.params] = ''
+							if member_detail[const.func.params]: # is array
+								member_set[const.func.params] = member_detail[const.func.type] + ' *' + property_name + ', int ' + property_name + '_sz'
+							else:
+								member_set[const.func.params] = member_detail[const.func.type] + ' ' + property_name
+							params,args = parse_parameters(member_set[const.func.params])
+							member_set[const.func.args] = ', '.join(args)
+
+							member_get[const.func.name] = 'get_' + property_name
+							if member_detail[const.func.params]: # is array
+								member_get[const.func.type] = member_detail[const.func.type] + ' *'
+							else:
+								member_get[const.func.type] = member_detail[const.func.type]
+							member_get[const.func.params] = ''
+							member_get[const.func.args] = ''
 						elif member_category == 'init':
 							member_detail[const.func.static] = 'False'
 							member_detail[const.func.comment] = const.constructor_comment
@@ -726,8 +755,7 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 								if member_detail[const.func.name] == one_member[const.func.name]:
 									member_detail[const.func.name] = myclass_name
 									break
-
-						one_myclass[const.m_dict[member_category]].append(member_detail)
+							one_myclass[const.m_dict[member_category]].append(member_detail)
 					else:
 						raise Exception('class {0} members of category *{1}* not exist'.\
 						  format(myclass_name, const.m_dict[member_category]))
