@@ -1,0 +1,42 @@
+{
+"file_note": "True",
+"namespace": "handle_body",
+"path":      "handle_body",
+"trace":     "True",
+"note":      "The Handle/Body idiom was originally introduced by Jim Coplien as a technique for hiding implementation details in the header file. This idiom is also called Pimpl, which stands for \"implementation pointer\" following the Hungarian naming convention. The version I present here is suitable for most header files that declare classes. The solution is reducing the number of #include directives and removing implementation details from header files (which are compiled multiple times) to a .cpp file (which gets compiled only once). Such \"header downsizing\" has another advantage: it enhances encapsulation.",
+
+"classes": {
+	"socket":{
+		"members": [
+			["method", "open",    "int", "int type, int protocol"],
+			["method", "receive", "int", "char *buf, size_t buf_sz", "", "", """
+				<br>bool little_end=pimpl->network_byte_order();
+				<br>pimpl->buffer.clear();
+				<br>pimpl->buffer.assign(p, p+length);
+			"""],
+			["var",    "_pimpl",   "struct socket_impl *", "", "private", "forward declaration"],
+		],
+	},
+
+	"socket_impl":{
+		"comment": "PIMPL-Private part: Donnot let others include this file, except socket implement",
+		"members": [
+			["var",    "sock_id",  "int",  "", "private"],
+			["var",    "sockaddr", "struct sockaddr_un*",  "", "private"],
+			["var",    "buffer",   "char",  "[1024]", "private"],
+			["method", "network_byte_order","int"],
+		],
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["socket"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}

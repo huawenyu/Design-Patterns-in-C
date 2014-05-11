@@ -1,0 +1,4 @@
+{'type':'node', 'id':'socket', 'attrs':'- _pimpl', 'meths':'+ socket()|+ open()|+ receive()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'socket_impl', 'attrs':'- sock_id|- sockaddr|- buffer', 'meths':'+ socket_impl()|+ network_byte_order()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'edge', 'id':'socket_to_socket_impl', 'source':'socket', 'target':'socket_impl', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'socket_impl_to_sockaddr_un', 'source':'socket_impl', 'target':'sockaddr_un', 'uml_edge_type':'composition'}
