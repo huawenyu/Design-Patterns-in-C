@@ -1,16 +1,16 @@
 {%- extends '_header.jinja' -%}
 {%- import '_macro.jinja' as func -%}
 
-{% block file_header %}{% if add_file_header -%}
+{% block file_header %}{% if file_note -%}
 	{{- func.file_header(file_name,copyright,author,date,summary,note) -}}
 {% endif %}{% endblock %}
 
 
 {%- block include -%}
 	{%- if includes -%}
-		{%- for one_include in includes %}
+		{%- for one_include in includes %}{% if not one_include is contain('.') %}
 #include "{{ one_include }}.h"
-		{%- endfor -%}
+		{% endif %}{%- endfor -%}
 	{%- endif -%}
 
 {# class dependency #}

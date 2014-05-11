@@ -1,14 +1,15 @@
 {
-"add_file_header":"True",
-"namespace":"builder",
-"path":"builder",
+"file_note": "True",
+"namespace": "builder",
+"path":      "builder",
+
 "classes": {
 	"animal":{
 		"members": [
 			["virtual", "eat", "void"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"kitten":{
 				"members": [ ["override",  "<ALL>"] ]
 			},
@@ -27,7 +28,7 @@
 			["virtual", "build_tail"  ,  "void"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"animal_builder_monkey":{
 				"members": [ ["override",  "<ALL>"] ]
 			},

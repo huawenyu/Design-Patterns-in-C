@@ -8,7 +8,7 @@
 			["var",      "name", "char", "[32]"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"concrete_product_1":{
 				"members": [ ["override", "<ALL>"] ]
 			},
@@ -24,7 +24,7 @@
 			["method",  "do_it",  "void" ]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"factory_product_1":{
 				"members": [ ["override", "<ALL>"] ]
 			},

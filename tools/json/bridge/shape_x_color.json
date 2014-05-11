@@ -1,8 +1,8 @@
 {
-"add_file_header":"True",
+"file_note":"True",
 "namespace"      :"bridge_shape",
 "path"           :"bridge_shape",
-"comment"        :"""Composite better than inheritance,
+"note"           :"""Composite better than inheritances,
 <br> When:
 <br> =====
 <br> 
@@ -29,7 +29,7 @@
 			["virtual", "draw", "void", ""],
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"shape_rectangle, shape_circle":{
 				"members": [ ["override",  "<ALL>"],
 				],
@@ -41,7 +41,7 @@
 		"members": [ ["virtual", "render", "void"],
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"color_blue, color_red":{
 				"members": [ ["override",  "<ALL>"],
 				],

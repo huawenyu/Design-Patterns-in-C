@@ -1,9 +1,9 @@
 {
-"add_file_header":"True",
-"namespace":      "mvc_student",
-"path":           "mvc_student",
-"trace":          "True",
-"comment":        "Student object acting as a model.StudentView will be a view class which can print student details on console and StudentController is the controller class responsible to store data in Student object and update view StudentView accordingly.",
+"file_note": "True",
+"namespace": "mvc_student",
+"path":      "mvc_student",
+"trace":     "True",
+"note":      "Student object acting as a model.StudentView will be a view class which can print student details on console and StudentController is the controller class responsible to store data in Student object and update view StudentView accordingly.",
 
 "classes": {
 	"student":{

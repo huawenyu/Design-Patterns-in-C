@@ -1,9 +1,25 @@
 {%- extends '_source.jinja' -%}
 {%- import '_macro.jinja' as func -%}
 
-{% block file_header %}{% if add_file_header -%}
+{% block file_header %}{% if file_note -%}
 	{{- func.file_header(file_name,copyright,author,date,summary,note) -}}
 {% endif %}{% endblock %}
+
+{% block message %}
+{% if message %}TODO({{ message }}){% endif %}
+{% endblock %}
+
+{% block error %}
+{% if error %}(...) _Static_assert(0, "{{ error }}"){% endif %}
+{% endblock %}
+
+{% block include_impl %}
+	{%- if includes -%}
+		{%- for one_include in includes %}{% if one_include is contain('.') %}
+#include "{{ one_include }}"
+		{% endif %}{%- endfor -%}
+	{%- endif -%}
+{% endblock %}
 
 {%- block private_method -%}
 {{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}

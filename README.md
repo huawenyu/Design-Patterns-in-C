@@ -154,6 +154,7 @@ shape_draw(&circle->shape);
   * Facade
   * Flyweight
   * Private Class Data
+  * Handle Body Idiom
   * Proxy
   * MVC
 3. Behavioral patterns

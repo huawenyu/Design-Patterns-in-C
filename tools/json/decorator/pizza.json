@@ -1,9 +1,9 @@
 {
-"add_file_header":"True",
-"namespace":      "decorator_pizza",
-"path":           "decorator_pizza",
-"trace":          "True",
-"comment":        """Consider a case of a pizza shop.
+"file_note": "True",
+"namespace": "decorator_pizza",
+"path":      "decorator_pizza",
+"trace":     "True",
+"note":      """Consider a case of a pizza shop.
 
 In the pizza shop they will sale few pizza varieties and they will also provide toppings in the menu.
 Now imagine a situation wherein if the pizza shop has to provide prices for each combination of pizza and topping.
@@ -24,7 +24,7 @@ GetPrice() method of Topping object would return cumulative price of both pizza 
 			["var",   "_pizza_price", "int", "", "private"],
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"margherita_pizza, gourmet_pizza":{
 				"members": [ ["override",  "<ALL>"],
 					["init","init", "void", "int pizza_price"],
@@ -38,7 +38,7 @@ GetPrice() method of Topping object would return cumulative price of both pizza 
 					["var", "_inner",  "struct pizza *", "", "private"],
 					["var", "_topping_price",  "int", "", "private"]
 				 ],
-				"inheritance": {
+				"inheritances": {
 					"extra_cheese_topping, jalapeno_topping, mushroom_topping":{
 						"members": [ ["override",  "<ALL>"],
 							["init","init", "void", "struct pizza *inner, int topping_price"]

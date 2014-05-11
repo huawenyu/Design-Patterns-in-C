@@ -2,15 +2,12 @@
 #
 # Requirement
 # ===========
-# > linux $ sudo pip install jinja2
-# > <or>
-# > linux $ sudo easy_install jinja2
+# $ sudo pip install jinja2
+# $ sudo pip install jsoncomment
 #
 # QuickStart
 # ==========
-# Run
-# ---
-# ./autogen_jinja2.py -i json/factory-method.json
+# ./gencode.py --file json/factory-method.json
 #
 # Debug
 # -----
@@ -21,13 +18,6 @@
 # (Pdb) s                # step into
 # (Pdb) n                # next
 # (Pdb) util 112         # continue util the line number
-#
-# Refs
-# ====
-# http://jinja.pocoo.org/docs/templates/
-# http://jinja.pocoo.org/docs/templates/#whitespace-control
-# http://www.dotnetperls.com/dictionary-python
-# http://pymotw.com/2/json/
 #
 
 import os
@@ -41,11 +31,12 @@ import collections
 import sys, traceback
 import copy
 import argparse
-import jinja2
+import jinja
 import re
 import const as const
 from odict import odict
 from time import gmtime, strftime
+
 
 def enum(*sequential, **named):
 	enums = dict(zip(sequential, range(len(sequential))), **named)
@@ -56,11 +47,11 @@ def enum(*sequential, **named):
 
 # Setup syntax constants
 const.auto_comn_tmpl_file = 'autogen_.jinja'
-const.classes             = 'classes'        #
-const.sub_classes         = 'inheritance'    #
+const.classes             = 'classes'
+const.sub_classes         = 'inheritances'
 ## member var and method
-const.members             = 'members'        #
-const.override_all        = '<ALL>'          #
+const.members             = 'members'
+const.override_all        = '<ALL>'
 const.textwrap            =['note', 'comment', 'copyright']
 
 const.m_dict              = odict([\
@@ -112,79 +103,6 @@ const.graphic_node        = odict([('type','node'), ('id','name'), ('attrs',''),
 const.graphic_edge        = odict([('type','edge'), ('id','name'), ('source','src'), ('target','dst'), ('uml_edge_type','generalisation')])
 
 
-def render_one_to_file(x, dir_name, files):
-	templateEnv,templateVars,code_style,output_dir = x
-
-	# if class have assign special templates, just apply them
-	if templateVars.has_key('templates') and len(templateVars['templates']) > 0:
-		for one_file in files :
-			filename = os.path.splitext(one_file)[0] # use filename as output file extension
-			ext = os.path.splitext(one_file)[1] # use filename as output file extension
-			for tmpl in templateVars['templates']:
-				if filename == tmpl or one_file == tmpl:
-					# open file
-					file_name = templateVars['file']
-					if "." not in file_name:
-						file_name = '{0}{1}'.format(file_name, ext)
-					output_abs_file = os.path.abspath(\
-					  '{0}/{1}/{2}/{3}'.format(\
-					  output_dir, code_style, templateVars['path'], file_name))
-					output_abs_dir = os.path.dirname(output_abs_file)
-					if not os.path.exists(output_abs_dir):
-						os.makedirs(output_abs_dir)
-
-					templateVars['file_name'] = file_name
-					templ_file = templateEnv.get_template(one_file)
-					output_text = templ_file.render( templateVars )
-					output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
-					f = open(output_abs_file, 'w')
-					f.write(output_text)
-					f.close()
-	else:
-		for one_file in files :
-			if not one_file.startswith('_') and one_file.endswith('jinja'):
-				# open file
-				ext = os.path.splitext(one_file)[0] # use filename as output file extension
-				file_name = templateVars['file']
-				if "." not in file_name:
-					file_name = '{0}.{1}'.format(file_name, ext)
-				output_abs_file = os.path.abspath(\
-				  '{0}/{1}/{2}/{3}'.format(\
-				  output_dir, code_style, templateVars['path'], file_name))
-				output_abs_dir = os.path.dirname(output_abs_file)
-				if not os.path.exists(output_abs_dir):
-					os.makedirs(output_abs_dir)
-
-				templateVars['file_name'] = file_name
-				templ_file = templateEnv.get_template(one_file)
-				output_text = templ_file.render( templateVars )
-				output_text = re.sub('([ \t]*\n){3,}', '\n\n', output_text.strip())
-				f = open(output_abs_file, 'w')
-				f.write(output_text)
-				f.close()
-
-
-def render_class_to_file(templateVars, code_style, output_dir):
-	tmpl_dir = ''
-	if code_style == 'c':
-		tmpl_dir = 'tmpl/c/'
-	elif code_style == 'cplus':
-		tmpl_dir = 'tmpl/cplus/'
-	elif code_style == 'java':
-		tmpl_dir = 'tmpl/java/'
-	elif code_style == 'csharp':
-		tmpl_dir = 'tmpl/csharp/'
-	elif code_style == 'python':
-		tmpl_dir = 'tmpl/python/'
-
-	# Setup jinja2 render template
-	templateLoader = jinja2.FileSystemLoader( searchpath=os.path.abspath(tmpl_dir) )
-	templateEnv = jinja2.Environment( loader=templateLoader, extensions=["jinja2.ext.do",] )
-	#templateEnv.line_statement_prefix = '##'
-	#templateEnv.keep_trailing_newline = True
-	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,code_style,output_dir))
-
-
 def get_value_else_default(rdict, key, def_val):
 	rval = rdict.get(key, def_val)
 	if not rval:
@@ -194,7 +112,7 @@ def get_value_else_default(rdict, key, def_val):
 
 def render_array_to_file(myclasses_array_dict, code_style, output_dir):
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
-		render_class_to_file(one_myclass, code_style, output_dir)
+		jinja.render_class_to_file(one_myclass, code_style, output_dir)
 
 
 # if language already support oop, continue makeup
@@ -558,7 +476,7 @@ def gen_pynsource_graphic_nodes(myclasses_array_dict):
 	# append graphic to classes
 	myclasses_array_dict[const.graphic] = odict()
 	myclasses_array_dict[const.graphic]['templates']       = [const.templ_graphic]
-	myclasses_array_dict[const.graphic]['add_file_header'] = False
+	myclasses_array_dict[const.graphic]['file_note']       = False
 	myclasses_array_dict[const.graphic]['file']            = const.graphic
 	myclasses_array_dict[const.graphic]['path']            = _path
 	myclasses_array_dict[const.graphic]['nodes']           = nodes
@@ -640,22 +558,24 @@ def convert_to_myclasses(myclass_dict, input_dict, mysuper):
 			one_myclass = odict()
 			myclass_dict[myclass_name] = one_myclass
 
-			one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
-			one_myclass['add_file_header'] = get_value_else_default(mysuper, 'add_file_header', False)
-			one_myclass['trace']     = get_value_else_default(mysuper, 'trace', False)
-			one_myclass['copyright'] = get_value_else_default(mysuper, 'copyright', [])
-			one_myclass['author']    = get_value_else_default(mysuper, 'author', []) # author with email
-			one_myclass['date']      = get_value_else_default(mysuper, 'date', '')
-			one_myclass['summary']   = get_value_else_default(mysuper, 'summary', [])
-			one_myclass['note']      = get_value_else_default(one_inputclass, 'note', get_value_else_default(mysuper, 'note', []))
-
-			one_myclass['path']      = get_value_else_default(mysuper, 'path', '.')
-			one_myclass['namespace'] = get_value_else_default(mysuper, 'namespace', '')
-			one_myclass['file']      = get_value_else_default(one_inputclass, 'file', myclass_name)
 			one_myclass['name']      = myclass_name
-			one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes', [])
-			one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment', '')
-			one_myclass['type']      = get_value_else_default(one_inputclass, 'type', 'class')
+			one_myclass['file']      = get_value_else_default(one_inputclass, 'file',      myclass_name)
+			one_myclass['path']      = get_value_else_default(one_inputclass, 'path',      get_value_else_default(mysuper, 'path',      '.'))
+			one_myclass['namespace'] = get_value_else_default(one_inputclass, 'namespace', get_value_else_default(mysuper, 'namespace', ''))
+			one_myclass['file_note'] = get_value_else_default(one_inputclass, 'file_note', get_value_else_default(mysuper, 'file_note', False))
+			one_myclass['trace']     = get_value_else_default(one_inputclass, 'trace',     get_value_else_default(mysuper, 'trace',     False))
+			one_myclass['copyright'] = get_value_else_default(one_inputclass, 'copyright', get_value_else_default(mysuper, 'copyright', []))
+			one_myclass['author']    = get_value_else_default(one_inputclass, 'author',    get_value_else_default(mysuper, 'author',    [])) # author with email
+			one_myclass['date']      = get_value_else_default(one_inputclass, 'date',      get_value_else_default(mysuper, 'date',      ''))
+			one_myclass['summary']   = get_value_else_default(one_inputclass, 'summary',   get_value_else_default(mysuper, 'summary',   []))
+			one_myclass['note']      = get_value_else_default(one_inputclass, 'note',      get_value_else_default(mysuper, 'note',      ''))
+			one_myclass['comment']   = get_value_else_default(one_inputclass, 'comment',   get_value_else_default(mysuper, 'comment',   ''))
+			one_myclass['message']   = get_value_else_default(one_inputclass, 'message',   get_value_else_default(mysuper, 'message',   ''))
+			one_myclass['error']     = get_value_else_default(one_inputclass, 'error',     get_value_else_default(mysuper, 'error',     ''))
+
+			one_myclass['templates'] = get_value_else_default(one_inputclass, 'templates', [])
+			one_myclass['includes']  = get_value_else_default(one_inputclass, 'includes',  [])
+			one_myclass['type']      = get_value_else_default(one_inputclass, 'type',      'class')
 
 			# control flags
 			one_myclass[const.control_super] = False  # config: enable_super
@@ -806,17 +726,20 @@ def convert_namespace_to_tree(def_path, input_dict):
 	context_dict_tree = odict()
 
 	# file header or comments
-	mysuper['add_file_header']  = get_value_else_default(input_dict, 'add_file_header', False)
-	mysuper['trace']            = get_value_else_default(input_dict, 'trace', False)
-	mysuper['copyright']        = get_value_else_default(input_dict, 'copyright', [])
-	mysuper['author']           = get_value_else_default(input_dict, 'author', []) # author with email
-	mysuper['date']             = get_value_else_default(input_dict, 'date', strftime("%Y-%m-%d", gmtime()))
-	mysuper['summary']          = get_value_else_default(input_dict, 'summary', [])
-	mysuper['note']             = get_value_else_default(input_dict, 'note', get_value_else_default(input_dict, 'comment', []))
+	mysuper['file_note'] = get_value_else_default(input_dict, 'file_note', False)
+	mysuper['trace']     = get_value_else_default(input_dict, 'trace',     False)
+	mysuper['copyright'] = get_value_else_default(input_dict, 'copyright', [])
+	mysuper['author']    = get_value_else_default(input_dict, 'author',    []) # author with email
+	mysuper['date']      = get_value_else_default(input_dict, 'date',      strftime("%Y-%m-%d", gmtime()))
+	mysuper['summary']   = get_value_else_default(input_dict, 'summary',   [])
+	mysuper['note']      = get_value_else_default(input_dict, 'note',      [])
+	mysuper['comment']   = get_value_else_default(input_dict, 'comment',   [])
+	mysuper['message']   = get_value_else_default(input_dict, 'message',   '')
+	mysuper['error']     = get_value_else_default(input_dict, 'error',     '')
 
 	# generate path
-	mysuper['path']             = get_value_else_default(input_dict, 'path', def_path)
-	mysuper['namespace']        = get_value_else_default(input_dict, 'namespace', def_path)
+	mysuper['path']      = get_value_else_default(input_dict, 'path',      def_path)
+	mysuper['namespace'] = get_value_else_default(input_dict, 'namespace', def_path)
 
 	mysuper[const.config_super] = 'False'
 	mysuper[const.config_destructor] = 'False'

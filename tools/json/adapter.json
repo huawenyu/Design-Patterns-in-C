@@ -1,21 +1,23 @@
 {
-"add_file_header":"True",
-"namespace":"adapter",
-"path":"adapter",
+"file_note": "True",
+"namespace": "adapter",
+"path":      "adapter",
+
 "classes": {
 	"target":{
 		"members": [
 			["virtual", "request", "void"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"adapter":{
 				"includes":["adaptee"],
-				"members": [ ["override",  "<ALL>"],
-				["var", "_adaptee", "struct adaptee *", "", "private"]
-				]
-			}
-		}
+				"members": [
+					["override",  "<ALL>"],
+					["var", "_adaptee", "struct adaptee *", "", "private"],
+				],
+			},
+		},
 	},
 
 	"adaptee":{

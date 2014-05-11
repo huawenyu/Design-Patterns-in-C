@@ -1,7 +1,8 @@
 {
-"add_file_header":"True",
-"namespace":"bridge_stack",
-"path":"bridge_stack",
+"file_note": "True",
+"namespace": "bridge_stack",
+"path":      "bridge_stack",
+
 "classes": {
 	"node":{
 		"members": [
@@ -24,7 +25,7 @@
 		"enable_super":"True",
 		"enable_destructor":"True",
 
-		"inheritance": {
+		"inheritances": {
 			"stack_hanoi":{
 				"members": [ ["override",  "push"] ]
 			},
@@ -44,7 +45,7 @@
 		],
 		"enable_destructor":"True",
 
-		"inheritance": {
+		"inheritances": {
 			"stack_impl_array":{
 				"members": [ ["override",  "<ALL>"],
 					["var", "items", "int", "[32]", "private"],

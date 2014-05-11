@@ -12,7 +12,7 @@
 			["var",     "sku", "char", "[32]"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"book":{
 				"members": [ ["override",  "<ALL>"],
 					["method", "set_pages_num", "void", "int pages"],

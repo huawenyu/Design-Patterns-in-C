@@ -1,7 +1,8 @@
 {
-"add_file_header":"True",
-"namespace":"two_stage",
-"path":"two_stage",
+"file_note": "True",
+"namespace": "two_stage",
+"path":      "two_stage",
+
 "classes": {
 	"factory":{
 		"includes": ["product", "domain_class"],
@@ -9,7 +10,7 @@
 			["virtual", "create", "struct product *", "struct domain_class *dc"]
 		],
 
-		"inheritance": {
+		"inheritances": {
 			"factory_product":{
 				"includes": ["product", "serializer", "file_access_handler", "domain_class"],
 				"members": [ ["override",  "<ALL>"],

@@ -1,5 +1,5 @@
 {
-"add_file_header":"True",
+"file_note":"True",
 "classes": {
 	"parent":{
 		"members": [
@@ -18,7 +18,7 @@
 		],
 		"enable_destructor":"True",
 
-		"inheritance": {
+		"inheritances": {
 			"child":{
 				"members": [
 					["override",  "<ALL>"],
@@ -28,7 +28,7 @@
 					["static_var", "static_pub_data3", "int",  "", "public"],
 					["static_var", "static_pri_data4", "int",  "", "private"]
 				],
-				"inheritance": {
+				"inheritances": {
 					"grandgirl":{
 						"members": [
 							["override",  "<ALL>"]
