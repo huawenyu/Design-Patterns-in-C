@@ -1,0 +1,13 @@
+{'type':'node', 'id':'animal', 'attrs':'', 'meths':'+ animal()|~ do_it()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'dog', 'attrs':'', 'meths':'+ dog()|~ do_it(animal)', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'cat', 'attrs':'', 'meths':'+ cat()|~ do_it(animal)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'animal_do', 'attrs':'', 'meths':'+ animal_do()|~ dog_do_it()|~ cat_do_it()', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'node', 'id':'sound', 'attrs':'', 'meths':'+ sound()|~ dog_do_it(animal_do)|~ cat_do_it(animal_do)', 'x':241, 'y':241, 'width':1, 'height':1}
+{'type':'node', 'id':'eat', 'attrs':'', 'meths':'+ eat()|~ dog_do_it(animal_do)|~ cat_do_it(animal_do)', 'x':301, 'y':301, 'width':1, 'height':1}
+{'type':'edge', 'id':'animal_to_animal_do', 'source':'animal', 'target':'animal_do', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'dog_to_animal', 'source':'dog', 'target':'animal', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'cat_to_animal', 'source':'cat', 'target':'animal', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'animal_do_to_dog', 'source':'animal_do', 'target':'dog', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'animal_do_to_cat', 'source':'animal_do', 'target':'cat', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'sound_to_animal_do', 'source':'sound', 'target':'animal_do', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'eat_to_animal_do', 'source':'eat', 'target':'animal_do', 'uml_edge_type':'generalisation'}

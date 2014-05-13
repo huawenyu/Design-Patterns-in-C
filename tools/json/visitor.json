@@ -1,0 +1,54 @@
+{
+"file_note": "True",
+"namespace": "visitor",
+"path":      "visitor",
+"trace":     "True",
+
+"note":      "The Visitor pattern is in essence about covering an important use case of double dispatch in a single-dispatch language. It leverages the single-dispatch mechanism in a two-step idiom. Therefore if you use reflection for one of those two steps, you are no longer implementing Visitor. One way to look at it is that the visitor pattern is a way of letting your clients add additional methods to all of your classes in a particular class hierarchy. It is useful when you have a fairly stable class hierarchy, but you have changing requirements of what needs to be done with that hierarchy. The Visitor design pattern works really well for \"recursive\" structures like directory trees, XML structures, or document outlines.",
+
+"classes": {
+	"animal":{
+		"comment":"forward declare struct animal_do",
+		"members": [
+			["virtual", "do_it",  "void", "struct animal_do *dome"],
+		],
+
+		"inheritances": {
+			"dog, cat":{
+				"includes":["animal_do"],
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+		},
+	},
+
+	"animal_do":{
+		"comment": """If we want to add make_sound() to our exists Animal-Heritance, How can we do: <br>1. we can add a new v-function to all our class-tree, <br>2. Or we can use Visitor to add this new method outside of the exists class-tree. <br>As Visitor, if oop language, we just need one v-function then use Visitor's overload to solve double dispatch, bur for C: <br>1. we can assign diff enum class-type, when switch enum class-type to dispatch our call <br>2. Or, we can provide serval v-functions, let the destination object choose from visitor's v-functions correctly to implement double dispatch. """,
+		"includes":["dog", "cat"],
+		"members": [
+			["virtual",    "dog_do_it",  "void",  "struct dog *dog"],
+			["virtual",    "cat_do_it",  "void",  "struct cat *cat"],
+		],
+
+		"inheritances": {
+			"sound, eat":{
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+		},
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["dog", "cat", "sound", "eat"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}
