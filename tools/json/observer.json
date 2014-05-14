@@ -1,0 +1,60 @@
+{
+"file_note": "True",
+"namespace": "observer",
+"path":      "observer",
+"trace":     "True",
+
+"note":      "The Observer Pattern (sometimes called Listener Pattern) is a design pattern which establishes a one-to-many relationship between objects, such that changes to one object (the subject) may be communicated to many other objects (the observers/listeners). The power of this pattern is that it loosely couples objects together in a manner that does not require the subject or its listeners understanding anything about the other, beyond the fact that they implement a shared interface for communicating.",
+
+"classes": {
+	"observer":{
+		"comment":"As listener, we can have many this kind objects.",
+		"includes":["subject"],
+		"members": [
+			["virtual", "update",  "void", "char *operation, char *record"],
+		],
+
+		"inheritances": {
+			"view":{
+				"includes":["animal_do"],
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+		},
+	},
+
+	"subject":{
+		"comment": "",
+		"includes":["observer"],
+		"members": [
+			["virtual",  "register_observer",  "void",  "struct observer *obs"],
+			["virtual",  "remove_observer",    "void",  "struct observer *obs"],
+			["virtual",  "notify_observers",   "void",  "struct observer *obs"],
+		],
+
+		"inheritances": {
+			"database":{
+				"members": [
+					["override",  "<ALL>"],
+					["method", "edit_record",  "void", "String operation, String record"],
+
+					["var", "operation",  "char *", "", "private"],
+					["var", "record",     "char *", "", "private"],
+				],
+			},
+		},
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["database", "view"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}
