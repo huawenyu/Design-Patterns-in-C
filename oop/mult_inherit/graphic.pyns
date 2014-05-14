@@ -1,0 +1,19 @@
+{'type':'node', 'id':'A', 'attrs':'', 'meths':'+ A()|~ _destructor()|~ free()|~ do_this()|~ do_that()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'A_B1', 'attrs':'', 'meths':'+ A_B1()|~ _destructor(A)|~ free(A)|~ do_this(A)|~ do_that(A)', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'A_B2', 'attrs':'', 'meths':'+ A_B2()|~ _destructor(A)|~ free(A)|~ do_this(A)|~ do_that(A)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'A_B3', 'attrs':'', 'meths':'+ A_B3()|~ _destructor(A)|~ free(A)|~ do_this(A)|~ do_that(A)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'node', 'id':'M', 'attrs':'', 'meths':'+ M()|~ _destructor()|~ free()|~ put_here()|~ put_there()', 'x':241, 'y':241, 'width':1, 'height':1}
+{'type':'node', 'id':'M_N', 'attrs':'', 'meths':'+ M_N()', 'x':301, 'y':301, 'width':1, 'height':1}
+{'type':'node', 'id':'P', 'attrs':'', 'meths':'+ P()|~ _destructor()|~ free()|=0|=0', 'x':361, 'y':361, 'width':1, 'height':1}
+{'type':'node', 'id':'P_Q', 'attrs':'', 'meths':'+ P_Q()|~ _destructor(P)|~ free(P)|~ jump_up(P)|~ jump_down(P)', 'x':421, 'y':421, 'width':1, 'height':1}
+{'type':'node', 'id':'me', 'attrs':'', 'meths':'+ me()', 'x':481, 'y':481, 'width':1, 'height':1}
+{'type':'edge', 'id':'A_B1_to_A', 'source':'A_B1', 'target':'A', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'A_B2_to_A', 'source':'A_B2', 'target':'A', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'A_B3_to_A', 'source':'A_B3', 'target':'A', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'M_N_to_M', 'source':'M_N', 'target':'M', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'P_Q_to_P', 'source':'P_Q', 'target':'P', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'me_to_A_B1', 'source':'me', 'target':'A_B1', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'me_to_A_B2', 'source':'me', 'target':'A_B2', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'me_to_A_B3', 'source':'me', 'target':'A_B3', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'me_to_M_N', 'source':'me', 'target':'M_N', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'me_to_P_Q', 'source':'me', 'target':'P_Q', 'uml_edge_type':'generalisation'}
