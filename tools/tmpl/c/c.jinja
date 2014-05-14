@@ -17,7 +17,7 @@
 	{%- if includes -%}
 		{%- for one_include in includes %}{% if one_include is contain('.') %}
 #include "{{ one_include }}"
-		{% endif %}{%- endfor -%}
+		{%- endif -%}{%- endfor -%}
 	{%- endif -%}
 {% endblock %}
 
@@ -37,6 +37,11 @@ static struct {{ name }}_ops {{ name }}_ops = {
 };
 {%- endblock -%}
 
+{##################################}
+{%- macro fetch_ops_name(name, super_idx, vtable_idx) -%}
+{{ name }}_ops{%- if super_idx > 1 -%}_{{ super_idx }}{%- endif -%}{%- if vtable_idx > 1 -%}_{{ vtable_idx }}{%- endif -%}
+{%- endmacro -%}
+{##################################}
 
 {%- block supers -%}{%- if supers -%}
 {%- for parent_name,parent_vtables in supers.iteritems() -%}
@@ -47,7 +52,7 @@ static struct {{ name }}_ops {{ name }}_ops = {
 		{%- if outer_loop.index > 1 -%}{%- set func_postfix = outer_loop.index -%}{%- endif -%}
 	{{- func.macro_loop_functions(trace,name,vtable_class_detail['virtuals'],'virtuals',mode='impl-print',abstract_name=vtable_class_name,abstract_path=vtable_class_detail['path'],qualifier='static',postfix=func_postfix) }}
 {# parent ops #}
-static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
+static struct {{ vtable_class_name }}_ops {{ fetch_ops_name(vtable_class_name, outer_loop.index, loop.index) }} = {
 	{{- func.macro_loop_functions(trace,name,vtable_class_detail['virtuals'],'virtuals',mode='assign',abstract_name=vtable_class_name,postfix=func_postfix) }}
 };
 {# end parent ops #}
@@ -85,7 +90,7 @@ static struct {{ vtable_class_name }}_ops {{ vtable_class_name }}_ops = {
 	{%- else -%}CLASS_OPS_INIT
 	{%- endif -%}
 
-({{ name }}->{{ vtable_class_detail['path'] }}.ops, {{ vtable_class_name }}_ops
+({{ name }}->{{ vtable_class_detail['path'] }}.ops, {{ fetch_ops_name(vtable_class_name, outer_loop.index, loop.index) }}
 
 				{%- if vtable_class_detail['_have_static_var'] -%}, {{ vtable_class_detail['_have_static_var'] }}{%- endif -%});
 			{%- endfor -%}

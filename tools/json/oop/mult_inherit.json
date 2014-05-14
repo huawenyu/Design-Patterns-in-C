@@ -1,27 +1,68 @@
 {
+"file_note": "True",
+"trace":     "True",
+"sumarry":   "Show Mutilple Inheritance.",
+
 "classes": {
-	"employee":{
+	"A":{
+		"comment":"show override",
+		"enable_super":"True",
 		"members": [
-			["virtual",  "wage",  "void"],
-			["virtual",  "level", "void"],
-			["var", "wage",  "int"],
-			["var", "level", "int"]
+			["virtual",  "do_this", "void"],
+			["virtual",  "do_that", "void"],
 		],
-		"enable_destructor":"True"
+
+		"inheritances":{
+			"A_B1, A_B2, A_B3": {
+				"members": [
+					["override", "<ALL>"]
+				],
+			},
+		},
 	},
-	"person":{
+
+	"M":{
+		"comment":"show none-override",
+		"enable_super":"True",
 		"members": [
-			["virtual",  "name", "void", ""],
-			["virtual",  "age",  "void", ""],
-			["var", "name", "char", "[32]"],
-			["var", "age",  "int",  ""]
-		]
+			["virtual",  "put_here",  "void"],
+			["virtual",  "put_there", "void"],
+		],
+		"inheritances":{
+			"M_N": {
+			},
+		},
 	},
-	"teacher":{
-		"supers": ["person", "employee"],
+
+	"P":{
+		"comment":"show pure virtual",
+		"enable_super":"True",
 		"members": [
-			["override", "<ALL>"]
-		]
+			["pure_virtual",  "jump_up",  "void"],
+			["pure_virtual",  "jump_down", "void"],
+		],
+		"inheritances":{
+			"P_Q": {
+				"members": [
+					["override", "<ALL>"]
+				],
+			},
+		},
+	},
+
+	"me":{
+		"comment":"",
+		"supers":["A_B1", "A_B2", "A_B3", "M_N", "P_Q"],
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["me"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
 	}
 }
 }

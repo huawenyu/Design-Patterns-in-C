@@ -25,13 +25,14 @@
 	"subject":{
 		"comment": "",
 		"includes":["observer"],
+		"enable_super":"True",
 		"members": [
 			["virtual",  "register_observer",  "int",  "struct observer *obs"],
 			["virtual",  "remove_observer",    "int",  "struct observer *obs"],
-			["virtual",  "notify_observers",   "int",  "struct observer *obs"],
+			["virtual",  "notify_observers",   "int",  "char *operation, char *record"],
 
-			["var",      "obs", "struct observer *obs", "[32]", "",  "private"],
-			["var",      "obs_sz", "int", "", "",  "private"],
+			["var",      "obs", "struct observer *", "[32]", "private"],
+			["var",      "obs_sz", "int", "", "private"],
 		],
 
 		"inheritances": {

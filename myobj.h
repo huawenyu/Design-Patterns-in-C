@@ -134,12 +134,12 @@
 	CLASS_OPS_INIT_WITH_SUPER(ptr, ops, __super, offsetof(typeof(ops), static_member))
 
 #define CLASS_OPS_INIT_WITH_SUPER(ptr, ops, member, sz) \
-	typeof(ptr) l_super = ptr; \
+	typeof(ptr) __CLASS_CONCAT_2(l_super,__LINE__) = ptr; \
 	_Static_assert((sz) == sizeof((ops).member) + offsetof(typeof(ops), member), \
 			_STR_MYOBJ_PRE_TAG_  __CLASS_WHERE ":" #ops "." #member " should be the last element with order (ops,super[,static])," \
 			" <OR> should be init with CLASS_OPS_INIT_SUPER_WITH_FIRST_STATIC()"); \
-	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, l_super) \
-	assert(l_super != &ops && "dead-loop: super pointer-to itself"); \
+	__CLASS_OPS_INIT_WITH_MEMBER(ptr, ops, offsetof(typeof(ops), member), member, __CLASS_CONCAT_2(l_super,__LINE__)) \
+	assert(__CLASS_CONCAT_2(l_super,__LINE__) != &ops && "dead-loop: super pointer-to itself"); \
 	ptr = &ops;
 
 /**Call super method
@@ -158,25 +158,25 @@
  * @super pos.super member name
  */
 #define CLASS_SUPER_OPS(ptr, function, ops, super, ...) do{ \
-	typeof((ptr)->ops) l_ops = (ptr)->ops; \
+	typeof((ptr)->ops) __CLASS_CONCAT_2(l_ops,__LINE__) = (ptr)->ops; \
 	assert((ptr)->ops->super && "invalid super pointer: check whether init with CLASS_OPS_INIT_SUPER()"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
 		(ptr)->ops->function(ptr, ##__VA_ARGS__); \
 	} \
-	(ptr)->ops = l_ops; \
+	(ptr)->ops = __CLASS_CONCAT_2(l_ops,__LINE__); \
 }while(0)
 
 #define CLASS_SUPER_OPS_RTN(ptr, function, rtn_type, ops, super, ...) ({ \
-	rtn_type __158__super__ops__call__rtn__; \
+	rtn_type __CLASS_CONCAT_2(l_super_rtn,__LINE__); \
 	typeof((ptr)->ops) l_ops = (ptr)->ops; \
 	assert((ptr)->ops->super && "invalid super pointer: check whether init with CLASS_OPS_INIT_SUPER()"); \
 	if ((ptr)->ops->super) { \
 		(ptr)->ops = (ptr)->ops->super; \
-		__158__super__ops__call__rtn__ = (ptr)->ops->function(ptr, ##__VA_ARGS__); \
+		__CLASS_CONCAT_2(l_super_rtn,__LINE__) = (ptr)->ops->function(ptr, ##__VA_ARGS__); \
 	} \
 	(ptr)->ops = l_ops; \
-	__158__super__ops__call__rtn__; \
+	__CLASS_CONCAT_2(l_super_rtn,__LINE__); \
 })
 
 #endif /* __MY_OBJ_H__ */

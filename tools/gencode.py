@@ -108,74 +108,68 @@ def flush_unused_and_makeup(myclasses_array_dict):
 				one_myclass[need_wrap] = textwrap_with_code(one_myclass[need_wrap])
 
 
-# find function's protocol from super's vtable
-# @find_the_supers begin search from this class's supers
-# @is_a_class come from override's type field, means the vtable should search first from is_a_class
-# @my_direct_parents must be contain in this_class's supers
-def find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, find_the_supers, is_a_class, my_direct_parents):
-	one_class = convert_to_class(myclasses_array_dict, find_the_supers)
-	for super_name in one_class[const.m_dict['super']].keys():
-		my_direct_parents.append(super_name)
-		one_super = convert_to_class(myclasses_array_dict, super_name)
-
-		# find vtable protocol in my supers, copy info into my class
-		my_supers = my_class[const.m_dict['super']]
-		#function = ['public', 'void', 'do_something', '']
-		for one_virtual in one_super[const.m_dict['virtual']]:
-			#   * if name matched, copy
-			#   * if my function name is <ALL>, copy all vtable
-			#   * if vtable function name is 'destructor & free', copy
-			if (func_name == const.override_all \
-			    or func_name == one_virtual[const.func.name] \
-			    or const.member_destructor[const.func.name] == one_virtual[const.func.name] \
-			    or const.member_free[const.func.name] == one_virtual[const.func.name] \
-			   ) \
-			   and len(my_direct_parents) > 0:
-				# use direct parent as key
-				if not my_supers.has_key(my_direct_parents[0]):
-					my_supers[my_direct_parents[0]] = odict()
-
-				# the value is function's array
-				if not my_supers[my_direct_parents[0]].has_key(one_super['name']):
-					my_supers[my_direct_parents[0]][one_super['name']] = odict()
-
-				my_supers[my_direct_parents[0]][one_super['name']]['path'] = '.'.join(my_direct_parents)
-				my_supers[my_direct_parents[0]][one_super['name']][const.control_super] = False
-				if not my_supers[my_direct_parents[0]][one_super['name']].has_key(const.m_dict['virtual']):
-					my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']] = []
-				my_supers[my_direct_parents[0]][one_super['name']][const.m_dict['virtual']].append(one_virtual)
-
-				if (func_name == one_virtual[const.func.name]):
-					return True
-
-		if find_virtual_prototype_by_name(my_class, func_name, myclasses_array_dict, super_name, is_a_class, my_direct_parents):
-			return True
-		my_direct_parents.pop()
-	return False
-
-
 def parse_override_function(myclasses_array_dict):
-	for class_name, one_myclass in myclasses_array_dict.iteritems():
-		# if override_all, flush the others
-		for override in one_myclass[const.m_dict['override']]:
-			if override[const.func.name] == const.override_all:
-				one_myclass[const.m_dict['override']] = []
-				one_myclass[const.m_dict['override']].append(override)
+	while True:
+		should_be_continue = False
+		for class_name, one_myclass in myclasses_array_dict.iteritems():
+			my_supers = one_myclass[const.m_dict['super']]
 
-		# find override functions prototype
-		for override in one_myclass[const.m_dict['override']]:
-			if not find_virtual_prototype_by_name(one_myclass, \
-			  override[const.func.name], myclasses_array_dict, \
-			  one_myclass['name'], override[const.func.type], []):
-				if override[const.func.name] != const.override_all:
-					raise Exception('class *{0}* override function *{1}* not exist in *{2}* and the supers'.\
-						format(one_myclass['name'], override[const.func.name], override[const.func.type]))
+			override_set = set()
+			if not one_myclass.has_key(const.override_all):
+				one_myclass[const.override_all] = False
+				for over_function in one_myclass[const.m_dict['override']]:
+					if over_function[const.func.name] == const.override_all:
+						one_myclass[const.override_all] = True
+						break
+					override_set.add(over_function[const.func.name])
+
+			for super_name in my_supers.keys():
+				super_class = convert_to_class(myclasses_array_dict, super_name)
+				# create new inherit-vtable
+				if (not my_supers[super_name].has_key(super_name)) \
+					and super_class[const.m_dict['virtual']]:
+					should_be_continue = True
+					my_supers[super_name][super_name] = odict()
+					my_supers[super_name][super_name]['path'] = super_name
+					my_supers[super_name][super_name][const.control_super] = False
+					v_func_list = []
+					if not my_supers[super_name][super_name].has_key(const.m_dict['virtual']):
+						my_supers[super_name][super_name][const.m_dict['virtual']] = v_func_list
+
+					# check override function
+					for v_function in super_class[const.m_dict['virtual']]:
+						if one_myclass[const.override_all] \
+							or v_function[const.func.name] in override_set:
+							v_func_list.append(v_function)
+
+				# clone inherit-vtable from supers
+				super2_supers = super_class[const.m_dict['super']]
+				for super2_name, super2_class in super2_supers.iteritems():
+					for super2_vtable_name, super2_vtable in super2_class.iteritems():
+						if not my_supers[super_name].has_key(super2_vtable_name):
+							should_be_continue = True
+							vtable_class = convert_to_class(myclasses_array_dict, super2_vtable_name)
+							my_supers[super_name][super2_vtable_name] = odict()
+							my_supers[super_name][super2_vtable_name]['path'] = super_name + '.' + super2_vtable['path']
+							my_supers[super_name][super2_vtable_name][const.control_super] = False
+							v_func_list = []
+							if not my_supers[super_name][super2_vtable_name].has_key(const.m_dict['virtual']):
+								my_supers[super_name][super2_vtable_name][const.m_dict['virtual']] = v_func_list
+
+							# check override function
+							for v_function in vtable_class[const.m_dict['virtual']]:
+								if v_function[const.func.name] in override_set:
+									v_func_list.push(v_function)
+
+		if not should_be_continue:
+			break
 
 
 def parse_helper_flag(myclasses_array_dict):
+	#1. const.control_vtable
 	for class_name, one_myclass in myclasses_array_dict.iteritems():
 		'''
-		"_have_vtable_new" is auto-gen field used to control code-gen
+		it's auto-gen field used to control code-gen
 		    - means the class add new virtual function or static-member-variable itself
 		    - The generated code should have a new vtable (for C code)
 		'''
@@ -202,7 +196,7 @@ def parse_helper_flag(myclasses_array_dict):
 									vtable[const.control_static_var] = variable[const.func.name]
 									break # exit find first static var
 
-	# const.control_super
+	#1. const.control_super
 	while True:
 		should_be_continue = False
 		for class_name, one_myclass in myclasses_array_dict.iteritems():
@@ -226,7 +220,7 @@ def parse_helper_flag(myclasses_array_dict):
 				* if one class config_super, change it's super all have super
 			'''
 
-			# parse 1-times for control_super
+			# parse 1-times for self's control_super
 			if not one_myclass[const.control_super]:
 				if one_myclass[const.m_dict['super']]: # As derive class
 					for super_name in one_myclass[const.m_dict['super']].keys():
@@ -243,7 +237,7 @@ def parse_helper_flag(myclasses_array_dict):
 							one_myclass[const.control_super] = True
 							should_be_continue = True
 
-		# parse 2-times for control_super: some flags should re-scan after 1-times
+		# parse 2-times for supers's control_super
 		for class_name, one_myclass in myclasses_array_dict.iteritems():
 			if one_myclass[const.m_dict['super']]: # As derive class
 				for super_name,super_class in one_myclass[const.m_dict['super']].iteritems():
@@ -257,9 +251,8 @@ def parse_helper_flag(myclasses_array_dict):
 								vtable_class[const.control_super] = True
 								should_be_continue = True
 
-							# sync vtable's flag
-							if vtable_class[const.control_super]:
-								vtable[const.control_super] = True
+						# sync vtable's flag
+						vtable[const.control_super] = vtable_class[const.control_super]
 
 		if not should_be_continue:
 			break
