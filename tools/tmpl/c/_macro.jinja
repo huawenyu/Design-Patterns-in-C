@@ -223,12 +223,13 @@ struct{{- SPACE -}}{{- args.first_arg_type -}}{{- SPACE -}}*{{- args.first_arg_t
 	{%- set args={'name':name,  'abstract_path':abstract_path,
 		'first_arg_type':first_arg_type,
 		'category':category,
-		'req_pure':pure,    'req_static':static,                 'req_scope':scope,
+		'req_pure':pure,    'req_static':static, 'req_scope':scope,
 		'insert_qualifier':qualifier,
-		'func_scope':func_scope,'func_is_static':func_is_static, 'func_rtn_type':func_rtn_type,
-		'func':new_func,        'func_postfix':postfix,          'func_format_str':format_str,
-		'func_params':func_params,'func_args':func_args,
-		'func_comment':func_comment,'func_pseudocode':func_pseudocode,
+		'func_is_pure':func_is_pure, 'func_is_static':func_is_static,
+		'func_scope':func_scope,     'func_rtn_type':func_rtn_type,
+		'func':new_func,             'func_postfix':postfix,          'func_format_str':format_str,
+		'func_params':func_params,   'func_args':func_args,
+		'func_comment':func_comment, 'func_pseudocode':func_pseudocode,
 		'trace':trace,
 		} -%}
 

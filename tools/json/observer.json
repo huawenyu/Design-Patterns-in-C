@@ -9,14 +9,12 @@
 "classes": {
 	"observer":{
 		"comment":"As listener, we can have many this kind objects.",
-		"includes":["subject"],
 		"members": [
 			["virtual", "update",  "void", "char *operation, char *record"],
 		],
 
 		"inheritances": {
 			"view":{
-				"includes":["animal_do"],
 				"members": [
 					["override",  "<ALL>"],
 				],
@@ -28,16 +26,18 @@
 		"comment": "",
 		"includes":["observer"],
 		"members": [
-			["virtual",  "register_observer",  "void",  "struct observer *obs"],
-			["virtual",  "remove_observer",    "void",  "struct observer *obs"],
-			["virtual",  "notify_observers",   "void",  "struct observer *obs"],
+			["virtual",  "register_observer",  "int",  "struct observer *obs"],
+			["virtual",  "remove_observer",    "int",  "struct observer *obs"],
+			["virtual",  "notify_observers",   "int",  "struct observer *obs"],
+
+			["var",      "obs", "struct observer *obs", "[32]", "",  "private"],
+			["var",      "obs_sz", "int", "", "",  "private"],
 		],
 
 		"inheritances": {
 			"database":{
 				"members": [
-					["override",  "<ALL>"],
-					["method", "edit_record",  "void", "String operation, String record"],
+					["method", "edit_record",  "void", "char *operation, char *record"],
 
 					["var", "operation",  "char *", "", "private"],
 					["var", "record",     "char *", "", "private"],
