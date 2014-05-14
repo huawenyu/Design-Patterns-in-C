@@ -1,0 +1,10 @@
+{'type':'node', 'id':'observer', 'attrs':'', 'meths':'+ observer()|~ update()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'view', 'attrs':'', 'meths':'+ view()|~ update(observer)', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'subject', 'attrs':'- obs|- obs_sz', 'meths':'+ subject()|~ register_observer()|~ remove_observer()|~ notify_observers()', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'database', 'attrs':'- operation|- record', 'meths':'+ database()|+ edit_record()', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'edge', 'id':'view_to_observer', 'source':'view', 'target':'observer', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'subject_to_observer', 'source':'subject', 'target':'observer', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'subject_to_observer', 'source':'subject', 'target':'observer', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'subject_to_observer', 'source':'subject', 'target':'observer', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'subject_to_observer', 'source':'subject', 'target':'observer', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'database_to_subject', 'source':'database', 'target':'subject', 'uml_edge_type':'generalisation'}
