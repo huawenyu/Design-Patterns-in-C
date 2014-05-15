@@ -114,6 +114,7 @@ def parse_override_function(myclasses_array_dict):
 		for class_name, one_myclass in myclasses_array_dict.iteritems():
 			my_supers = one_myclass[const.m_dict['super']]
 
+			# setup self's override set
 			override_set = set()
 			if not one_myclass.has_key(const.override_all):
 				one_myclass[const.override_all] = False
@@ -122,7 +123,11 @@ def parse_override_function(myclasses_array_dict):
 						one_myclass[const.override_all] = True
 						break
 					override_set.add(over_function[const.func.name])
+					# also snap super's free|destructor
+					override_set.add(const.member_destructor[const.func.name])
+					override_set.add(const.member_free[const.func.name])
 
+			# traverse all super's vtable, try-match my override-func
 			for super_name in my_supers.keys():
 				super_class = convert_to_class(myclasses_array_dict, super_name)
 				# create new inherit-vtable
