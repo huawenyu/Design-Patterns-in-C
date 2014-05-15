@@ -1,0 +1,12 @@
+{'type':'node', 'id':'machine', 'attrs':'- _state', 'meths':'+ init()|+ on()|+ off()|+ set_state()|+ get_state()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'state', 'attrs':'', 'meths':'+ state()|~ _destructor()|~ free()|~ on()|~ off()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'state_on', 'attrs':'', 'meths':'+ state_on()|~ off(state)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'state_off', 'attrs':'', 'meths':'+ state_off()|~ on(state)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'edge', 'id':'machine_to_state', 'source':'machine', 'target':'state', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'machine_to_state', 'source':'machine', 'target':'state', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'machine_to_state', 'source':'machine', 'target':'state', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'machine_to_state', 'source':'machine', 'target':'state', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'state_to_machine', 'source':'state', 'target':'machine', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'state_to_machine', 'source':'state', 'target':'machine', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'state_on_to_state', 'source':'state_on', 'target':'state', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'state_off_to_state', 'source':'state_off', 'target':'state', 'uml_edge_type':'generalisation'}

@@ -1,0 +1,54 @@
+{
+"file_note": "True",
+"trace":     "True",
+"note":      "There are really two key aspects to consider in working with the state pattern: enumeration and transition. Enumeration simply means identifying the set of possible states (e.g. days of the week), or more abstractly the types of states (i.e. meta states) such as starting, ending, and in between for a workflow engine.Transition means deciding how to model movement between states where this is typically either done by capturing all possible transitions in a tabular representation (i.e. Finite State Machine) or make each state know its possible \"transitions\" to other states.",
+
+"classes": {
+	"machine":{
+		"comment":"As state's context.",
+		"members": [
+			["init",   "init","void", "struct state *state"],
+			["method", "on",  "void", ""],
+			["method", "off", "void", ""],
+
+			["property", "state", "struct state *"],
+		],
+	},
+
+	"state":{
+		"comment": "ops's transition",
+		"enable_super":"True",
+		"enable_destructor":"True",
+		"members": [
+			["virtual",  "on",  "void",  "struct machine *fsm", "", "forward declare machine"],
+			["virtual",  "off", "void",  "struct machine *fsm", "", "forward declare machine"],
+		],
+
+		"inheritances": {
+			"state_on":{
+				"includes":["machine"],
+				"members": [
+					["override",  "off"],
+				],
+			},
+			"state_off":{
+				"includes":["machine"],
+				"members": [
+					["override",  "on"],
+				],
+			},
+		},
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["state_on", "state_off", "machine"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}
