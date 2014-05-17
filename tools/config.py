@@ -22,6 +22,7 @@ const.m_dict              = odict([\
                             \
                             ('method'       ,'methods'),  \
                             ('static_method','methods'),  \
+                            ('inline_method','inlines'),  \
                             \
                             ('virtual'      ,'virtuals'), \
                             ('pure_virtual' ,'virtuals'), \

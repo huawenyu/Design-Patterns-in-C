@@ -81,3 +81,7 @@ struct {{ name }}_ops {
 {%- endif -%}
 {%- endblock -%}
 
+{%- block inline_method -%}
+	{{- func.macro_loop_functions(trace,name,inlines,'inlines',mode='impl-print',scope='public', qualifier='static inline') }}
+{%- endblock -%}
+

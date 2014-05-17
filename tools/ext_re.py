@@ -54,6 +54,12 @@ def is_contain(s, sub_str):
     else:
         return False
 
+def is_startswith(s, sub_str):
+    if s.startswith(sub_str):
+        return True
+    else:
+        return False
+
 def is_re_match(s, rs, flagstr=None):
     reflags = get_re_flags(flagstr)
     if re.search(rs, s, reflags):
@@ -68,4 +74,7 @@ def filter_re_sub(s, rs, repl, flagstr=None, count=0):
 
 def filter_re_escape(s):
     return re.escape(s)
+
+def filter_substr(s, pos):
+    return s[pos:]
 

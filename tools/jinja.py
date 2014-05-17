@@ -82,8 +82,10 @@ def render_class_to_file(templateVars, code_style, output_dir):
 	#templateEnv.keep_trailing_newline = True
 	templateEnv.tests['re_match'] = ext_re.is_re_match
 	templateEnv.tests['contain'] = ext_re.is_contain
+	templateEnv.tests['startswith'] = ext_re.is_startswith
 	templateEnv.filters['re_sub'] = ext_re.filter_re_sub
 	templateEnv.filters['re_escape'] = ext_re.filter_re_escape
+	templateEnv.filters['substr'] = ext_re.filter_substr
 
 	os.path.walk(tmpl_dir, render_one_to_file, (templateEnv,templateVars,code_style,output_dir))
 

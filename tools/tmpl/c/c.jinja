@@ -21,6 +21,10 @@
 	{%- endif -%}
 {% endblock %}
 
+{%- block inline_method -%}
+{{- func.macro_loop_functions(trace,name,inlines,'inlines',mode='impl-print',scope='private', qualifier='static inline') }}
+{%- endblock -%}
+
 {%- block private_method -%}
 {{ func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='private',qualifier='static') }}
 {%- endblock -%}
@@ -121,3 +125,4 @@ static struct {{ vtable_class_name }}_ops {{ fetch_ops_name(vtable_class_name, o
 {%- block public_method -%}
 	{{- func.macro_loop_functions(trace,name,methods,'methods',mode='impl-print',scope='public') }}
 {%- endblock -%}
+

@@ -43,7 +43,10 @@ ref:	{%- import '_macro.jinja' as func -%}
 
 
 {##################################}
-{%- macro macro_function_impl_as_printf(args) %}
+{%- macro macro_function_impl_as_printf(args) -%}
+	{%- set l_have_return = [] -%}
+
+	{# destructor #}
 	{%- if args.func == '_destructor' %}
 	TODO(Please add our **destructor** code here ...)
 		{%- if args.abstract_path %}
@@ -56,7 +59,9 @@ ref:	{%- import '_macro.jinja' as func -%}
 		{%- else %}
 	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
-		{%- endif %}
+		{%- endif -%}
+
+	{# free #}
 	{%- elif args.func == 'free' %}
 	TODO(Please add our **free** code here ...)
 		{%- if args.abstract_path %}
@@ -75,7 +80,44 @@ ref:	{%- import '_macro.jinja' as func -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
 	free({{ args.first_arg_type }});
 	*/
-		{%- endif %}
+		{%- endif -%}
+
+
+	{# get_property #}
+	{%- elif args.func is startswith('get_') %}
+	{%- do l_have_return.append(1) %}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+
+		{%- if args.abstract_path %}
+	/*
+	struct {{ args.name }} *a_{{ args.name }} = container_of({{- args.first_arg_type -}}
+		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
+	return a_{{ args.name }}->{{ args.func|substr(3) }};
+	*/
+		{%- else %}
+	return {{ args.name }}->{{ args.func|substr(3) }};
+		{%- endif -%}
+
+
+	{# set_property #}
+	{%- elif args.func is startswith('set_') %}
+	{%- do l_have_return.append(1) %}
+	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
+	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+
+		{%- if args.abstract_path %}
+	/*
+	struct {{ args.name }} *a_{{ args.name }} = container_of({{- args.first_arg_type -}}
+		, typeof(*a_{{ args.name }}), {{ args.abstract_path }});
+	a_{{ args.name }}->{{ args.func|substr(3) }} = {{ args.func|substr(4) }};
+	*/
+		{%- else %}
+	{{ args.name }}->{{ args.func|substr(3) }} = {{ args.func|substr(4) }};
+		{%- endif -%}
+
+
+	{# default #}
 	{%- else %}
 		{%- if args.abstract_path %}
 	/* struct {{ args.name }} *a_{{ args.name }} = container_of({{- args.first_arg_type -}}
@@ -84,15 +126,20 @@ ref:	{%- import '_macro.jinja' as func -%}
 		{%- endif %}
 	{% if not args.trace %}printf{% else %}_MY_TRACE_STR{% endif -%}
 	("{{ args.name }}::{{ args.func ~ args.func_postfix }}()\n");
+
 	{%- endif -%}
 
+	{# after functions: pseudocode, return #}
 	{%- if args.func_pseudocode %}
 	/** PSEUDOCODE
-{{ args.func_pseudocode|indent(4, true) }}
+		{{- args.func_pseudocode|indent(4, true) }}
 	*/
 	{%- endif -%}
 
-	{{- macro_function_return_value(args) -}}
+	{%- if not l_have_return -%}
+	{{ EMPTY }}{{ macro_function_return_value(args) }}
+	{%- endif -%}
+
 {%- endmacro -%}
 
 
