@@ -1,0 +1,18 @@
+{'type':'node', 'id':'data_node', 'attrs':'+ next', 'meths':'+ data_node()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'iterator', 'attrs':'', 'meths':'+ iterator()|~ first()|~ next()|~ end()|~ current()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'stack_array_iter', 'attrs':'', 'meths':'+ stack_array_iter()|~ first(iterator)|~ next(iterator)|~ end(iterator)|~ current(iterator)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'stack_link_iter', 'attrs':'', 'meths':'+ stack_link_iter()|~ first(iterator)|~ next(iterator)|~ end(iterator)|~ current(iterator)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'node', 'id':'stack', 'attrs':'', 'meths':'+ stack()|~ push()|~ pop()|~ is_empty()|~ is_full()|~ create_iter()', 'x':241, 'y':241, 'width':1, 'height':1}
+{'type':'node', 'id':'stack_array', 'attrs':'- arr|- top', 'meths':'+ stack_array()|~ push(stack)|~ pop(stack)|~ is_empty(stack)|~ is_full(stack)|~ create_iter(stack)', 'x':301, 'y':301, 'width':1, 'height':1}
+{'type':'node', 'id':'stack_link', 'attrs':'- link', 'meths':'+ stack_link()|~ push(stack)|~ pop(stack)|~ is_empty(stack)|~ is_full(stack)|~ create_iter(stack)', 'x':361, 'y':361, 'width':1, 'height':1}
+{'type':'edge', 'id':'data_node_to_data_node*', 'source':'data_node', 'target':'data_node*', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'iterator_to_data_node', 'source':'iterator', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_array_iter_to_iterator', 'source':'stack_array_iter', 'target':'iterator', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'stack_link_iter_to_iterator', 'source':'stack_link_iter', 'target':'iterator', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'stack_to_data_node', 'source':'stack', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_to_data_node', 'source':'stack', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_to_iterator', 'source':'stack', 'target':'iterator', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_array_to_data_node', 'source':'stack_array', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_array_to_stack', 'source':'stack_array', 'target':'stack', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'stack_link_to_data_node', 'source':'stack_link', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'stack_link_to_stack', 'source':'stack_link', 'target':'stack', 'uml_edge_type':'generalisation'}

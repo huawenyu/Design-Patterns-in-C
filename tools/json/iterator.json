@@ -1,0 +1,91 @@
+{
+"file_note":"True",
+"trace":    "True",
+"note":     """
+			<br> Add iterator to the container:
+			<br>    - Design an \"iterator\" class for the \"container\" class
+			<br>    - Add a createIterator() member to the container class
+			<br>    - Clients ask the container object to create an iterator object
+			<br>    - Clients use the first(), isDone(), next(), and currentItem() protocol
+			""",
+
+"classes": {
+	"data_node":{
+		"comment":"the abstract data",
+		"members": [
+			["var", "next",  "struct data_node*", "", "", "if array, point-to me"],
+		],
+	},
+	"iterator":{
+		"comment":"Take traversal-of-a-collection functionality out of the collection and promote it to \"full object status\".",
+		"includes":["data_node"],
+		"members": [
+			["virtual", "first",  "void"],
+			["virtual", "next",   "void"],
+			["virtual", "is_end", "int", "", "", "@return bool" ],
+			["virtual", "current","struct data_node *"],
+		],
+
+		"inheritances": {
+			"stack_array_iter":{
+				"includes": ["stack_array"],
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init",         "void", "struct stack_array *stack_array"],
+					["var",   "_stack_array", "struct stack_array *", "", "private"],
+					["var",   "_pos",          "int", "", "private", "As cursor of stack_array"],
+				],
+			},
+			"stack_link_iter":{
+				"includes": ["stack_link"],
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init",         "void", "struct stack_link *stack_link"],
+					["var",   "_stack_link",  "struct stack_link *", "", "private"],
+					["var",   "_current",      "struct data_node *", "", "private", "As cursor of stack_link"],
+				],
+			},
+		},
+	},
+
+	"stack":{
+		"comment": "Add a createIterator() member to the container class",
+		"includes":["iterator", "data_node"],
+		"enable_super":"True",
+		"members": [
+			["virtual",  "push",   "void", "struct data_node *node"],
+			["virtual",  "pop",    "struct data_node *"],
+			["virtual",  "is_empty",  "int",  "", "", "@return bool"],
+			["virtual",  "is_full",   "int",  "", "", "@return bool"],
+			["virtual",  "create_iter",   "struct iterator *"],
+		],
+
+		"inheritances": {
+			"stack_array":{
+				"members": [
+					["override",  "<ALL>"],
+					["var",       "arr", "struct data_node *", "[STACK_ARRAY_MAX]", "private", "#define STACK_ARRAY_MAX 32"],
+					["var",       "top", "int", "", "private"],
+				],
+			},
+			"stack_link":{
+				"members": [
+					["override",  "<ALL>"],
+					["var",       "link", "struct data_node", "", "private"],
+				],
+			},
+		},
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["stack_array", "stack_link", "stack_array_iter", "stack_link_iter"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+			"""
+			],
+		],
+	}
+}
+}
