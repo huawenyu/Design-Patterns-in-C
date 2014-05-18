@@ -1,0 +1,14 @@
+{'type':'node', 'id':'context', 'attrs':'- values', 'meths':'+ context()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'operand', 'attrs':'', 'meths':'+ operand()|~ traverse()|~ eval()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'variable', 'attrs':'+ _name', 'meths':'+ init()|~ traverse(operand)|~ eval(operand)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'number', 'attrs':'+ _val', 'meths':'+ init()|~ traverse(operand)|~ eval(operand)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'node', 'id':'expression', 'attrs':'+ _oper|+ _left|+ _right', 'meths':'+ init()|~ traverse(operand)|~ eval(operand)', 'x':241, 'y':241, 'width':1, 'height':1}
+{'type':'node', 'id':'caculator', 'attrs':'', 'meths':'+ caculator()|+ precedence()|+ convert_to_postfix()|+ build_syntax_tree()', 'x':301, 'y':301, 'width':1, 'height':1}
+{'type':'edge', 'id':'operand_to_context', 'source':'operand', 'target':'context', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'variable_to_operand', 'source':'variable', 'target':'operand', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'number_to_operand', 'source':'number', 'target':'operand', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'expression_to_operand', 'source':'expression', 'target':'operand', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'expression_to_operand', 'source':'expression', 'target':'operand', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'expression_to_operand', 'source':'expression', 'target':'operand', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'caculator_to_data_node', 'source':'caculator', 'target':'data_node', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'caculator_to_operand', 'source':'caculator', 'target':'operand', 'uml_edge_type':'composition'}

@@ -1,0 +1,84 @@
+{
+"file_note":"True",
+"trace":    "True",
+"note":     "Uses a class hierarchy to represent the grammar given.",
+
+"classes": {
+	"context":{
+		"comment":"Hold the variable's eval value",
+		"members": [
+			["method", "get_value",  "int", "char *name"],
+			["method", "put_value",  "void", "char *name", "int val"],
+			["var", "_names",  "char", "[32][32]", "private"],
+			["var", "_values", "int",  "[32]", "private"],
+		],
+	},
+	"operand":{
+		"comment":"<interface>",
+		"members": [
+			["virtual", "traverse",   "void", "int level"],
+			["virtual", "eval",  "int", "struct context *ctx"],
+		],
+
+		"inheritances": {
+			"variable":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init", "void", "char *name"],
+					["var",  "_name", "char *"],
+				],
+			},
+			"number":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init", "void", "int val"],
+					["var",  "_val", "int"],
+				],
+			},
+			"expression":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init", "void", "char oper"],
+					["var",  "_oper",  "char"],
+					["var",  "_left",  "struct operand *"],
+					["var",  "_right", "struct operand *"],
+				],
+			},
+		},
+	},
+
+	"caculator":{
+		"comment": "",
+		"includes":["variable", "expression", "number"],
+		"members": [
+			["static_method",  "precedence",   "int", "char a, char b", "", "@return bool"],
+			["static_method",  "convert_to_postfix",    "char *", "char *expr", "", "convert expr from in-fix to post-fix"],
+			["static_method",  "build_syntax_tree",  "struct operand *",  "char *tree"],
+		],
+	},
+
+
+	"test":{
+		"templates":["_test"],
+		"includes":["operand", "caculator", "context"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>System.out.println(\"celsi * 9 / 5 + thirty\");
+				<br>String postfix = convert_to_postfix(\"celsi * 9 / 5 + thirty\");
+				<br>System.out.println(postfix);
+				<br>Operand expr = build_syntax_tree(postfix);
+				<br>expr.traverse(1);
+				<br>System.out.println();
+				<br>HashMap < String, Integer > map = new HashMap < String, Integer > ();
+				<br>map.put(\"thirty\", 30);
+				<br>for (int i = 0; i <= 100; i += 10)
+				<br>{
+				<br>	map.put(\"celsi\", i);
+				<br>	System.out.println(\"C is \" + i + \",  F is \" + expr.evaluate(map));
+				<br>}
+			"""
+			],
+		],
+	}
+}
+}
