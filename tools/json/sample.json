@@ -1,0 +1,54 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+<br>The info will insert to every source file explaining the pattern's design details.
+<br>    We also can append lists like this:
+<br>      - list 1, give point one
+<br>          detail provide for point one
+<br>      - list 2, offer point two
+""",
+
+"classes": {
+	"class1":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method",        "showthis", "int",  "char *name"],
+			["static_method", "showthat", "int",  "char *name"],
+			["var",           "_count",   "int",  "", "private"],
+			["property",      "value",    "void"],
+		],
+	},
+	"base_class":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["virtual", "eval",  "int"],
+			["pure_virtual", "eval",  "int"],
+		],
+
+		"inheritances": {
+			"extend_calss1, extend_class2":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init", "void", "char *name"],
+					["var",  "_name", "char *"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["extend_calss1", "extend_calss2", "class1"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}

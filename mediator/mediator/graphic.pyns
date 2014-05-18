@@ -1,0 +1,14 @@
+{'type':'node', 'id':'mediator', 'attrs':'- _widget_one|- _widget_two', 'meths':'+ mediator()|+ register_widget_one()|+ register_widget_two()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'participant', 'attrs':'', 'meths':'+ participant()|=0', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'widget_one', 'attrs':'+ _mediator', 'meths':'+ init()|+ talk()|~ notify(participant)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'widget_two', 'attrs':'+ _mediator', 'meths':'+ init()|+ talk()|~ notify(participant)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'edge', 'id':'mediator_to_widget_one', 'source':'mediator', 'target':'widget_one', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'mediator_to_widget_two', 'source':'mediator', 'target':'widget_two', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'mediator_to_widget_one', 'source':'mediator', 'target':'widget_one', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'mediator_to_widget_one', 'source':'mediator', 'target':'widget_one', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'widget_one_to_mediator', 'source':'widget_one', 'target':'mediator', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'widget_one_to_mediator', 'source':'widget_one', 'target':'mediator', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'widget_one_to_participant', 'source':'widget_one', 'target':'participant', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'widget_two_to_mediator', 'source':'widget_two', 'target':'mediator', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'widget_two_to_mediator', 'source':'widget_two', 'target':'mediator', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'widget_two_to_participant', 'source':'widget_two', 'target':'participant', 'uml_edge_type':'generalisation'}

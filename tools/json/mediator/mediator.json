@@ -1,0 +1,72 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+<br>Use a mediator when the complexity of object communication begins to hinder object reusability.
+<br>    This type of complexity often appears in view instances, though it could really be anywhere.
+<br>    1. For example, using mediator to add log file functionality, it works like this:
+<br>      - Obj A tells the mediator it needs something done.
+<br>      - The mediator sends the message to various client objects.
+<br>      - Obj B does the thing Obj A needs, and sends an appropriate message back via the mediator.
+<br>      - Meanwhile, Obj C is also sent both messages by the mediator, and logs the results.
+<br>          That way, we can get user statistics from the log files.
+<br>      - Obj D could be an error checker as well, so that if Obj B responds that Obj A's request is impossible,
+<br>          Obj D could be the thing that reports that to the user.
+<br>          Errors can now be logged in a different file than regular activity,
+<br>          and could use some other means to behave (beeping, whatever) that Obj A shouldn't really concern itself with.
+<br>
+<br>    2. The following code assume that:
+<br>      At a highlevel, we have 2 Participants that want to talk so we need to setup a common interface to do so.
+<br>      - We create a method call Notify(message); that basically is our channel of communication.
+<br>      - To set things up we instantiate a mediator, and then instantiate both participants passing them the mediator.
+<br>      - The last step insetup, is to inject/set the mediators participants. In our case we just use simple setters.
+<br>      - When its time to communicate, each participant just calls the mediator, passes the message and self as a parameter.
+<br>      - Mediator see who contacted them, and then calls the opposite.
+""",
+
+"classes": {
+	"mediator":{
+		"comment":"As mediator, it should know the detail type of each participants which is injectted using DI.",
+		"includes":["widget_one", "widget_two"],
+		"members": [
+			["var",    "_widget_one",   "struct widget_one *",  "", "private"],
+			["var",    "_widget_two",   "struct widget_two *",  "", "private"],
+
+			["method", "register_widget_one", "void",  "struct widget_one *widget_one"],
+			["method", "register_widget_two", "void",  "struct widget_two *widget_two"],
+
+			["method", "talk", "char *", "struct participant *participant, char *msg", "", "mediator process the complex communication"],
+		],
+	},
+	"participant":{
+		"comment":"our channel of communication",
+		"includes":[],
+		"members": [
+			["pure_virtual", "notify",  "char *", "char *msg", "", "send a message, also get the response message"],
+		],
+
+		"inheritances": {
+			"widget_one, widget_two":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",   "init",      "void",   "struct mediator *mediator"],
+					["method", "talk",      "char *", "char *msg", "", "forward to mediator"],
+					["var",    "_mediator", "struct mediator *"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["widget_one", "widget_two", "mediator"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}
