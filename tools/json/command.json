@@ -1,0 +1,67 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+<br>The info will insert to every source file explaining the pattern's design details.
+<br>    We also can append lists like this:
+<br>      - list 1, give point one
+<br>          detail provide for point one
+<br>      - list 2, offer point two
+""",
+
+"classes": {
+	"light":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method", "turnon",  "void",],
+			["method", "turnoff", "void",],
+		],
+	},
+
+	"switcher":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method", "append",  "void", "struct command *cmd"],
+			["method", "execute",  "void",],
+
+			["var", "_commands_sz", "int",],
+			["var", "_commands", "struct command *", "[32]"],
+		],
+	},
+
+	"command":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["pure_virtual", "execute",  "void"],
+		],
+
+		"inheritances": {
+			"includes":["light"],
+			"flipup, flipdown":{
+				"members": [
+					["override",  "<ALL>"],
+					["init",  "init", "void", "struct light *light, int val"],
+
+					["var",  "_light", "struct light *"],
+					["var",  "_val", "int"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["flipup", "flipdown", "light", "switcher"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}

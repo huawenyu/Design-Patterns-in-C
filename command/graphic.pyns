@@ -1,0 +1,10 @@
+{'type':'node', 'id':'light', 'attrs':'', 'meths':'+ light()|+ turnon()|+ turnoff()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'command', 'attrs':'', 'meths':'+ command()|=0', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'flipup', 'attrs':'+ _light', 'meths':'+ init()|~ execute(command)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'flipdown', 'attrs':'+ _light', 'meths':'+ init()|~ execute(command)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'edge', 'id':'flipup_to_light', 'source':'flipup', 'target':'light', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'flipup_to_light', 'source':'flipup', 'target':'light', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'flipup_to_command', 'source':'flipup', 'target':'command', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'flipdown_to_light', 'source':'flipdown', 'target':'light', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'flipdown_to_light', 'source':'flipdown', 'target':'light', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'flipdown_to_command', 'source':'flipdown', 'target':'command', 'uml_edge_type':'generalisation'}
