@@ -1,0 +1,52 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+The Flyweight pattern is used to avoid the overhead of large numbers of very similar classes. There are cases in programming where it seems that you need to generate a very large number of small class instances to represent data. Sometimes you can greatly reduce the number of different classes that you need to instantiate if you can recognize that the instances are fundamentally the same except for a few parameters. If you can move those variables outside the class instance and pass them in as part of a method call, the number of separate instances can be greatly reduced by sharing them.
+""",
+
+"classes": {
+	"character_factory":{
+		"comment":"",
+		"includes":["character_a", "character_b", "character_c"],
+		"members": [
+			["method", "get_character", "struct character *",  "char c", "", "Uses lazy initialization"],
+			["var",    "_characters",   "character_dict",  "['Z'-'A'+1]", "private", "we should define this."],
+		],
+	},
+	"character":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["var", "symbol",  "char"],
+			["var", "size",    "int"],
+			["var", "width",   "int"],
+			["var", "height",  "int"],
+
+			["pure_virtual", "display",  "void", "int size"],
+		],
+
+		"inheritances": {
+			"character_a, character_b, character_c":{
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"comment":"Build a ducument with text",
+		"includes":[],
+		"templates":["_test"],
+		"includes":["character_factory", "character_a", "character_b", "character_c"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}

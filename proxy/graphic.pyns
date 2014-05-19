@@ -1,0 +1,6 @@
+{'type':'node', 'id':'subject', 'attrs':'', 'meths':'+ subject()|=0', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'real_subject', 'attrs':'', 'meths':'+ real_subject()|~ request(subject)', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'proxy', 'attrs':'+ _subject', 'meths':'+ proxy()|~ request(subject)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'edge', 'id':'real_subject_to_subject', 'source':'real_subject', 'target':'subject', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'proxy_to_real_subject', 'source':'proxy', 'target':'real_subject', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'proxy_to_subject', 'source':'proxy', 'target':'subject', 'uml_edge_type':'generalisation'}

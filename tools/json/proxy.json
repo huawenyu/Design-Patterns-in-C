@@ -1,0 +1,46 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+Provides a surrogate or placeholder for another object to control access to it.
+This structural code demonstrates the Proxy pattern which provides a representative object (proxy) that controls access to another similar object.
+""",
+
+"classes": {
+	"subject":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["pure_virtual", "request",  "void"],
+		],
+
+		"inheritances": {
+			"real_subject":{
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+			"proxy":{
+				"comment":"Proxy can delay creatting of the real-subject case by case.",
+				"includes":["real_subject"],
+				"members": [
+					["override",  "<ALL>"],
+					["var",  "_subject", "struct real_subject *"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["proxy"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}

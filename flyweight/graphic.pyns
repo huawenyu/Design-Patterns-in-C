@@ -1,0 +1,8 @@
+{'type':'node', 'id':'character_factory', 'attrs':'- _characters', 'meths':'+ character_factory()|+ get_character()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'character', 'attrs':'+ symbol|+ size|+ width|+ height', 'meths':'+ character()|=0', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'character_a', 'attrs':'', 'meths':'+ character_a()|~ display(character)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'character_b', 'attrs':'', 'meths':'+ character_b()|~ display(character)', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'node', 'id':'character_c', 'attrs':'', 'meths':'+ character_c()|~ display(character)', 'x':241, 'y':241, 'width':1, 'height':1}
+{'type':'edge', 'id':'character_a_to_character', 'source':'character_a', 'target':'character', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'character_b_to_character', 'source':'character_b', 'target':'character', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'character_c_to_character', 'source':'character_c', 'target':'character', 'uml_edge_type':'generalisation'}
