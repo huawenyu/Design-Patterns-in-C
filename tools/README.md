@@ -14,7 +14,7 @@ The files like following:
 ```
 ➜  Design-Patterns-in-C git:(master) tree tools
 tools
-|-- autogen_jinja2.py   <<< the entry script
+|-- gencode.py   <<< the entry script
 |-- const.py            <<<    implement const
 |-- odict.py            <<<    implement order diction
 |-- json                <<< the pattern describe files using json
@@ -167,14 +167,14 @@ tmpl
 ## Using jinja2 replace&combine the json-define-class-info and the Template
 
 ```
-$ ./autogen_jinja2.py --file json/factory-method.json 
+$ ./gencode.py --file json/factory-method.json 
 ```
 
 ## Check Result
 
 ```
-$ tree autogen_code 
-autogen_code
+$ tree _code 
+_code
 `-- factory_method
     |-- concrete_product_1.c
     |-- concrete_product_1.h
@@ -196,19 +196,20 @@ autogen_code
 
 ```
 $ cd tools  
-$ ./autogen_jinja2.py --file json/factory-method.json  
+$ ./gencode.py --file json/factory-method.json  
 ```
 
 ## Debug
 
 ```
-python /usr/lib64/python2.7/pdb.py autogen_jinja2.py  
+python -m pdb gencode.py --file json/command.json
 (Pdb) break            # set breakpoint  
-(Pdb) run -i 'json/factory-method.json'  
 (Pdb) c                # continue util breakpoint  
 (Pdb) s                # step into  
 (Pdb) n                # next  
 (Pdb) util 112         # continue util the line number  
+
+(Pdb) run --file 'json/factory-method.json'    <<< if want to debug another input file  
 ```
 
 # Requirement

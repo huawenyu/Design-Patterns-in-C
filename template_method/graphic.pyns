@@ -1,0 +1,5 @@
+{'type':'node', 'id':'template_method', 'attrs':'', 'meths':'+ template_method()|+ step_1()|+ step_3()|+ step_5()|+ execute()|=0|=0', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'method_a', 'attrs':'', 'meths':'+ method_a()|~ step_2(template_method)|~ step_4(template_method)', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'method_b', 'attrs':'', 'meths':'+ method_b()|~ step_2(template_method)|~ step_4(template_method)', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'edge', 'id':'method_a_to_template_method', 'source':'method_a', 'target':'template_method', 'uml_edge_type':'generalisation'}
+{'type':'edge', 'id':'method_b_to_template_method', 'source':'method_b', 'target':'template_method', 'uml_edge_type':'generalisation'}

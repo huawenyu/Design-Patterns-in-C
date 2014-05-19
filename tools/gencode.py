@@ -505,8 +505,10 @@ def convert_namespace_to_tree(def_path, input_dict):
 	mysuper[const.config_super] = 'False'
 	mysuper[const.config_destructor] = 'False'
 	mysuper[const.m_dict['super']]   = []
-	if input_dict.has_key('classes'):
-		convert_to_myclasses(context_dict_tree, input_dict['classes'], mysuper)
+	if input_dict.has_key(const.classes):
+		convert_to_myclasses(context_dict_tree, input_dict[const.classes], mysuper)
+	else:
+		raise Exception('json source no "{0}"'.format(const.classes))
 
 	return context_dict_tree
 

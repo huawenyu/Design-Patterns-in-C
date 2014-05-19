@@ -3,11 +3,10 @@
 "trace":    "True",
 "summary":  "",
 "note":     """
-<br>The info will insert to every source file explaining the pattern's design details.
-<br>    We also can append lists like this:
-<br>      - list 1, give point one
-<br>          detail provide for point one
-<br>      - list 2, offer point two
+<br>Need to issue requests to objects without knowing anything about the operation being requested or the receiver of the request.
+<br>    Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.
+<br>    Promote \"invocation of a method on an object\" to full object status
+<br>    An object-oriented callback
 """,
 
 "classes": {
@@ -40,8 +39,8 @@
 		],
 
 		"inheritances": {
-			"includes":["light"],
 			"flipup, flipdown":{
+				"includes":["light"],
 				"members": [
 					["override",  "<ALL>"],
 					["init",  "init", "void", "struct light *light, int val"],

@@ -1,0 +1,47 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+Two different components have significant similarities, but demonstrate no reuse of common interface or implementation. If a change common to both components becomes necessary, duplicate effort must be expended.
+<br> Intent:
+<br>    Define the skeleton of an algorithm in an operation, deferring some steps to client subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
+<br>    Base class declares algorithm 'placeholders', and derived classes implement the placeholders.
+""",
+
+"classes": {
+	"template_method":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method",       "step_1",  "void"],
+			["pure_virtual", "step_2",  "void", "", "", "2. Steps requiring peculiar implementations are \"placeholders\" in base class"],
+			["method",       "step_3",  "void"],
+			["pure_virtual", "step_4",  "void"],
+			["method",       "step_5",  "void"],
+
+			["method",       "execute",  "void", "", "", "1. Standardize the skeleton of an algorithm in a base class \"template method\""],
+		],
+
+		"inheritances": {
+			"method_a, method_b":{
+				"comment":"3. Derived classes implement placeholder methods",
+				"members": [
+					["override",  "<ALL>"],
+				],
+			},
+		},
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["method_a", "method_b"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}
