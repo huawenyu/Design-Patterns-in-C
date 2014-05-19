@@ -163,8 +163,6 @@ shape_draw(&circle->shape);
   * Interpreter
   * Iterator
   * Mediator
-  * Memento
-  * Null Object
   * Observer
   * State
   * Strategy
