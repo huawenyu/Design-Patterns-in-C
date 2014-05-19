@@ -1,0 +1,63 @@
+{
+"file_note":"True",
+"trace":    "True",
+"summary":  "",
+"note":     """
+Provide a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level interface that makes the subsystem easier to use.
+<br>The classes and/or objects participating in this pattern are:
+<br>    Facade   (MortgageApplication)
+<br>      - knows which subsystem classes are responsible for a request.
+<br>      - delegates client requests to appropriate subsystem objects.
+<br>    Subsystem classes   (Bank, Credit, Loan)
+<br>      - implement subsystem functionality.
+<br>      - handle work assigned by the Facade object.
+<br>      - have no knowledge of the facade and keep no reference to it.
+""",
+
+"classes": {
+	"bank":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method", "has_sufficient_savings", "int",  "char *cust, int amount"],
+		],
+	},
+	"credit":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method", "has_good_credit", "int",  "char *cust"],
+		],
+	},
+	"loan":{
+		"comment":"",
+		"includes":[],
+		"members": [
+			["method", "has_bad_loan", "int",  "char *cust"],
+		],
+	},
+
+	"mortgage":{
+		"comment":"The facade class",
+		"includes":["bank", "credit", "loan"],
+		"members": [
+			["method", "is_eligible", "int",  "char *cust, int amount"],
+
+			["var",    "_bank",   "struct bank *"],
+			["var",    "_credit", "struct credit *"],
+			["var",    "_loan",   "struct loan *"],
+		],
+	},
+
+	"test":{
+		"templates":["_test"],
+		"includes":["mortgage"],
+		"members": [
+			["static_method", "main", "int", "", "private", "", """
+				<br>printf(\"Hello world\");
+			"""
+			],
+		],
+	}
+}
+}

@@ -1,0 +1,7 @@
+{'type':'node', 'id':'bank', 'attrs':'', 'meths':'+ bank()|+ has_sufficient_savings()', 'x':1, 'y':1, 'width':1, 'height':1}
+{'type':'node', 'id':'credit', 'attrs':'', 'meths':'+ credit()|+ has_good_credit()', 'x':61, 'y':61, 'width':1, 'height':1}
+{'type':'node', 'id':'loan', 'attrs':'', 'meths':'+ loan()|+ has_bad_loan()', 'x':121, 'y':121, 'width':1, 'height':1}
+{'type':'node', 'id':'mortgage', 'attrs':'+ _bank|+ _credit|+ _loan', 'meths':'+ mortgage()|+ is_eligible()', 'x':181, 'y':181, 'width':1, 'height':1}
+{'type':'edge', 'id':'mortgage_to_bank', 'source':'mortgage', 'target':'bank', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'mortgage_to_credit', 'source':'mortgage', 'target':'credit', 'uml_edge_type':'composition'}
+{'type':'edge', 'id':'mortgage_to_loan', 'source':'mortgage', 'target':'loan', 'uml_edge_type':'composition'}
