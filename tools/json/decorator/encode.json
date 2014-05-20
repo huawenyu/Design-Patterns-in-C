@@ -39,7 +39,7 @@
 
 	"test":{
 		"includes":["wrapper", "core"],
-		"templates":["_test"]
+		"templates":["_test"],
 		"members": [
 			["static_method", "test_me", "int", "", "private", "", """
 				<br> Interface *object = new Wrapper(new Wrapper(new Wrapper(new Core(), '123'), 
