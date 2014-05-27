@@ -14,7 +14,7 @@ The files like following:
 ```
 ➜  Design-Patterns-in-C git:(master) tree tools
 tools
-|-- gencode.py   <<< the entry script
+|-- gencode.py          <<< the entry script
 |-- const.py            <<<    implement const
 |-- odict.py            <<<    implement order diction
 |-- json                <<< the pattern describe files using json
@@ -167,7 +167,7 @@ tmpl
 ## Using jinja2 replace&combine the json-define-class-info and the Template
 
 ```
-$ ./gencode.py --file json/factory-method.json 
+$ python gencode.py --file json/factory-method.json 
 ```
 
 ## Check Result
@@ -196,7 +196,7 @@ _code
 
 ```
 $ cd tools  
-$ ./gencode.py --file json/factory-method.json  
+$ python gencode.py --file json/factory-method.json  
 ```
 
 ## Debug
