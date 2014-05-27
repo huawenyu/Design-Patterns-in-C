@@ -1,0 +1,28 @@
+pizza_factory_standard_v2_d.o: pizza_factory_standard_v2.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h cheese_pizza_v2.h \
+ ../../cheese_pizza.h ../../pizza.h pizza_ingredient_factory.h \
+ ../../pizza.h veggie_pizza_v2.h ../../veggie_pizza.h \
+ pizza_factory_standard_v2.h ../two_dimension/pizza_factory.h \
+ ../two_dimension/../../pizza.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+cheese_pizza_v2.h:
+
+../../cheese_pizza.h:
+
+../../pizza.h:
+
+pizza_ingredient_factory.h:
+
+../../pizza.h:
+
+veggie_pizza_v2.h:
+
+../../veggie_pizza.h:
+
+pizza_factory_standard_v2.h:
+
+../two_dimension/pizza_factory.h:
+
+../two_dimension/../../pizza.h:

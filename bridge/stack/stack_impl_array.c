@@ -96,5 +96,5 @@ void stack_impl_array_init(struct stack_impl_array *stack_impl_array)
 {
 	memset(stack_impl_array, sizeof(*stack_impl_array), 0);
 	stack_impl_init(&stack_impl_array->stack_impl);
-	CLASS_OPS_INIT_WITH_SUPER(stack_impl_array->stack_impl.ops, stack_impl_ops, super);
+	CLASS_OPS_INIT_SUPER(stack_impl_array->stack_impl.ops, stack_impl_ops);
 }

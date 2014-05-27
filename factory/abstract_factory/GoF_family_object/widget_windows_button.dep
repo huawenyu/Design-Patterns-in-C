@@ -1,0 +1,9 @@
+widget_windows_button_d.o: widget_windows_button.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ widget_windows_button.h widget.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+widget_windows_button.h:
+
+widget.h:

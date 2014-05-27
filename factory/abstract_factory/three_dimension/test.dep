@@ -1,0 +1,30 @@
+test_d.o: test.c /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ /home/wilson/work_me/Design-Patterns-in-C/util/test_suite.h \
+ ../two_dimension/pizza_store3.h ../two_dimension/../../pizza.h \
+ ../two_dimension/../two_dimension/pizza_factory.h \
+ ../two_dimension/../two_dimension/../../pizza.h \
+ ../two_dimension/pizza_factory.h pizza_factory_standard_v2.h \
+ pizza_ingredient_factory.h ../../pizza.h \
+ pizza_ingredient_factory_organic.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+/home/wilson/work_me/Design-Patterns-in-C/util/test_suite.h:
+
+../two_dimension/pizza_store3.h:
+
+../two_dimension/../../pizza.h:
+
+../two_dimension/../two_dimension/pizza_factory.h:
+
+../two_dimension/../two_dimension/../../pizza.h:
+
+../two_dimension/pizza_factory.h:
+
+pizza_factory_standard_v2.h:
+
+pizza_ingredient_factory.h:
+
+../../pizza.h:
+
+pizza_ingredient_factory_organic.h:

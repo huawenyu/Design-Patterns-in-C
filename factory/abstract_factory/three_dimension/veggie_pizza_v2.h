@@ -2,7 +2,7 @@
 #ifndef VEGGIE_PIZZA_V2_H_
 #define VEGGIE_PIZZA_V2_H_
 
-#include "veggie_pizza.h"
+#include "../../veggie_pizza.h"
 #include "pizza_ingredient_factory.h"
 
 struct veggie_pizza_v2 {

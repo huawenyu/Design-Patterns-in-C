@@ -41,7 +41,7 @@ struct pizza_ops {
 	void (*box)(struct pizza *);
 	void (*free)(struct pizza *);
 
-	struct pizza_ops *super;
+	struct pizza_ops *__super;
 };
 
 void pizza_init(struct pizza *);

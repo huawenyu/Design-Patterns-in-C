@@ -27,7 +27,7 @@ struct stack_impl_ops {
 	int (*top)(struct stack_impl *);
 	int (*is_empty)(struct stack_impl *);
 	int (*is_full)(struct stack_impl *);
-	struct stack_impl_ops *super;
+	struct stack_impl_ops *__super;
 };
 void stack_impl_init(struct stack_impl *);
 

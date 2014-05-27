@@ -28,8 +28,8 @@ static int test_adapter(char *output, size_t sz)
 	return 0;
 }
 
-void adapter_test(void);
-void adapter_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
-	my_test_suite_add(test_adapter, "Adapter");
+	my_test_suite_add(test_adapter, "Test template_method");
 }

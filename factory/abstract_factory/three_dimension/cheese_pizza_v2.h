@@ -2,7 +2,7 @@
 #ifndef CHEESE_PIZZA_V2_H_
 #define CHEESE_PIZZA_V2_H_
 
-#include "cheese_pizza.h"
+#include "../../cheese_pizza.h"
 #include "pizza_ingredient_factory.h"
 
 struct cheese_pizza_v2 {

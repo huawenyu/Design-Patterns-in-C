@@ -30,7 +30,7 @@ struct stack_ops {
 	int (*top)(struct stack *);
 	int (*is_empty)(struct stack *);
 	int (*is_full)(struct stack *);
-	struct stack_ops *super;
+	struct stack_ops *__super;
 };
 void stack_init(struct stack *, const char *);
 

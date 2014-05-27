@@ -3,6 +3,7 @@
 #include <myobj.h>
 #include "pizza_ingredient_factory.h"
 #include "veggie_pizza_v2.h"
+#include "../../veggie_pizza.h"
 
 static void veggie_v2_prepare(struct pizza *pizza)
 {
@@ -23,6 +24,6 @@ void veggie_pizza_v2_init(struct veggie_pizza_v2 *pizza, enum pizza_size_type ty
 		struct pizza_ingredient_factory *factory)
 {
 	veggie_pizza_init(&pizza->pizza, type);
-	CLASS_OPS_INIT_WITH_SUPER(pizza->pizza.pizza.ops, ops, super);
+	CLASS_OPS_INIT_SUPER(pizza->pizza.pizza.ops, ops);
 	pizza->factory = factory;
 }

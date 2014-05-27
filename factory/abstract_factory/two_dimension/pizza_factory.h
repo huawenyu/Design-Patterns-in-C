@@ -2,7 +2,7 @@
 #ifndef PIZZA_FACTORY_H_
 #define PIZZA_FACTORY_H_
 
-#include "pizza.h"
+#include "../../pizza.h"
 
 struct pizza_factory_ops;
 struct pizza_factory { /* interface */

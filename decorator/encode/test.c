@@ -30,5 +30,5 @@ static int test_main_entry(char *output, size_t sz)
 void main_entry_test(void);
 void main_entry_test(void)
 {
-	my_test_suite_add(test_main_entry, "Test decorator");
+	my_test_suite_add(test_main_entry, "Test decorator encode");
 }

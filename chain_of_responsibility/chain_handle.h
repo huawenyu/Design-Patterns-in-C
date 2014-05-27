@@ -18,7 +18,7 @@ struct chain_base_ops {
 	void (*_add)(struct chan_handle *, struct chan_handle *next); /* not override */
 	void (*handle)(struct chan_handle *, int);
 	void (*close)(struct chan_handle *); /* virtual desturct routine, the base class no-implement */
-	struct chain_base_ops *super; /* should as last of ops, pointer to parent's ops */
+	struct chain_base_ops *__super; /* should as last of ops, pointer to parent's ops */
 };
 
 void chain_base_init(struct chan_handle *base); /* construct routine */
@@ -45,19 +45,19 @@ void chain_base_close(struct chan_handle *base)
 static inline
 void chain_base_close_super(struct chan_handle *base)
 {
-	base->ops->super->close(base);
+	base->ops->__super->close(base);
 }
 
 static inline
 void chain_base_add_super(struct chan_handle *base, struct chan_handle *next)
 {
-	base->ops->super->_add(base, next);
+	base->ops->__super->_add(base, next);
 }
 
 static inline
 void chain_base_handle_super(struct chan_handle *base, int data)
 {
-	base->ops->super->handle(base, data);
+	base->ops->__super->handle(base, data);
 }
 
 #endif /* __CHAIN_HANDLE_H__ */

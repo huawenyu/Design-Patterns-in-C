@@ -4,8 +4,8 @@
 
 #include <myobj.h>
 #include <test_suite.h>
-#include "pizza_store3.h"
-#include "pizza_factory.h"
+#include "../two_dimension/pizza_store3.h"
+#include "../two_dimension/pizza_factory.h"
 #include "pizza_factory_standard_v2.h"
 #include "pizza_ingredient_factory_organic.h"
 
@@ -36,8 +36,8 @@ static int test_abstrace_factory(char *output, size_t sz)
 	return 0;
 }
 
-void abstract_factory_two_dimension_test(void);
-void abstract_factory_two_dimension_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
 	my_test_suite_add(test_abstrace_factory, "Abstract Factory : two dimension");
 }

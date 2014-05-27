@@ -34,8 +34,8 @@ static int test_factory_family_object(char *output, size_t sz)
 	return 0;
 }
 
-void abstract_factory_family_objest_test(void);
-void abstract_factory_family_objest_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
 	my_test_suite_add(test_factory_family_object, "Abstract Factory: family objects");
 }

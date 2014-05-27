@@ -1,0 +1,16 @@
+widget_factory_windows_d.o: widget_factory_windows.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ widget_windows_button.h widget.h widget_windows_menu.h \
+ widget_factory_windows.h widget_factory.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+widget_windows_button.h:
+
+widget.h:
+
+widget_windows_menu.h:
+
+widget_factory_windows.h:
+
+widget_factory.h:

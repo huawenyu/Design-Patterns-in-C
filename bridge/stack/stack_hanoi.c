@@ -38,6 +38,6 @@ void stack_hanoi_init(struct stack_hanoi *stack_hanoi, char *stack_impl)
 {
 	memset(stack_hanoi, sizeof(*stack_hanoi), 0);
 	stack_init(&stack_hanoi->stack, stack_impl);
-	CLASS_OPS_INIT_WITH_SUPER(stack_hanoi->stack.ops, stack_ops, super);
+	CLASS_OPS_INIT_SUPER(stack_hanoi->stack.ops, stack_ops);
 	stack_hanoi->rejects = 0;
 }

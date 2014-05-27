@@ -23,6 +23,6 @@ void cheese_pizza_v2_init(struct cheese_pizza_v2 *pizza, enum pizza_size_type ty
 		struct pizza_ingredient_factory *factory)
 {
 	cheese_pizza_init(&pizza->pizza, type);
-	CLASS_OPS_INIT_WITH_SUPER(pizza->pizza.pizza.ops, cheese_v2_ops, super);
+	CLASS_OPS_INIT_SUPER(pizza->pizza.pizza.ops, cheese_v2_ops);
 	pizza->factory = factory;
 }

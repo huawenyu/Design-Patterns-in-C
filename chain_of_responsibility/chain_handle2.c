@@ -27,5 +27,5 @@ static struct chain_base_ops chain_handler2_ops = {
 void chain_handle2_init(struct chain_handle2 *chain)
 {
 	chain_base_init(&chain->super);
-	CLASS_OPS_INIT_WITH_SUPER(chain->super.ops, chain_handler2_ops, super);
+	CLASS_OPS_INIT_SUPER(chain->super.ops, chain_handler2_ops);
 }

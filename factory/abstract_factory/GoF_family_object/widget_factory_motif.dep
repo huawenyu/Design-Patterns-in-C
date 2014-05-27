@@ -1,0 +1,16 @@
+widget_factory_motif_d.o: widget_factory_motif.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ widget_motif_button.h widget.h widget_motif_menu.h \
+ widget_factory_motif.h widget_factory.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+widget_motif_button.h:
+
+widget.h:
+
+widget_motif_menu.h:
+
+widget_factory_motif.h:
+
+widget_factory.h:

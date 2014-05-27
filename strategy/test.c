@@ -6,7 +6,7 @@
 #include <test_suite.h>
 #include "test_bed.h"
 
-static int test(char *output, size_t sz)
+static int strategy_test(char *output, size_t sz)
 {
 	struct test_bed test;
 	unsigned int ii, answer[] = {1,2,1,1,2};
@@ -22,8 +22,8 @@ static int test(char *output, size_t sz)
 	return 0;
 }
 
-void strategy_test(void);
-void strategy_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
-	my_test_suite_add(test, "strategy test");
+	my_test_suite_add(strategy_test, "Test Strategy");
 }

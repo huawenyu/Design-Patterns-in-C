@@ -43,7 +43,7 @@ static struct pizza_ops cheese_ops = {
 void cheese_pizza_init(struct cheese_pizza *cheese, enum pizza_size_type type)
 {
 	pizza_init(&cheese->pizza);
-	CLASS_OPS_INIT_WITH_SUPER(cheese->pizza.ops, cheese_ops, super);
+	CLASS_OPS_INIT_SUPER(cheese->pizza.ops, cheese_ops);
 	snprintf(cheese->pizza.name, sizeof(cheese->pizza.name), "cheese");
 	cheese->pizza.size = type;
 }

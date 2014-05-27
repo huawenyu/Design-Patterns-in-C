@@ -4,7 +4,7 @@
 #include "chain_handle2.h"
 #include "chain_handle3.h"
 
-static int test(char *output, size_t sz)
+static int chain_of_responsibility_test(char *output, size_t sz)
 {
 	int i;
 
@@ -26,8 +26,8 @@ static int test(char *output, size_t sz)
 	return 0;
 }
 
-void chain_of_responsibility_test(void);
-void chain_of_responsibility_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
-	my_test_suite_add(test, "chain of responsibility test");
+	my_test_suite_add(chain_of_responsibility_test, "Test chain of responsibility");
 }

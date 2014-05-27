@@ -1,0 +1,16 @@
+veggie_pizza_v2_d.o: veggie_pizza_v2.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ pizza_ingredient_factory.h ../../pizza.h veggie_pizza_v2.h \
+ ../../veggie_pizza.h ../../pizza.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+pizza_ingredient_factory.h:
+
+../../pizza.h:
+
+veggie_pizza_v2.h:
+
+../../veggie_pizza.h:
+
+../../pizza.h:

@@ -2,7 +2,7 @@
 #ifndef PIZZA_INGREDIENT_FACTORY_H_
 #define PIZZA_INGREDIENT_FACTORY_H_
 
-#include "pizza.h"
+#include "../../pizza.h"
 
 struct pizza_ingredient_factory_ops;
 struct pizza_ingredient_factory {

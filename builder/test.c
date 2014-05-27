@@ -40,8 +40,8 @@ static int test_builder(char *output, size_t sz)
 	return 0;
 }
 
-void builder_test(void);
-void builder_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
-	my_test_suite_add(test_builder, "Builder");
+	my_test_suite_add(test_builder, "Test Builder");
 }

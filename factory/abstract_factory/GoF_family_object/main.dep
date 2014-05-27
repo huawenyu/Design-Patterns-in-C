@@ -1,0 +1,6 @@
+main_d.o: main.c /home/wilson/work_me/Design-Patterns-in-C/util/mytrace.h \
+ /home/wilson/work_me/Design-Patterns-in-C/util/test_suite.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/mytrace.h:
+
+/home/wilson/work_me/Design-Patterns-in-C/util/test_suite.h:

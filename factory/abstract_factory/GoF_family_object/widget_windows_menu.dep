@@ -1,0 +1,9 @@
+widget_windows_menu_d.o: widget_windows_menu.c \
+ /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
+ widget_windows_menu.h widget.h
+
+/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
+
+widget_windows_menu.h:
+
+widget.h:

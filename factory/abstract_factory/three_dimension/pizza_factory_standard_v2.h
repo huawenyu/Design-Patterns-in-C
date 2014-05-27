@@ -2,7 +2,7 @@
 #ifndef PIZZA_FACTORY_STANDARD_V2_H_
 #define PIZZA_FACTORY_STANDARD_V2_H_
 
-#include "pizza_factory.h"
+#include "../two_dimension/pizza_factory.h"
 #include "pizza_ingredient_factory.h"
 
 struct pizza_factory_standard_v2 {

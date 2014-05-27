@@ -33,8 +33,8 @@ static int test_prototype(char *output, size_t sz)
 	return 0;
 }
 
-void prototype_test(void);
-void prototype_test(void)
+void main_entry_test(void);
+void main_entry_test(void)
 {
 	my_test_suite_add(test_prototype, "Prototype");
 }

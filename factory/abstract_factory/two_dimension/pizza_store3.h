@@ -5,8 +5,8 @@
 #ifndef PIZZA_STORE3_H_
 #define PIZZA_STORE3_H_
 
-#include "pizza.h"
-#include "pizza_factory.h"
+#include "../../pizza.h"
+#include "../two_dimension/pizza_factory.h"
 
 struct pizza_store3 {
 	struct pizza_factory *factory;
