@@ -33,32 +33,15 @@ variables
 Make a pattern
 --------------
 
-$ make target=prototype     <<< build one pattern
-<OR>
-$ make target=bridge/shape  <<< build one pattern
-$ ./Debug/main              <<< if Makefile set Debug=y, run this, if json.trace=True, output pretty with indent
-
-	=TESTSUITE=BEGIN[Design Pattern TestSuite] total 1 fail 0 at 0
-	         test_main_entry
-	            color_blue_init()
-	            shape_rectangle_init()
-	               shape_rectangle::draw()
-	                  shape::draw()
-	                        color_blue::render()
-	                     shape_rectangle::_destructor()
-	                        shape::_destructor()
-	               shape_rectangle::free()
-	=TESTSUITE= [ OK ] 0    Test bridge_shape
-
-	=TESTSUITE= END [Design Pattern TestSuite] total 1 fail 0 at 1
-
-$ make clean
+$ make
+$ make runall
+$ make clean_all
 
 Auto Generate class
 -------------------
 
 $ cd tools
-$ ./gencode.py --file json/prototype.json > log   <<< the generated code in dir ./tools/code/c/prototype
+$ python gencode.py --file json/prototype.json > log   <<< the generated code in dir ./tools/code/c/prototype
 
 ```
 
