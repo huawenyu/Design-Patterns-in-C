@@ -179,4 +179,20 @@
 	__CLASS_CONCAT_2(l_super_rtn,__LINE__); \
 })
 
+/*____________________________________________________________________________
+                                                            MACROS OVERLOAD */
+#define __CLASS_SELECT( NAME, NUM ) __CLASS_CONCAT( NAME ## _, NUM )
+
+#define __CLASS_GET_COUNT( _1, _2, _3, _4, _5, _6 /* ad nauseam */, COUNT, ... ) COUNT
+#define __CLASS_VA_SIZE( ... ) __CLASS_GET_COUNT( __VA_ARGS__, 6, 5, 4, 3, 2, 1 )
+
+#define __CLASS_VA_SELECT( NAME, ... ) __CLASS_SELECT( NAME, __CLASS_VA_SIZE(__VA_ARGS__) )(__VA_ARGS__)
+
+/*____________________________________________________________________________
+                                                             OVERLOAD SAMPLE*/
+#define MY_OVERLOADED( ... ) __CLASS_VA_SELECT( MY_IMPL, __VA_ARGS__ )
+#define MY_IMPL_1( X ) foo< X >
+#define MY_IMPL_2( X, Y ) bar< X >( Y )
+#define MY_IMPL_3( X, Y, Z ) bang_ ## X< Y >.Z()
+
 #endif /* __MY_OBJ_H__ */
