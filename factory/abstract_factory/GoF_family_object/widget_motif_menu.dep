@@ -1,9 +1,0 @@
-widget_motif_menu_d.o: widget_motif_menu.c \
- /home/wilson/work_me/Design-Patterns-in-C/util/myobj.h \
- widget_motif_menu.h widget.h
-
-/home/wilson/work_me/Design-Patterns-in-C/util/myobj.h:
-
-widget_motif_menu.h:
-
-widget.h:

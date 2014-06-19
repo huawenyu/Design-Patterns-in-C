@@ -1,5 +1,0 @@
-widget_factory_d.o: widget_factory.c widget_factory.h widget.h
-
-widget_factory.h:
-
-widget.h:

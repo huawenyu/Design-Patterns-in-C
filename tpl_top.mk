@@ -3,6 +3,9 @@
 #                               READONLY FILE
 # Using file 'config.mk' as upward search sanity file to detect $(TOPDIR)
 #_______________________________________________________________________________
+REPLACE_ME= XXXXXX
+OUTDIR    = $(REPLACE_ME)
+
 ifndef TOPDIR
 empty:=
 space:= $(empty) $(empty)

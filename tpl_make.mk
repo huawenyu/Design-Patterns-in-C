@@ -1,24 +1,24 @@
 include topdir.mk
 #_______________________________________________________________________________
-#                                                                   IGNORE ABOVE
-# if = <auto>: auto assign value
-#
-# target: foo, foo.a, foo.so
+# Config                                                            IGNORE ABOVE
 TARGET         = #<auto>
 SOURCES        = #<auto>
-SUBPROJS       = #proj1 proj2 <auto> proj_n proj_m
-SUBDIRS        = #dir1 dir2 <auto> dir_n dir_m
-
-# add more to global config
+SOURCES_NOT    =
+SUBPROJS       = #<auto>
+SUBPROJS_NOT   =
+SUBDIRS        = #<auto>
+SUBDIRS_NOT    =
+#_____________
+# Append Flags
 EXTRA_MACROS   =
 EXTRA_INCS     = #$(TOPDIR)include
-EXTRA_LIBDIRS  = #$(TOPDIR)lib
+EXTRA_LIBDIRS  = #$(TOPDIR)$(OUTDIR)lib
 EXTRA_LIBS     =
 EXTRA_CPPFLAGS =
 EXTRA_LDFLAGS  =
 EXTRA_ARFLAGS  =
-
-# this proj donnot use global config
+#______________________
+# Override Global Flags
 #MACROS        =
 #INCS          =
 #LIBDIRS       =
@@ -26,7 +26,6 @@ EXTRA_ARFLAGS  =
 #CPPFLAGS      =
 #LDFLAGS       =
 #ARFLAGS       =
-
 #_______________________________________________________________________________
 #                                                                   IGNORE BELOW
 include $(TOPDIR)config.mk

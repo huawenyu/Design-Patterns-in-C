@@ -1,6 +1,0 @@
-pizza_ingredient_factory_d.o: pizza_ingredient_factory.c \
- pizza_ingredient_factory.h ../../pizza.h
-
-pizza_ingredient_factory.h:
-
-../../pizza.h:

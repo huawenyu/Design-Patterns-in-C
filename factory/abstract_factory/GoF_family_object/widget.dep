@@ -1,3 +1,0 @@
-widget_d.o: widget.c widget.h
-
-widget.h:

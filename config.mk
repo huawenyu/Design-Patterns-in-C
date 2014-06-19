@@ -1,8 +1,7 @@
-# If only use a proj's define: define it in the proj's Makefile
-# If add more option: define EXTRA_* in the proj's Makefile which will be merged with this global one
+REPLACE_ME= XXXXXX
+OUTDIR    = $(REPLACE_ME)
 #_______________________________________________________________________________
-#                                                         PROJECTS GLOBAL CONFIG
-# 1, enable, otherwise comment it
+#                       PROJECTS GLOBAL CONFIG                      IGNORE ABOVE
 #VERBOSE   = 1
 DEBUGMODE = 1
 
@@ -15,6 +14,9 @@ G_CPPFLAGS= -Wall -Werror -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wunu
 G_LDFLAGS =
 G_ARFLAGS = -cr
 
+G_OUTDIR_DEBUG   = out_debug
+G_OUTDIR_RELEASE = out_release
+G_OUTDIR_PROFILE = out_profile
 #_______________________________________________________________________________
 #                                                                   IGNORE BELOW
-include $(TOPDIR)config_ext.mk
+include $(TOPDIR)base.mk
