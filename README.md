@@ -1,3 +1,28 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Design-Patterns-in-C](#design-patterns-in-c)
+  - [C oop implement:](#c-oop-implement)
+- [](#)
+- [  member           -                +       +](#member-----------------------------------)
+  - [Quick Start:](#quick-start)
+  - [Make a pattern](#make-a-pattern)
+  - [Auto Generate class](#auto-generate-class)
+  - [OOP basic:](#oop-basic)
+    - [Object](#object)
+    - [Class](#class)
+    - [Data Abstraction & Encapsulation](#data-abstraction-&-encapsulation)
+    - [Inheritance](#inheritance)
+    - [Polymorphism](#polymorphism)
+  - [Design Patterns:](#design-patterns)
+  - [Contribute](#contribute)
+  - [License](#license)
+  - [See also & References](#see-also-&-references)
+  - [TODOS](#todos)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Design-Patterns-in-C
 
 **Practical Design Patterns in C**  
