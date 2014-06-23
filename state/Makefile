@@ -5,9 +5,9 @@ include topdir.mk
 #
 # target: foo, foo.a, foo.so
 TARGET         = <auto>
-SOURCES        = <auto>
+SOURCES        =
 SUBPROJS       = #proj1 proj2 <auto> proj_n proj_m
-SUBDIRS        = #dir1 dir2 <auto> dir_n dir_m
+SUBDIRS        = <auto>
 
 # add more to global config
 EXTRA_MACROS   =
