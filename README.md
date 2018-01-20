@@ -29,7 +29,8 @@
 
 This will be a repository of
 * Implement the Design Patterns of **GoF**(Gang of Four) in C.  
-* Provide script to auto generate Design Patterns into different code style: C, pyNSource(ascii-UML), ... [C++, Java, C#]
+* (Version 1) Provide script to auto generate Design Patterns into different code style: C, pyNSource(ascii-UML), ... [C++, Java, C#]
+* (Version 2) Reference from [Design Patterns in PHP](https://github.com/kamranahmedse/design-patterns-for-humans)
 
 ## C oop implement:
 
@@ -58,6 +59,7 @@ variables
 Make a pattern
 --------------
 
+$ cd auto-gen
 $ make
 $ make runall
 $ make clean_all
