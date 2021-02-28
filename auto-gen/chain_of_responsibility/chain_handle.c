@@ -8,7 +8,7 @@ static void chain_base_ops_add(struct chan_handle *base, struct chan_handle *nex
 		base->next = next;
 }
 
-static void chain_base_ops_handle(struct chan_handle *base, int data)
+static void chain_base_ops_handle(struct chain_handle *base, int data)
 {
 	if (base->next)
 		chain_base_handle(base->next, data);
@@ -20,12 +20,12 @@ static struct chain_base_ops chain_base_ops = {
 	._add = chain_base_ops_add,
 	.handle = chain_base_ops_handle,
 };
-struct chain_base_ops *chain_base_ops_get(struct chan_handle *base)
+struct chain_base_ops *chain_base_ops_get(struct chain_handle *base)
 {
 	return base->ops;
 }
 
-void chain_base_init(struct chan_handle *base)
+void chain_base_init(struct chain_handle *base)
 {
 	base->ops = &chain_base_ops;
 	base->next = 0;

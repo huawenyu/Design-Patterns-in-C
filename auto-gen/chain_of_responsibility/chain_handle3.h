@@ -4,7 +4,7 @@
 #include "chain_handle.h"
 
 struct chain_handle3 {
-	struct chan_handle super;
+	struct chain_handle super;
 };
 
 void chain_handle3_init(struct chain_handle3 *);

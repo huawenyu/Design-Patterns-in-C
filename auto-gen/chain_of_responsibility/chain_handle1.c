@@ -1,6 +1,6 @@
 #include "chain_handle1.h"
 
-static void chain_handler1_ops_handle(struct chan_handle *base, int data)
+static void chain_handler1_ops_handle(struct chain_handle *base, int data)
 {
 	if (data % 3 == 1) {
 		printf("H1 processed %d  \n", data);
@@ -14,7 +14,7 @@ static void chain_handler1_ops_handle(struct chan_handle *base, int data)
 	}
 }
 
-static void chain_handler1_ops_close(struct chan_handle *base)
+static void chain_handler1_ops_close(struct chain_handle *base)
 {
 }
 
@@ -27,4 +27,8 @@ void chain_handle1_init(struct chain_handle1 *chain)
 {
 	chain_base_init(&chain->super);
 	CLASS_OPS_INIT_SUPER(chain->super.ops, chain_handler1_ops);
+#if DEBUG
+	chain_handler1_ops.__super = chain_base_init(&chain->super);
+	chain->ops = OPS_FILL(&chain_handler1_ops, chain->ops.__super);
+#endif
 }

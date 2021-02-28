@@ -1,6 +1,6 @@
 #include "chain_handle3.h"
 
-static void chain_handler3_ops_handle(struct chan_handle *base, int data)
+static void chain_handler3_ops_handle(struct chain_handle *base, int data)
 {
 	if (data % 3 == 0) {
 		printf("H3 processed %d  \n", data);
@@ -15,7 +15,7 @@ static void chain_handler3_ops_handle(struct chan_handle *base, int data)
 	}
 }
 
-static void chain_handler3_ops_close(struct chan_handle *base)
+static void chain_handler3_ops_close(struct chain_handle *base)
 {
 }
 
