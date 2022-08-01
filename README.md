@@ -217,6 +217,7 @@ SOFTWARE.
 [.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
 [Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
 [Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)  
+[Design Patterns](https://www.scaler.com/topics/design-patterns/) 
 
 ## TODOS
 
