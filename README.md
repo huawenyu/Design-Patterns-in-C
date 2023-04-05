@@ -230,15 +230,31 @@ http://oopsconcepts.blogspot.ca/
 * manual about oop C's implement:
 ```
 ops -> vtable
-caps -> DI (construct)
-client -> DI (argument)
+  t_ops -> half class level vtable
+caps -> DI - callback (construct)
+cbs -> DI - client/request callback (argument)
 
 ```
+
+* [The SOLID principles of object-oriented programming](https://en.wikipedia.org/wiki/SOLID)
+  - DIP: Dependence Inversion Principle, dependence on abstract interface
+  - LSP: Liskov Substitution Principle
+  - SRP: Single Responsibility Principle
+  - OCP: Open Close Principle
+  - ISP: Interface Segregation Principle
+  - LoD: Least Knowledge Principle
+
 * framework-lib cooperate with client:
   - caps: template drive
     + can be simple interface which implement by client and used by class, is callback-functions
     + can be simple factory which implement by client and used by class to create itself, such as client's memory implements
-  - DI: dependence on abstract interface
+  - DI: [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection)
+    + Interface injection
+    + Constructor injection
+    + Setter injection
+    + Method injection
+  - AI: argument injection
+  - IoC: Inversion of Control
   - derive (instance embed): inheritance as-A
-  - client-ops: AI (argument injection)
+  - client/request-cbs: AI, one kind of client/request ops, 
   - call-ops: smaller client-ops
