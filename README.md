@@ -34,7 +34,7 @@ This will be a repository of
 
 ## C oop implement:
 
-```
+```python
 
 ======================================================
                 private protected public  static  pure
@@ -55,7 +55,7 @@ variables
 
 ## Quick Start:
 
-```
+```sh
 Make a pattern
 --------------
 
@@ -80,7 +80,7 @@ The oop come from myobj.h:
 * the derive class's v-table instance should initial with merge with it's parent
 
 ### Object
-```
+```c
 struct shape_rectangle *rect;
 
 rect = malloc(sizeof(*rect));
@@ -92,7 +92,7 @@ shape_free(&rect->shape);
 
 ### Class
 
-```
+```c
 struct shape_ops;
 struct shape {
 	struct shape_ops *ops;
@@ -109,7 +109,7 @@ void shape_init(struct shape *);
 
 ### Data Abstraction & Encapsulation
 
-```
+```c
 struct shape_rectangle *rect;
 
 shape_rectangle_init(rect);
@@ -119,7 +119,7 @@ shape_free(&rect->shape);
 
 ### Inheritance
 
-```
+```c
 struct shape_rectangle {
 	struct shape shape;
 };
@@ -129,12 +129,70 @@ void shape_rectangle_init(struct shape_rectangle *);
 
 ### Polymorphism
 
-```
+```c
 struct shape_rectangle *rect;
 struct shape_circle *circle;
 
 shape_draw(&rect->shape);
 shape_draw(&circle->shape);
+```
+## Another OOP style (OOC by A.T. Schreiner)
+
+```c
+struct Class {
+    size_t size;
+    void *(* ctor) (void *self, va_list *app);
+};
+
+struct String {
+    const void *class;  // must be first
+    char *text;
+};
+
+
+void *new(const void *_class, ...) {
+    const struct Class *class = _class;     // assign the address of `struct String` class
+    void *p = calloc(1, class->size);       // allocate the sizeof(struct String);
+
+    assert(p);
+    *(const struct Class **)p = class;      // Force the conversion of p and set the argument `class` as the value of this pointer.
+    if(class->ctor) {
+        va_list ap;
+        va_start(ap, _class);
+        p = class->ctor(p, &ap);        // Now what is `p` here, a `struct String` or `struct Class`.
+                                        // and if it is `struct Class` then how it convert to `struct String` in `String_ctor` function 
+                                        // given below.
+        va_end(ap);
+    }
+    return p;
+}
+
+
+static void *String_ctor(void *_self, va_list *app) {
+    struct String *self = _self;        
+    const char *text = va_arg(*app, const char *);
+
+    self->text = malloc(strlen(text) + 1);
+    assert(self->text);
+    strcpy(self->text, text);
+    return self;
+}
+
+
+// Initialization
+static const struct Class _String  = {
+    sizeof(struct String),
+    String_ctor
+};
+
+const void *String = &_String;
+
+
+
+// Call like this:
+int main(void) {
+ void *a = new(String, "some text");
+}
 ```
 
 ## Design Patterns:
@@ -181,43 +239,6 @@ shape_draw(&circle->shape);
 
 The repository contains a folder by each design pattern.
 
-## Contribute
-
-All constructive comments are welcome.
-Please feel free to fork and extend existing or add your own examples and send a pull request with your changes!
-
-## License
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Wilson Huawen Yu
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-## See also & References
-
-[PyNSource - UML tool for Python](http://www.andypatterns.com/index.php/products/pynsource/)
-[Design Patterns Explained Simply](http://sourcemaking.com/design_patterns)  
-[.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
-[Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
-[Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)  
-
 ## TODOS
 
 oop:
@@ -258,3 +279,41 @@ cbs -> DI - client/request callback (argument)
   - derive (instance embed): LSP, inheritance as-A
   - client/request-cbs: AI,MI, one kind of client/request ops, 
   - call-ops: smaller client-ops
+ 
+
+## Contribute
+
+All constructive comments are welcome.
+Please feel free to fork and extend existing or add your own examples and send a pull request with your changes!
+
+## License
+
+The MIT License (MIT)
+
+Copyright (c) 2014 Wilson Huawen Yu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+## See also & References
+
+[PyNSource - UML tool for Python](http://www.andypatterns.com/index.php/products/pynsource/)
+[Design Patterns Explained Simply](http://sourcemaking.com/design_patterns)  
+[.NET Design Patterns](http://www.dofactory.com/Patterns/Patterns.aspx)  
+[Software design pattern](http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29)  
+[Computer Science Design Patterns](http://en.wikibooks.org/wiki/Computer_Science_Design_Patterns)  
