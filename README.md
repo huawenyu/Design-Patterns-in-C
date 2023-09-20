@@ -139,16 +139,11 @@ shape_draw(&circle->shape);
 ## Another OOP style (OOC by A.T. Schreiner)
 
 ```c
+// file: OOC.h
 struct Class {
     size_t size;
     void *(* ctor) (void *self, va_list *app);
 };
-
-struct String {
-    const void *class;  // must be first
-    char *text;
-};
-
 
 void *new(const void *_class, ...) {
     const struct Class *class = _class;     // assign the address of `struct String` class
@@ -168,6 +163,15 @@ void *new(const void *_class, ...) {
 }
 
 
+// file: mystring.h
+
+#include "OOC.h"
+
+struct String {
+    const void *class;  // must be first
+    char *text;
+};
+
 static void *String_ctor(void *_self, va_list *app) {
     struct String *self = _self;        
     const char *text = va_arg(*app, const char *);
@@ -177,7 +181,6 @@ static void *String_ctor(void *_self, va_list *app) {
     strcpy(self->text, text);
     return self;
 }
-
 
 // Initialization
 static const struct Class _String  = {
@@ -189,9 +192,13 @@ const void *String = &_String;
 
 
 
-// Call like this:
-int main(void) {
- void *a = new(String, "some text");
+// file: main.c
+
+#include "mystring.h"
+
+int main(void)
+{
+    void *a = new(String, "some text");
 }
 ```
 
